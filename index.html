@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ใครว่ายมากับน้ำ?</title>
+<!--
+  ===== ไฟล์นี้รวม style.css, art.js, story-data.js, story.js ไว้ในไฟล์เดียวแล้ว อัปไฟล์นี้ไฟล์เดียวก็ใช้ได้ =====
+  ===== วิธีแก้เนื้อหาเว็บนี้ =====
+  • ข้อความทั้งหมดอยู่ในไฟล์นี้ แก้ได้ตรงๆ แต่ละหน้าคั่นด้วยบรรทัด  ===== ชื่อหน้า =====
+  • ตัวเลขที่วิ่งนับ (มี data-count="...") : แก้ทั้งตัวเลขที่เห็น และค่า data-count ให้ตรงกัน
+  • ตัวเลขในกราฟ รายเขต และแผนที่ : story-data.js
+  • ภาพวาด : art.js  เรียกใช้ด้วย <svg viewBox="0 0 64 64"><use href="#ชื่อภาพ"/></svg>
+  • สีและหน้าตา : style.css   • การเคลื่อนไหวและปุ่มกด : story.js
+  • เพิ่มหน้าใหม่ : คัดลอก <section class="page"> ... </section> ทั้งก้อนไปวาง แล้วตั้ง data-ch ตามบท (1–4)
+  • เกม : ทำในไฟล์ game.html (ปุ่ม "เล่นเกม" ท้ายเรื่องลิงก์ไปไฟล์นี้แล้ว)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE   : เล่าเหมือนข่าวสืบสวนตอนกลางคืน จริงจังแต่อ่านง่าย เด็กก็ตามทัน
+   IDEA    : เลื่อนผ่านคำร้องจริงทีละใบ ระดับน้ำด้านหลังขึ้นลงตามวันของน้ำท่วม
+   PICTURE : ภาพวาดบ้านกลางน้ำ สัตว์ 4 ตัว และฉาก 3 ระลอก วาดเองด้วย SVG (art.js)
+   COLOUR  : คืนสีน้ำเงินเขียวเข้ม ตัวหนังสือสีกระดูก ส้มไซเรนคือสีเด่น แดงปลิงใช้กับอันตรายเท่านั้น
+   LAYOUT  : คอลัมน์เดียว 1080px แบ่ง 4 บท ทุกบทมีจุดให้แตะเล่น */
+:root {
+  --night: #0D181C;
+  --water: #16313A;
+  --bone: #E9E3D3;
+  --silt: #9DB0AF;
+  --siren: #E8893B;
+  --leech: #D9534F;
+  --safe: #62B48D;
+  --line: rgba(233, 227, 211, 0.14);
+  --card: rgba(233, 227, 211, 0.04);
+  --font-display: "Bai Jamjuree", "Sarabun", system-ui, sans-serif;
+  --font-body: "Sarabun", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; min-width: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { margin: 0; background: var(--night); color: var(--bone); font-family: var(--font-body); font-size: 19px; line-height: 1.75; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.25; text-wrap: balance; margin: 0; }
+p { margin: 0; max-width: 64ch; }
+a { color: var(--siren); }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--siren); outline-offset: 3px; }
+button { font: inherit; }
+.num { font-variant-numeric: tabular-nums; }
+.t-siren { color: var(--siren); }
+.t-leech { color: var(--leech); }
+
+/* ฉากหลัง: ระดับน้ำ ความแดง แถบความคืบหน้า */
+#flood { position: fixed; left: 0; right: 0; bottom: 0; height: 6vh; z-index: 0; pointer-events: none; transition: height 0.25s linear; }
+#flood svg { position: absolute; top: -18px; left: 0; width: 200%; height: 20px; animation: drift 9s linear infinite; }
+#flood .body { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(38, 84, 92, 0.55), rgba(22, 49, 58, 0.85)); }
+#flood .rust { position: absolute; inset: 0; opacity: 0; background: linear-gradient(180deg, rgba(122, 64, 42, 0.6), rgba(68, 34, 28, 0.9)); }
+#heat { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background: radial-gradient(130% 75% at 50% 115%, rgba(217, 83, 79, 0.6), rgba(217, 83, 79, 0) 70%), radial-gradient(60% 50% at 100% 0%, rgba(217, 83, 79, 0.18), rgba(217, 83, 79, 0) 70%); }
+#gauge { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); z-index: 3; font-family: var(--font-mono); font-size: 13px; color: var(--silt); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+#gauge .bar { width: 4px; height: 160px; background: var(--line); border-radius: 2px; position: relative; overflow: hidden; }
+#gauge .fill { position: absolute; left: 0; right: 0; bottom: 0; background: var(--siren); height: 0%; }
+#prog { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 20; pointer-events: none; background: rgba(233, 227, 211, 0.06); }
+#prog .fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--siren), var(--leech)); }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* เมนูบท */
+.chap { position: fixed; top: 12px; left: 50%; z-index: 15; transform: translate(-50%, -90px); transition: transform 0.35s ease; }
+.chap.show { transform: translate(-50%, 0); }
+.chap-now { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 16px; border-radius: 40px; border: 1px solid var(--line); background: rgba(13, 24, 28, 0.9); backdrop-filter: blur(8px); color: var(--bone); font-family: var(--font-display); font-size: 16px; cursor: pointer; white-space: nowrap; }
+#chapNum { font-family: var(--font-mono); font-size: 13px; color: var(--siren); }
+#chapList { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); min-width: 250px; margin: 0; padding: 8px; list-style: none; background: #13252B; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); }
+#chapList a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--bone); text-decoration: none; font-family: var(--font-display); font-size: 17px; }
+#chapList a:hover { background: rgba(233, 227, 211, 0.07); }
+#chapList a[aria-current="true"] { color: var(--siren); }
+
+/* โครงหน้า */
+main { position: relative; z-index: 1; }
+.page { max-width: 1080px; margin: 0 auto; padding: 88px 24px; display: flex; flex-direction: column; gap: 28px; }
+.eyebrow { font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.04em; color: color-mix(in oklab, var(--siren), var(--leech) calc(var(--heat, 0) * 100%)); }
+.page h2 { font-size: clamp(30px, 4.4vw, 48px); font-weight: 700; }
+.lead { font-size: 22px; }
+.muted { color: var(--silt); }
+.note, .hint { font-size: 15.5px; color: var(--silt); }
+.chapter { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 120px 24px 24px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.chapter-n { font-family: var(--font-mono); font-size: 14px; color: var(--siren); }
+.chapter-t { font-size: clamp(42px, 7vw, 84px); font-weight: 700; line-height: 1.1; }
+.chapter-q { font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 3vw, 34px); line-height: 1.4; color: var(--silt); max-width: 30ch; }
+.chapter-q em { font-style: normal; color: var(--siren); }
+
+/* กล่อง "นับยังไง" พับได้ */
+.how { border: 1px solid var(--line); border-radius: 12px; padding: 0 18px; max-width: 72ch; }
+.how summary { cursor: pointer; list-style: none; padding: 12px 0; font-size: 16px; color: var(--silt); display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.how summary::-webkit-details-marker { display: none; }
+.how summary::before { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform 0.2s; flex: none; }
+.how[open] summary::before { transform: rotate(45deg); }
+.how summary:hover { color: var(--bone); }
+.how p { padding-bottom: 16px; font-size: 16px; color: var(--silt); }
+
+/* คำที่แตะเพื่อดูความหมาย */
+.tip { color: inherit; background: none; border: 0; padding: 0; border-bottom: 2px dotted var(--siren); cursor: help; font-weight: 600; line-height: inherit; }
+.tip:hover { color: var(--siren); }
+.sheet { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 30; width: min(560px, calc(100% - 24px)); background: var(--bone); color: #1E1A14; border-radius: 16px; padding: 18px 20px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; }
+.sheet[hidden] { display: none; }
+.sheet b { font-family: var(--font-display); font-size: 19px; }
+.sheet p { grid-column: 1; font-size: 17px; line-height: 1.6; }
+.sheet button { grid-column: 2; grid-row: 1 / 3; align-self: start; min-height: 40px; padding: 6px 16px; border: 0; border-radius: 20px; background: #1E1A14; color: var(--bone); cursor: pointer; }
+
+/* ใบคำร้อง */
+.ticket { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+.ticket:has(.t-ico) { padding-right: 86px; }
+.ticket .t-ico { position: absolute; right: 14px; top: 14px; width: 62px; }
+.ticket .meta { font-family: var(--font-mono); font-size: 13.5px; color: var(--silt); display: flex; gap: 14px; flex-wrap: wrap; }
+.ticket .meta b { color: var(--siren); font-weight: 500; }
+.ticket q { font-size: 20px; quotes: "“" "”"; }
+.ticket q.loud { font-size: 27px; font-weight: 600; }
+.ticket.red { border-color: rgba(217, 83, 79, 0.55); }
+.ticket.red .meta b { color: var(--leech); }
+.ticket.ok { border-color: rgba(98, 180, 141, 0.6); }
+.ticket.ok .meta b { color: var(--safe); }
+.tickets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+/* เปิดเรื่อง */
+.hero { padding-top: 96px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.hero-art { margin: 0; }
+.hero-art svg, .end-art svg { display: block; width: 100%; height: auto; }
+.bubble { position: relative; background: var(--bone); color: #1E1A14; border-radius: 16px; padding: 22px 24px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45); }
+.bubble::before { content: ""; position: absolute; left: -12px; top: 38%; border: 12px solid transparent; border-left: 0; border-right-color: var(--bone); }
+.bubble-meta { font-family: var(--font-mono); font-size: 13px; color: #5B544A; margin-bottom: 8px; }
+.bubble .lines { display: flex; flex-direction: column; gap: 6px; font-size: clamp(19px, 2.1vw, 23px); line-height: 1.55; }
+.bubble .t-leech { color: #B0302C; }
+.bubble .t-siren { color: #A9520F; }
+.js .bubble .lines span { animation: type 0.9s ease-out both; }
+.js .bubble .lines span:nth-child(2) { animation-delay: 0.7s; }
+.js .bubble .lines span:nth-child(3) { animation-delay: 1.4s; }
+.js .bubble .lines span:nth-child(4) { animation-delay: 2.1s; }
+@keyframes type { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.hero h1 { font-size: clamp(52px, 9vw, 112px); font-weight: 700; line-height: 1.05; margin-top: 8px; }
+.hero h1 em { font-style: normal; color: var(--siren); }
+.scroll-hint { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--silt); font-size: 15px; padding-top: 12px; }
+.scroll-hint svg { animation: sh-bounce 2.2s ease-in-out infinite; }
+@keyframes sh-bounce { 0%, 100% { transform: translateY(0); } 55% { transform: translateY(10px); } }
+
+/* จระเข้ */
+.search { display: flex; align-items: center; gap: 14px; background: var(--bone); color: var(--night); border-radius: 40px; padding: 12px 22px; width: fit-content; font-size: 22px; font-weight: 600; }
+.caret { width: 2px; height: 1.1em; background: var(--night); margin-left: -10px; opacity: 0; }
+.searching .caret { opacity: 1; animation: blink 0.8s steps(1) infinite; }
+#qStatus { min-height: 1.7em; font-family: var(--font-mono); }
+.big { font-family: var(--font-display); font-weight: 700; font-size: clamp(90px, 18vw, 200px); line-height: 1; color: var(--siren); }
+.croc-row { display: flex; align-items: flex-end; gap: 12px 28px; flex-wrap: wrap; }
+.croc-art { width: clamp(150px, 24vw, 260px); }
+#n566 { transition: color 0.6s; transform-origin: left bottom; cursor: pointer; }
+#n566.ticking { color: var(--bone); }
+#n566.landed { animation: land 0.45s cubic-bezier(0.3, 1.6, 0.5, 1); }
+@keyframes land { 40% { transform: scale(1.08); } }
+mark { background: var(--siren); color: var(--night); padding: 0 3px; border-radius: 3px; }
+mark.red { background: var(--leech); color: var(--bone); }
+
+/* จับผิดคำร้อง */
+.fakes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.fake { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; transition: border-color 0.3s, background 0.3s; }
+.fake q { font-size: 21px; quotes: "“" "”"; }
+.fake-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.fake-btns button { min-height: 44px; padding: 6px 18px; border-radius: 30px; border: 1px solid rgba(233, 227, 211, 0.3); background: transparent; color: var(--bone); font-family: var(--font-display); font-size: 16px; cursor: pointer; }
+.fake-btns button:hover { border-color: var(--siren); }
+.fake.done .fake-btns button { cursor: default; opacity: 0.45; }
+.fake.done .fake-btns button.picked { opacity: 1; background: rgba(233, 227, 211, 0.12); }
+.fake.right { border-color: rgba(98, 180, 141, 0.7); background: rgba(98, 180, 141, 0.07); }
+.fake.wrong { border-color: rgba(232, 137, 59, 0.7); background: rgba(232, 137, 59, 0.07); }
+.fake-why { font-size: 16.5px; color: var(--silt); }
+.fake-why b { color: var(--bone); }
+.js .fake:not(.done) .fake-why { display: none; }
+.fake-score { font-family: var(--font-display); font-size: 21px; min-height: 1.5em; }
+.funnel { display: flex; align-items: flex-end; gap: 20px 32px; flex-wrap: wrap; }
+.funnel > div { display: flex; flex-direction: column; gap: 4px; max-width: 16em; }
+.funnel .n { font-family: var(--font-display); font-weight: 700; line-height: 1; }
+.funnel-end svg { width: 130px; }
+.clean { border-top: 1px solid var(--line); padding-top: 28px; display: flex; flex-direction: column; gap: 16px; }
+.clean-t { font-size: 22px; }
+.sieve { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.sieve li { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: baseline; gap: 18px; padding: 12px 18px; border-left: 5px solid rgba(233, 227, 211, 0.25); background: var(--card); border-radius: 0 10px 10px 0; }
+.sieve li:nth-child(2) { margin-left: 3%; }
+.sieve li:nth-child(3) { margin-left: 6%; }
+.sieve li:nth-child(4) { margin-left: 9%; }
+.sieve b { font-family: var(--font-display); font-size: 30px; text-align: right; }
+.sieve span { font-size: 17.5px; }
+.sieve li.hl { border-left-color: var(--leech); background: rgba(217, 83, 79, 0.08); }
+.sieve li.hl b { color: var(--leech); }
+
+/* กราฟ */
+.chart { width: 100%; overflow-x: auto; }
+.chart svg { display: block; width: 100%; height: auto; min-width: 560px; }
+.chart text { fill: var(--silt); font-family: var(--font-body); font-size: 13.5px; transition: opacity 0.4s; }
+.chart .hl { fill: var(--bone); font-weight: 600; }
+.chart-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.readout { font-size: 17px; color: var(--silt); min-height: 1.7em; }
+.readout b { color: var(--bone); }
+.replay { min-height: 40px; padding: 6px 16px; border-radius: 30px; border: 1px solid var(--line); background: transparent; color: var(--bone); font-family: var(--font-display); font-size: 15px; cursor: pointer; }
+.replay:hover { border-color: var(--siren); }
+.hit { fill: transparent; cursor: pointer; }
+
+/* ทายสิ */
+.quiz { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.quiz button { color: var(--bone); background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: border-color 0.2s, transform 0.2s; }
+.quiz button:hover { border-color: var(--siren); transform: translateY(-3px); }
+.quiz svg { width: 100%; max-width: 130px; }
+.quiz .nm { font-family: var(--font-display); font-size: 23px; font-weight: 600; }
+.quiz .x { font-family: var(--font-mono); font-size: 15px; color: var(--silt); visibility: hidden; }
+.quiz.done .x { visibility: visible; }
+.quiz.done button.win { border-color: var(--leech); background: rgba(217, 83, 79, 0.12); animation: quiz-pop 0.55s cubic-bezier(0.3, 1.5, 0.5, 1); }
+@keyframes quiz-pop { 35% { transform: scale(1.1); } 75% { transform: scale(0.97); } }
+.quiz-msg { font-size: 21px; min-height: 1.7em; }
+
+/* หมายจับ */
+.wanted { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.poster { width: 150px; background: #E6DCC4; color: #1E1A14; border-radius: 4px; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4); }
+.poster svg { width: 100%; }
+.poster .w { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.18em; font-size: 15px; }
+.poster .who { font-weight: 600; font-size: 18px; }
+.poster .k { display: inline-block; font-family: var(--font-display); font-weight: 700; line-height: 1.05; }
+.poster .f { font-family: var(--font-mono); font-size: 13px; }
+.poster.top { width: 230px; padding: 20px 14px; border: 5px solid var(--leech); }
+.poster.top .w { font-size: 22px; }
+.poster.top .who { font-size: 21px; }
+.poster.top .w, .poster.top .k { color: #B0302C; }
+.fact { display: flex; align-items: center; gap: 18px; border: 1px dashed rgba(217, 83, 79, 0.55); border-radius: 14px; padding: 14px 20px; background: rgba(217, 83, 79, 0.06); max-width: 760px; }
+.fact svg { width: 96px; flex: none; }
+.fact p { font-size: 18px; }
+.fact b { color: var(--leech); }
+
+/* 10 วันในบ้าน */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; align-items: start; }
+.home-left { display: flex; flex-direction: column; gap: 22px; }
+.cal { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.cal span { position: relative; font-family: var(--font-display); font-weight: 700; font-size: 20px; text-align: center; padding: 12px 0; border-radius: 8px; background: rgba(233, 227, 211, 0.05); color: var(--silt); }
+.cal span::after { content: ""; position: absolute; left: 18%; right: 18%; top: 52%; height: 2px; background: var(--leech); transform-origin: left; transition: transform 0.25s ease-out; transition-delay: calc(var(--i, 0) * 260ms); }
+.cal span:last-child { color: var(--siren); border: 2px solid var(--siren); }
+.cal span:last-child::after { display: none; }
+.cal.armed span::after { transform: scaleX(0); }
+.cal.in span:last-child { animation: glow 1.4s ease-in-out 2.6s 3; }
+@keyframes glow { 50% { box-shadow: 0 0 0 6px rgba(232, 137, 59, 0.25); background: rgba(232, 137, 59, 0.15); } }
+.letter { background: var(--bone); color: #1E1A14; border-radius: 6px; padding: 28px; font-size: 21px; line-height: 1.75; display: flex; flex-direction: column; gap: 10px; }
+.letter .meta { font-family: var(--font-mono); font-size: 13.5px; color: #5B544A; }
+
+/* Aha */
+.aha { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.3; max-width: none; }
+.aha em { font-style: normal; color: var(--siren); }
+.waves { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.wave { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 8px; background: var(--card); }
+.wave svg { width: 100%; border-radius: 10px; background: rgba(0, 0, 0, 0.18); }
+.wave h3 { font-size: 22px; }
+.wave .k { font-family: var(--font-display); font-weight: 700; font-size: 44px; line-height: 1; }
+.wave p { font-size: 17px; }
+.wave.peak { border: 2px solid var(--siren); background: rgba(232, 137, 59, 0.07); }
+.wave.peak .k { color: var(--siren); }
+.wave.ghost { border-style: dashed; }
+
+/* แผนที่ */
+.map svg { width: 100%; height: auto; display: block; max-height: 640px; }
+.map text { font-family: var(--font-body); font-weight: 600; fill: var(--bone); paint-order: stroke; stroke: var(--night); stroke-width: 0.5px; }
+.legend { display: flex; gap: 10px 20px; flex-wrap: wrap; font-size: 15.5px; color: var(--silt); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; vertical-align: -1px; }
+
+/* รายเขต */
+.finder { border: 1px solid var(--line); border-radius: 16px; padding: 22px; background: var(--card); display: grid; gap: 14px; }
+.finder-q { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+.finder select { width: min(100%, 380px); min-height: 50px; padding: 8px 44px 8px 16px; font: inherit; font-size: 18px; color: var(--bone); background-color: var(--water); border: 1px solid rgba(233, 227, 211, 0.3); border-radius: 12px; appearance: none; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--bone) 50%), linear-gradient(135deg, var(--bone) 50%, transparent 50%); background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%; background-size: 6px 6px; background-repeat: no-repeat; }
+.finder-card { display: grid; gap: 16px; }
+.fc-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
+.fc-head h3 { font-size: 30px; }
+.chip { display: inline-block; font-family: var(--font-display); font-size: 16px; font-weight: 600; padding: 3px 14px; border-radius: 20px; }
+.chip.up { background: rgba(217, 83, 79, 0.2); color: #F08A86; }
+.chip.flat { background: rgba(157, 176, 175, 0.2); color: var(--silt); }
+.chip.down { background: rgba(98, 180, 141, 0.2); color: var(--safe); }
+.fc-bars { display: grid; gap: 8px; max-width: 640px; }
+.fc-row { display: grid; grid-template-columns: 8.5em minmax(0, 1fr) 3ch; align-items: center; gap: 12px; font-size: 16.5px; }
+.fc-row b { text-align: right; font-family: var(--font-display); font-size: 20px; }
+.fc-track { height: 16px; background: rgba(233, 227, 211, 0.08); border-radius: 8px; overflow: hidden; }
+.fc-track i { display: block; height: 100%; width: 0; border-radius: 8px; transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.fc-animals { display: flex; flex-wrap: wrap; gap: 10px; }
+.fc-animals span { display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px 4px 6px; border: 1px solid var(--line); border-radius: 30px; font-size: 16px; }
+.fc-animals svg { width: 50px; }
+.fc-animals b { font-family: var(--font-display); font-size: 18px; }
+.fc-stand { font-size: 17px; color: var(--silt); }
+.fc-stand b { color: var(--bone); }
+
+/* ช่องว่าง: ทายก่อน */
+.guess { border: 1px solid rgba(232, 137, 59, 0.5); border-radius: 18px; padding: 24px; background: rgba(232, 137, 59, 0.05); display: grid; gap: 16px; }
+.guess-q { font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 2.8vw, 30px); line-height: 1.4; max-width: 34ch; }
+.houses { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; max-width: 560px; }
+.houses svg { width: 100%; color: rgba(233, 227, 211, 0.18); transition: color 0.3s, transform 0.3s; }
+.houses svg.on { color: var(--safe); }
+.houses svg.wait { color: var(--leech); }
+.guess-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.guess-row input { width: min(100%, 420px); height: 44px; accent-color: var(--siren); cursor: pointer; }
+.guess-row output { font-family: var(--font-display); font-size: 24px; font-weight: 700; min-width: 6ch; }
+.guess-msg { font-size: 20px; min-height: 1.6em; }
+.guess-msg b { color: var(--siren); }
+.js .gap-result.locked { display: none; }
+.gap-result { display: flex; flex-direction: column; gap: 28px; }
+.clock { font-family: var(--font-mono); font-size: 15px; color: var(--silt); display: flex; gap: 22px; flex-wrap: wrap; align-items: baseline; }
+.clock b { color: var(--bone); font-size: 27px; font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+.clock .open b { color: var(--leech); }
+.dots svg { width: 100%; height: auto; display: block; }
+.dots rect { transition: fill 0.35s, fill-opacity 0.35s; }
+.dots .open.alarm { animation: alarm 1.8s ease-in-out infinite; }
+@keyframes alarm { 50% { stroke: #D9534F; stroke-opacity: 1; fill: #3A1E20; } }
+.steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.steps div { border-left: 3px solid var(--line); padding-left: 12px; display: flex; flex-direction: column; transition: border-color 0.3s, background 0.3s; }
+.steps b { font-family: var(--font-display); font-size: 28px; }
+.steps small { color: var(--silt); font-size: 15px; }
+.steps.armed div { border-left-color: var(--line); }
+.steps div.lit { border-left-color: var(--siren); background: rgba(232, 137, 59, 0.06); }
+.urgent { font-size: 22px; border-left: 6px solid var(--leech); padding: 6px 0 6px 18px; max-width: 46ch; }
+.urgent > b:first-child { color: var(--leech); }
+.urgent .muted { font-size: 16px; }
+.status { display: inline-flex; align-items: center; gap: 7px; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--leech); animation: blink 1.3s ease-in-out infinite; }
+.status.ok i { background: var(--safe); animation: none; }
+@keyframes blink { 50% { opacity: 0.15; } }
+
+/* ถึงผู้มีอำนาจ */
+.goal { font-family: var(--font-display); font-size: clamp(24px, 3.2vw, 34px); font-weight: 700; border-left: 6px solid var(--siren); padding: 6px 0 6px 20px; max-width: 34ch; }
+.asks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.asks li { border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px; background: var(--card); }
+.asks svg { width: 56px; }
+.asks h3 { font-size: 22px; }
+.asks .ev { font-size: 15.5px; color: var(--silt); }
+
+/* ถึงทุกคน: เช็กความพร้อม */
+.meter { position: sticky; top: 64px; z-index: 2; background: rgba(13, 24, 28, 0.94); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 14px; padding: 12px 18px 14px; display: grid; gap: 8px; }
+.meter-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.meter-top b { font-family: var(--font-display); font-size: 26px; }
+.meter-top span { font-size: 17px; color: var(--silt); }
+.meter-bar { height: 12px; border-radius: 6px; background: rgba(233, 227, 211, 0.1); overflow: hidden; }
+.meter-bar i { display: block; height: 100%; width: 0; border-radius: 6px; background: linear-gradient(90deg, var(--siren), var(--safe)); transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.ready { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.ready section { border-top: 4px solid var(--c); background: var(--card); border-radius: 0 0 14px 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.ready h3 { font-size: 21px; }
+.ready button { display: grid; grid-template-columns: 52px minmax(0, 1fr) 26px; align-items: center; gap: 12px; text-align: left; font-size: 16.5px; line-height: 1.5; color: var(--bone); background: rgba(233, 227, 211, 0.03); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; min-height: 68px; transition: border-color 0.2s, background 0.2s; }
+.ready button:hover { border-color: rgba(233, 227, 211, 0.4); }
+.ready button svg { width: 52px; }
+.ready button::after { content: ""; width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(233, 227, 211, 0.35); justify-self: end; }
+.ready button[aria-pressed="true"] { border-color: var(--safe); background: rgba(98, 180, 141, 0.1); }
+.ready button[aria-pressed="true"]::after { content: "✓"; border-color: var(--safe); background: var(--safe); color: var(--night); font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+.gamecard { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 18px 22px; border-radius: 18px; text-decoration: none; color: var(--bone); background: linear-gradient(120deg, rgba(232, 137, 59, 0.2), rgba(217, 83, 79, 0.12)); border: 1px solid rgba(232, 137, 59, 0.55); transition: transform 0.2s; }
+.gamecard:hover { transform: translateY(-3px); }
+.gamecard svg { width: 76px; }
+.gc-text b { display: block; font-family: var(--font-display); font-size: 25px; }
+.gc-text span { display: block; color: var(--silt); font-size: 17px; }
+.gc-go { font-family: var(--font-display); font-weight: 600; font-size: 18px; background: var(--siren); color: var(--night); padding: 10px 20px; border-radius: 30px; white-space: nowrap; }
+.btn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 600; font-size: 19px; color: var(--night); background: var(--siren); border: 0; border-radius: 40px; padding: 12px 28px; min-height: 48px; cursor: pointer; width: fit-content; }
+.btn:hover { filter: brightness(1.08); }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+
+/* คำถามสุดท้าย */
+.end-art { margin: 0; width: min(100%, 520px); }
+.end h2 { font-size: clamp(30px, 4.8vw, 54px); }
+.end .q2 { color: var(--siren); }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.cta-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; font-family: var(--font-display); font-weight: 600; font-size: 17px; padding: 10px 22px; border-radius: 40px; border: 1px solid var(--siren); color: var(--siren); background: transparent; text-decoration: none; transition: background 0.2s; }
+.cta-btn:hover { background: rgba(232, 137, 59, 0.15); }
+.cta-btn b { font-family: var(--font-mono); font-size: 18px; color: var(--bone); }
+.cta-btn.primary { background: var(--siren); color: var(--night); }
+.cta-btn.primary:hover { filter: brightness(1.1); }
+
+/* เบื้องหลังข้อมูล */
+.behind { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 72px 24px 150px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 26px; font-size: 16px; color: var(--silt); }
+.behind h2 { color: var(--bone); font-size: 34px; }
+.pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.pipe li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.pipe svg { width: 48px; }
+.pipe b { color: var(--bone); font-family: var(--font-display); font-size: 19px; }
+.pipe p { font-size: 15.5px; line-height: 1.6; }
+.arc { font-size: 15.5px; max-width: none; }
+.arc b, .cols b { color: var(--bone); }
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.cols ul { margin: 6px 0 0; padding-left: 20px; }
+
+/* การเคลื่อนไหว: สถานะพักคือภาพสุดท้ายเสมอ .armed ใส่ด้วย JS เฉพาะส่วนที่ยังอยู่ใต้จอ แล้วเปลี่ยนเป็น .in เมื่อเลื่อนถึง */
+.heat-leech { color: var(--leech); }
+.heat-siren { color: var(--siren); }
+.sweep { background-image: linear-gradient(var(--siren), var(--siren)); background-repeat: no-repeat; background-size: 100% 0.28em; background-position: 0 92%; transition: background-size 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s; }
+.sweep.red { background-image: linear-gradient(var(--leech), var(--leech)); }
+.sweep.armed { background-size: 0% 0.28em; }
+.rise > * { transition: opacity 0.6s ease-out, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: calc(var(--i, 0) * 140ms); }
+.rise.armed > * { opacity: 0; transform: translateY(28px); }
+.wanted .poster { transition: transform 0.7s cubic-bezier(0.3, 1.4, 0.5, 1), opacity 0.4s; transition-delay: calc(var(--i, 0) * 230ms); }
+.wanted.armed .poster { opacity: 0; transform: translateY(-70px) rotate(-9deg); }
+.wanted.in .poster.top .k { animation: stamp 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 1.1s both; }
+.wanted.in .poster.top { animation: shake 0.4s ease-in-out 1.45s; }
+@keyframes stamp { from { transform: scale(2.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes shake { 25% { translate: -4px 0; } 75% { translate: 4px 0; } }
+.pulse { fill: none; stroke-width: 0.25; transform-box: fill-box; transform-origin: center; animation: pulse 2s ease-out infinite; }
+.chart .pulse { stroke-width: 2; }
+@keyframes pulse { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
+.map .g { transition: opacity 1s ease-out; }
+.map .g2 { transition-delay: 0.8s; }
+.map .g3 { transition-delay: 1.6s; }
+.map .g5 { transition-delay: 0.4s; }
+.map .g6 { transition-delay: 4s; }
+.map.armed .g { opacity: 0; }
+.map .lp { transform-box: fill-box; transform-origin: center; transition: transform 0.5s cubic-bezier(0.3, 1.6, 0.5, 1); transition-delay: calc(2.3s + var(--i, 0) * 35ms); }
+.map.armed .lp { transform: scale(0); }
+
+@media (max-width: 1240px) { #gauge { display: none; } }
+@media (max-width: 760px) {
+  body { font-size: 18px; }
+  .page { padding: 64px 18px; gap: 24px; }
+  .chapter { padding: 88px 18px 12px; }
+  .lead { font-size: 20px; }
+  .hero { padding-top: 64px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .bubble::before { left: 48px; top: -12px; border: 12px solid transparent; border-top: 0; border-bottom-color: var(--bone); }
+  .fakes, .tickets, .split, .waves, .asks, .ready, .cols { grid-template-columns: minmax(0, 1fr); }
+  .quiz { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sieve li { grid-template-columns: minmax(0, 1fr); gap: 2px; margin-left: 0 !important; }
+  .sieve b { text-align: left; }
+  .poster { width: calc(50% - 8px); }
+  .poster.top { width: 100%; }
+  .poster.top svg { width: 60%; }
+  .gamecard { grid-template-columns: 56px minmax(0, 1fr); }
+  .gamecard svg { width: 56px; }
+  .gc-go { grid-column: 1 / -1; justify-self: start; }
+  .fc-row { grid-template-columns: 6.5em minmax(0, 1fr) 3ch; }
+  .houses { gap: 4px; }
+  .meter { top: 62px; }
+  .map { overflow-x: auto; }
+  .map svg { min-width: 620px; }
+}
+@media (max-width: 480px) {
+  .pipe { grid-template-columns: minmax(0, 1fr); }
+  .chap-now { font-size: 15px; padding: 6px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+</style>
+</head>
+<body>
+<div id="heat" aria-hidden="true"></div>
+<div id="flood" aria-hidden="true"><div class="body"></div><div class="rust" id="rust"></div><svg viewBox="0 0 400 20" preserveAspectRatio="none"><path d="M0 10 Q 25 0 50 10 T 100 10 T 150 10 T 200 10 T 250 10 T 300 10 T 350 10 T 400 10 V 20 H 0 Z" fill="rgba(38,84,92,0.55)"/></svg></div>
+<div id="gauge" aria-hidden="true"><span>ระดับน้ำ</span><div class="bar"><div class="fill" id="gaugeFill"></div></div><span id="gaugeDay">วันที่ 0</span></div>
+<div id="prog" aria-hidden="true"><div class="fill"></div></div>
+
+<nav class="chap" id="chap" aria-label="บทของเรื่อง">
+  <button type="button" class="chap-now" id="chapNow" aria-expanded="false" aria-controls="chapList"><span id="chapNum">บทที่ 1/4</span><b id="chapName">คืนที่น้ำมา</b><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <ol id="chapList" hidden>
+    <li><a href="#p-open">1 · คืนที่น้ำมา</a></li>
+    <li><a href="#ch2">2 · ผู้ต้องสงสัยตัวจริง</a></li>
+    <li><a href="#ch3">3 · น้ำที่ไม่ยอมไป</a></li>
+    <li><a href="#ch4">4 · ใครจะไปถึงก่อน</a></li>
+    <li><a href="#behind">เบื้องหลังข้อมูล</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ======================= บทที่ 1 · คืนที่น้ำมา ======================= -->
+
+<!-- ===== เปิดเรื่อง: ตัวละคร ===== -->
+<section class="page hero" id="p-open" data-ch="1">
+  <div class="hero-grid">
+    <figure class="hero-art"><svg viewBox="0 0 480 320" role="img" aria-label="ภาพวาดบ้านกลางน้ำท่วมตอนกลางคืน มีคนอยู่ในหน้าต่างที่เปิดไฟ ในน้ำมีงูและปลิง"><use href="#scene-night"/></svg></figure>
+    <div class="bubble">
+      <div class="bubble-meta">คำร้องจริงใน Traffy Fondue · 26 ก.ย. 2569 · 20:07 · เขตสะพานสูง</div>
+      <div class="lines">
+        <span>ผู้สูงอายุประมาณ 80 ปี อยู่บ้านเพียงลำพัง</span>
+        <span>น้ำท่วมสูง <b class="t-leech">ปลิง</b>เข้ามาในบ้าน และเกาะตามร่างกาย</span>
+        <span>ต้องตัดไฟเพื่อความปลอดภัย จึงทำอาหารไม่ได้</span>
+        <span>สิ่งที่ขอ คือ อาหาร และ<b class="t-siren">ได้ไปอยู่กับลูกสาว</b></span>
+      </div>
+    </div>
+  </div>
+  <h1>ใครว่าย<em>มากับน้ำ?</em></h1>
+  <p class="lead">คำร้องนี้เป็น 1 ใน <b class="num" data-count="94587" data-now>94,587</b> เรื่องที่คนกรุงเทพฯ ส่งเข้า <button type="button" class="tip" data-tip="แอปที่ให้ทุกคนถ่ายรูปและแจ้งปัญหาในเมืองถึงหน่วยงานได้ทันที เช่น น้ำท่วม ถนนพัง สัตว์เข้าบ้าน แต่ละเรื่องที่แจ้งเรียกว่า “คำร้อง”">Traffy Fondue</button> ช่วง 1 ก.ย.–27 ต.ค. 2569</p>
+  <p class="lead">เราค้นในคำร้องทั้งหมดเพื่อตอบ 2 คำถาม <b>ตอนน้ำท่วม สัตว์อะไรอันตรายจริงๆ</b> และ <b>ความช่วยเหลือไปถึงทันไหม</b></p>
+  <div class="scroll-hint" aria-hidden="true"><span>เลื่อนลงเพื่อเริ่มเรื่อง</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 13l7 7 7-7"/></svg></div>
+</section>
+
+<!-- ===== น้ำมา: คำร้องน้ำท่วมรายวัน ===== -->
+<section class="page" id="p-surge" data-ch="1">
+  <div class="eyebrow">คืน 24 ต่อ 25 ก.ย. ฝนไม่หยุด</div>
+  <h2>ก่อนน้ำมา คนแจ้งเรื่องน้ำท่วมวันละราว 60–110 เรื่อง แต่วันที่ 26 ก.ย. พุ่งเป็น <span class="num heat-siren" id="h5089">5,089</span> เรื่อง</h2>
+  <div class="chart" id="floodBars" role="img" aria-label="คำร้องเรื่องน้ำท่วมรายวัน 18 กันยายน ถึง 14 ตุลาคม 2569 ช่วงน้ำท่วม 25 กันยายน ถึง 10 ตุลาคม สูงสุด 5,089 เรื่องวันที่ 26 กันยายน"></div>
+  <div class="chart-foot"><p class="readout" id="barRead" aria-live="polite">แตะแท่งกราฟเพื่อดูตัวเลขแต่ละวัน</p><button type="button" class="replay" id="barReplay">เล่นอีกครั้ง</button></div>
+  <details class="how"><summary>ช่วงน้ำท่วม 16 วัน นับยังไง</summary><p>เริ่ม 25 ก.ย. วันที่คำร้องน้ำท่วมกระโดดขึ้นจากระดับปกติ และปิดช่วง 10 ต.ค. วันที่คำร้องลดลงต่ำสุดหลังพีค ทั้งเรื่องเราเทียบ 16 วันนี้กับ 16 วันก่อนหน้า (9–24 ก.ย.) หลัง 10 ต.ค. คำร้องกลับเพิ่มขึ้นอีกช่วงสั้นๆ (855 เรื่องวันที่ 14 ต.ค.)</p></details>
+</section>
+
+<!-- ===== Hook: จระเข้ 566 ตัว? ===== -->
+<section class="page" id="p-croc" data-ch="1">
+  <p class="lead">พอน้ำท่วม สัตว์ตัวแรกที่เรานึกถึงคือ “จระเข้” ลองค้นในคำร้องดู</p>
+  <div class="search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg><span id="q">จระเข้, จรเข้</span><span class="caret" aria-hidden="true"></span></div>
+  <div class="note" id="qStatus" aria-hidden="true">พบ 566 คำร้อง</div>
+  <div class="croc-row">
+    <div class="big num" id="n566">566</div>
+    <svg class="croc-art" viewBox="0 0 140 80" aria-hidden="true"><use href="#croc"/></svg>
+  </div>
+  <h2>กรุงเทพฯ มีจระเข้ 566 ตัว?</h2>
+</section>
+
+<!-- ===== หักมุม: จับผิดคำร้อง (การเตรียมข้อมูล) ===== -->
+<section class="page" id="p-fake" data-ch="1">
+  <div class="eyebrow">หักมุม · ลองจับผิด</div>
+  <h2>คำร้องเหล่านี้พูดถึงสัตว์จริงไหม?</h2>
+  <p class="muted">คอมพิวเตอร์ค้นคำได้เร็ว แต่แยกไม่ออกว่าคำไหนคือสัตว์ ลองช่วยแยกดู</p>
+  <div class="fakes" id="fakes">
+    <div class="fake" data-real="0"><q>…รถไม่สามารถสัญ<mark>จรเข้</mark>า-ออกได้…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">“จรเข้” ซ่อนอยู่ในคำว่า สัญจรเข้า-ออก แบบนี้มีถึง 553 เรื่อง</p></div>
+    <div class="fake" data-real="0"><q><mark>หนู</mark>เป็นนักเรียน…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">“หนู” ตรงนี้คือคนที่เขียนคำร้อง เรียกตัวเองว่าหนู</p></div>
+    <div class="fake" data-real="0"><q>…สุนัข<mark>เห่า</mark>เสียงดัง…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">ระบบเห็นคำว่า “เห่า” แล้วคิดว่าเป็น “งูเห่า” แต่จริงๆ คือหมาเห่า</p></div>
+    <div class="fake" data-real="1"><q>…พบ<mark class="red">จระเข้ตาย</mark> จำนวน 1 ตัว…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">ตัวนี้จริง คำร้อง 5 ต.ค. ย่านศรีนครินทร์</p></div>
+  </div>
+  <p class="fake-score" id="fakeScore" aria-live="polite"></p>
+
+  <div class="funnel rise">
+    <div><span class="n num" data-count="566" data-delay="300" style="font-size:60px;color:var(--silt);text-decoration:line-through">566</span><small class="muted">เจอคำว่า จระเข้/จรเข้</small></div>
+    <div><span class="n num" data-count="13" data-from="566" data-delay="700" style="font-size:60px;color:var(--silt)">13</span><small class="muted">เป็นคำว่าจระเข้จริงๆ ส่วนใหญ่คือชื่อคลอง</small></div>
+    <div class="funnel-end"><svg viewBox="0 0 140 80" aria-hidden="true"><use href="#croc-x"/></svg><span class="n num heat-siren" data-count="1" data-from="13" data-delay="1100" data-heat="siren" style="font-size:112px">1</span><small class="muted">จระเข้ตัวจริง และมันตายแล้ว</small></div>
+  </div>
+
+  <div class="clean">
+    <p class="clean-t">บทเรียนจากจระเข้: <b>ข้อมูลดิบหลอกเราได้</b> เราจึงคัดคำร้องทั้งหมดใหม่ทีละขั้น</p>
+    <ol class="sieve rise">
+      <li><b class="num" data-count="94587">94,587</b><span>คำร้องทั้งหมดในกรุงเทพฯ</span></li>
+      <li><b class="num" data-count="14105">14,105</b><span>มีคำที่ดูเหมือนชื่อสัตว์</span></li>
+      <li><b class="num" data-count="4996">4,996</b><span>พูดถึงสัตว์จริง หลังตัดคำแบบ “สัญจรเข้า-ออก” “หนูเป็นนักเรียน” “หมาเห่า”</span></li>
+      <li class="hl"><b class="num" data-count="738">738</b><span>พูดถึงสัตว์ที่อันตรายต่อคน: งู ปลิง ตะขาบ แมงป่อง หนู/ฉี่หนู</span></li>
+    </ol>
+    <details class="how"><summary>เราคัดอย่างไร</summary><p>ค้นชื่อสัตว์ 17 กลุ่มด้วยคำค้น แล้วตัดคำที่ไม่ได้หมายถึงสัตว์ออก จากนั้นเลือกเฉพาะสัตว์ที่อันตรายต่อคน 5 กลุ่ม รวมถึงคำร้องที่เขียนกว้างๆ ว่า “สัตว์มีพิษ” หรือ “สัตว์เลื้อยคลาน” ตัวเลขทั้งหมดในเรื่องนี้คือจำนวนคำร้อง ไม่ใช่จำนวนสัตว์จริง และคำร้องหนึ่งเรื่องอาจพูดถึงสัตว์หลายชนิด</p></details>
+  </div>
+</section>
+
+<!-- ======================= บทที่ 2 · ผู้ต้องสงสัยตัวจริง ======================= -->
+<header class="chapter" id="ch2" data-ch="2">
+  <span class="chapter-n">บทที่ 2 / 4</span>
+  <h2 class="chapter-t">ผู้ต้องสงสัยตัวจริง</h2>
+  <p class="chapter-q">ขณะที่เราเถียงกันเรื่องจระเข้ มีบางอย่างกำลัง<em>ว่ายมากับน้ำ</em></p>
+</header>
+
+<!-- ===== ทายสิ ===== -->
+<section class="page" id="p-quiz" data-ch="2">
+  <div class="eyebrow">ทายสิ</div>
+  <h2>ช่วงน้ำท่วม คำร้องเรื่องสัตว์ตัวไหน “เพิ่มขึ้น” มากที่สุด?</h2>
+  <div class="quiz" id="quiz">
+    <button type="button" data-name="งู" data-x="1.7"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span class="nm">งู</span><span class="x">×1.7</span></button>
+    <button type="button" data-name="หนู" data-x="2.3"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><span class="nm">หนู</span><span class="x">×2.3</span></button>
+    <button type="button" data-name="ตะขาบ" data-x="4"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#centipede"/></svg><span class="nm">ตะขาบ</span><span class="x">×4</span></button>
+    <button type="button" data-name="ปลิง" data-x="25" class="ans"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><span class="nm">ปลิง</span><span class="x">×25</span></button>
+  </div>
+  <p id="quizMsg" aria-live="polite" class="quiz-msg">แตะเลือกคำตอบ</p>
+</section>
+
+<!-- ===== หมายจับ ===== -->
+<section class="page" id="p-wanted" data-ch="2">
+  <div class="eyebrow">หมายจับ · เทียบ 16 วันก่อนน้ำท่วม กับ 16 วันช่วงน้ำท่วม</div>
+  <div class="wanted">
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span class="who">งู</span><span class="k num" style="font-size:34px" data-count="1.7" data-dec="1" data-pre="×" data-delay="300">×1.7</span><span class="f num">57 → 96 เรื่อง</span></div>
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><span class="who">หนู / ฉี่หนู</span><span class="k num" style="font-size:38px" data-count="2.3" data-dec="1" data-pre="×" data-delay="500">×2.3</span><span class="f num">29 → 67 เรื่อง</span></div>
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#centipede"/></svg><span class="who">ตะขาบ</span><span class="k num" style="font-size:44px" data-count="4" data-pre="×" data-delay="700">×4</span><span class="f num">6 → 24 เรื่อง</span></div>
+    <div class="poster top"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><span class="who">ปลิงควาย</span><span class="k num" style="font-size:84px" data-count="25" data-pre="×" data-delay="1100" data-dur="900">×25</span><span class="f num">3 → 75 เรื่อง</span></div>
+  </div>
+  <p class="lead">ปกติคนกรุงเทพฯ แทบไม่เคยแจ้งเรื่องปลิง ราว 1 เรื่องต่อสัปดาห์ พอน้ำมา กลายเป็น<span class="sweep red">เกือบ 5 เรื่องทุกวัน</span></p>
+  <div class="fact"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><p><b>รู้ไหม?</b> ปลิงกัดไม่เจ็บ เพราะน้ำลายของมันมีสารชา และสารที่ทำให้เลือดไม่แข็งตัว หลายคนจึงรู้ตัวตอนเห็นเลือดไหลไม่หยุดแล้ว</p></div>
+  <details class="how"><summary>×25 คิดจากอะไร</summary><p>คำร้องที่พูดถึงปลิง 16 วันก่อนน้ำท่วมมี 3 เรื่อง ช่วงน้ำท่วม 16 วันมี 75 เรื่อง ช่วงเดียวกันคำร้องทุกประเภทเพิ่มขึ้นราว 2 เท่า สัตว์ที่เพิ่มเร็วกว่าภาพรวมมากคือปลิงและตะขาบ</p></details>
+</section>
+
+<!-- ===== เสียงจากคำร้อง ===== -->
+<section class="page" id="p-voices" data-ch="2">
+  <div class="eyebrow">เสียงจากคำร้อง</div>
+  <h2>ตัวเลขเหล่านี้คือข้อความจริง ที่คนพิมพ์ขอความช่วยเหลือ</h2>
+  <div class="tickets rise">
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><div class="meta"><b>26 ก.ย. 04:43</b><span>สะพานสูง</span></div><q>ผู้อาศัย…โดนปลิงกัดเลือดไหลไม่หยุด</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><div class="meta"><b>29 ก.ย. 18:45</b><span>สะพานสูง</span></div><q>คุณลุงข้างบ้านโดนงูกัดค่ะ ตะขาบจะถึงขาแล้วค่ะ ช่วยด้วย</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><div class="meta"><b>29 ก.ย. 23:26</b><span>มีนบุรี</span></div><q class="loud">งูอยู่ในห้องน้ำค่ะ</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><div class="meta"><b>30 ก.ย. 10:42</b><span>ลาดกระบัง</span></div><q>มีผู้ป่วยโรคฉี่หนู ต้องการยารักษาด่วน</q></div>
+  </div>
+  <p class="note">ตัดบ้านเลขที่และชื่อหมู่บ้านออก เหลือแค่เขตและเวลา</p>
+</section>
+
+<!-- ===== 10 วันในบ้าน ===== -->
+<section class="page" id="p-home" data-ch="2">
+  <div class="eyebrow">10 วันในบ้าน</div>
+  <div class="split">
+    <div class="home-left">
+      <div class="cal" id="cal" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+      <div><span class="big num heat-leech" style="font-size:72px" data-count="40" data-heat="leech">40</span><p class="muted">คำร้องเรื่องสัตว์อันตรายที่พูดถึงผู้สูงอายุในบ้าน</p></div>
+    </div>
+    <div class="letter">
+      <span class="meta">คำร้อง 15 ต.ค. · เขตสะพานสูง</span>
+      <span>“เราติดอยู่ในบ้าน 10 วัน ออกไปใช้ชีวิตภายนอกไม่ได้เพราะน้ำล้อม</span>
+      <span>เราไม่อยากพาลูกลุยน้ำไปรับ เพราะกลัวสัตว์มีพิษและโรคฉี่หนู</span>
+      <b>ได้แต่อดทนให้มันผ่านไป”</b>
+    </div>
+  </div>
+  <h2>สัตว์ไม่ได้ทำร้ายแค่ตอนกัด แต่ทำให้คน<span class="sweep red">ไม่กล้าก้าวออกจากบ้าน</span></h2>
+</section>
+
+<!-- ======================= บทที่ 3 · น้ำที่ไม่ยอมไป ======================= -->
+<header class="chapter" id="ch3" data-ch="3">
+  <span class="chapter-n">บทที่ 3 / 4</span>
+  <h2 class="chapter-t">น้ำที่ไม่ยอมไป</h2>
+  <p class="chapter-q">น้ำท่วมสูงสุดวันที่ 26 ก.ย. แต่ทำไมคำร้องเรื่องสัตว์<em>ยังไม่หยุด?</em></p>
+</header>
+
+<!-- ===== Aha: ภัยมาช้ากว่าน้ำ ===== -->
+<section class="page" id="p-lag" data-ch="3">
+  <h2>หลังน้ำท่วมสูงสุด คำร้องสัตว์อันตรายยังเพิ่มต่ออีก 5 วัน</h2>
+  <div class="chart" id="lag" role="img" aria-label="คำร้องสัตว์อันตรายรายวัน พีควันที่ 1 ตุลาคม 34 เรื่อง หลังน้ำท่วมสูงสุดวันที่ 26 กันยายน"></div>
+  <p class="readout" id="lagRead" aria-live="polite">แตะหรือลากนิ้วบนกราฟเพื่อดูตัวเลขแต่ละวัน</p>
+  <p class="aha">อันตรายไม่ได้มากับน้ำที่มา<br><em class="sweep red">แต่มากับน้ำที่ไม่ยอมไป</em></p>
+  <p class="lead">แปลว่าช่วงที่ต้องรีบช่วยที่สุด ไม่ใช่วันแรก แต่คือ<b>วันที่ 4–9</b> ตอนที่น้ำเริ่มขังและเน่า</p>
+  <div class="waves rise">
+    <div class="wave"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-climb"/></svg><span class="note">ระลอก 1 · วันที่ 1–3</span><h3>สัตว์หนีน้ำขึ้นบ้าน</h3><span class="k num" data-count="8" data-pre="×" data-delay="200">×8</span><p>คำร้องเรื่องตะขาบต่อวัน เทียบกับก่อนน้ำท่วม</p></div>
+    <div class="wave peak"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-stagnant"/></svg><span class="note">ระลอก 2 · วันที่ 4–9</span><h3>น้ำขัง น้ำเน่า</h3><span class="k num" data-count="45" data-pre="×" data-delay="500" data-dur="1400">×45</span><p>คำร้องเรื่องปลิงต่อวัน หนูเพิ่มราว 3 เท่า ช่วงที่คำร้องสัตว์อันตรายสูงที่สุด</p></div>
+    <div class="wave ghost"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-germ"/></svg><span class="note">ระลอก 3 · หลังน้ำลด</span><h3>อันตรายที่มองไม่เห็น</h3><span class="k">1–2 สัปดาห์</span><p>ระยะที่เชื้อ<button type="button" class="tip" data-tip="โรคเลปโตสไปโรซิส ติดจากเชื้อในฉี่หนูที่ปนอยู่ในน้ำ เข้าทางแผลหรือผิวที่แช่น้ำนาน อาการเช่น ไข้สูง ปวดน่อง ตาแดง">โรคฉี่หนู</button>ใช้กว่าจะแสดงอาการ คือตอนที่ทุกคนคิดว่าจบแล้ว</p></div>
+  </div>
+</section>
+
+<!-- ===== แผนที่น้ำขังเกิน 3 วัน × สัตว์อันตราย ===== -->
+<section class="page" id="p-map" data-ch="3">
+  <p class="lead">ถ้าน้ำขังคือต้นเหตุ ปลิงก็ควรอยู่ตรงที่น้ำขัง ลองดูบนแผนที่</p>
+  <h2>ปลิง <span class="num heat-leech" data-count="67" data-heat="leech">67</span> จาก 75 เรื่อง อยู่ในพื้นที่ที่น้ำขังเกิน 3 วัน</h2>
+  <div class="map" id="map" role="img" aria-label="แผนที่กรุงเทพฯ พื้นที่ที่มีคำร้องว่าน้ำขัง 3 วันขึ้นไป และจุดคำร้องเรื่องปลิงและสัตว์อันตรายอื่น"></div>
+  <div class="legend"><span><i style="background:rgba(84,150,196,0.75)"></i>มีคำร้องว่าน้ำขัง 3 วันขึ้นไป</span><span><i style="background:rgba(147,166,165,0.3)"></i>น้ำท่วม ไม่มีรายงานว่าขังนาน</span><span><i style="background:var(--leech);border-radius:6px"></i>ปลิง</span><span><i style="background:var(--bone);border-radius:6px;opacity:.7"></i>สัตว์อันตรายอื่น</span></div>
+  <details class="how"><summary>แผนที่นี้ทำยังไง</summary><p>ช่วงน้ำท่วม 25 ก.ย.–10 ต.ค. มีคำร้อง 3,336 เรื่องที่ระบุว่าน้ำขัง 3 วันขึ้นไป มากที่สุดที่ลาดกระบัง ประเวศ สะพานสูง หนองจอก และมีนบุรี เราแบ่งกรุงเทพฯ เป็นช่องละราว 900 × 900 เมตร แล้วระบายสีตามพิกัดของคำร้อง จึงไม่มีเส้นแบ่งเขต</p></details>
+</section>
+
+<!-- ===== รายเขต + ค้นหาเขตของคุณ ===== -->
+<section class="page" id="p-district" data-ch="3">
+  <div class="eyebrow">ก่อน · ช่วงน้ำท่วม รายเขต</div>
+  <h2><span class="num" data-count="33">33</span> จาก 50 เขตเจอสัตว์อันตรายมากขึ้น หนองจอกเพิ่มมากที่สุด จาก 5 เป็น <span class="num heat-leech" data-count="31" data-from="5" data-heat="leech">31</span> เรื่อง</h2>
+  <div class="chart" id="dumbbell" role="img" aria-label="คำร้องสัตว์อันตรายก่อนและช่วงน้ำท่วม 14 เขตที่มีคำร้องมากที่สุด"></div>
+  <p class="hint">แตะชื่อเขตในกราฟ หรือเลือกเขตของคุณด้านล่าง</p>
+  <div class="finder" id="finder">
+    <label for="dSel" class="finder-q">เขตของคุณเป็นยังไง?</label>
+    <select id="dSel"></select>
+    <div class="finder-card" id="dCard" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ======================= บทที่ 4 · ใครจะไปถึงก่อน ======================= -->
+<header class="chapter" id="ch4" data-ch="4">
+  <span class="chapter-n">บทที่ 4 / 4</span>
+  <h2 class="chapter-t">ใครจะไปถึงก่อน</h2>
+  <p class="chapter-q">เรารู้แล้วว่าภัยมาเมื่อไหร่ และอยู่ที่ไหน คำถามต่อไปคือ<em>ความช่วยเหลือไปถึงทันไหม?</em></p>
+</header>
+
+<!-- ===== ช่องว่าง: ทายก่อน แล้วเฉลย ===== -->
+<section class="page" id="p-gap" data-ch="4">
+  <div class="guess" id="guess">
+    <p class="guess-q">ลองทายก่อน: ถ้ามีคำร้องเรื่องสัตว์อันตราย 10 เรื่อง จะมีกี่เรื่องที่ปิดได้ภายใน 3 วัน?</p>
+    <div class="houses" id="gHouses" aria-hidden="true"></div>
+    <div class="guess-row">
+      <input type="range" id="gIn" min="0" max="10" step="1" value="5" aria-label="ทายจำนวนเรื่องจาก 10 เรื่อง">
+      <output id="gOut" for="gIn">5 จาก 10</output>
+    </div>
+    <button type="button" class="btn" id="gBtn">เฉลย</button>
+    <p id="gMsg" class="guess-msg" aria-live="polite"></p>
+  </div>
+  <div class="gap-result" id="gapResult">
+    <h2>คำร้องสัตว์อันตรายช่วงน้ำท่วม <span class="num" data-count="332">332</span> เรื่อง ปิดเรื่องได้ภายใน 3 วันแค่ 1 ใน 10</h2>
+    <div class="clock" aria-live="off"><span id="clkDay">ณ 27 ต.ค.</span><span>ปิดเรื่องแล้ว <b id="clkClosed">191</b></span><span class="open">ยังไม่ปิด <b id="clkOpen">141</b></span></div>
+    <div class="dots" id="dots" role="img" aria-label="332 ช่อง แต่ละช่องคือหนึ่งคำร้อง 34 ปิดภายใน 3 วัน 157 ปิดหลัง 3 วัน 141 ยังไม่ปิด"></div>
+    <div class="legend"><span><i style="background:var(--safe)"></i>ปิดเรื่องภายใน 3 วัน · 34</span><span><i style="background:var(--silt)"></i>ปิดเรื่องหลัง 3 วัน · 157</span><span><i style="background:var(--water);outline:1px solid var(--silt)"></i>ยังไม่ปิด ณ 27 ต.ค. · 141</span></div>
+    <div class="steps" id="steps">
+      <div><b class="num">13</b><small>ภายใน 1 วัน</small></div>
+      <div><b class="num">34</b><small>ภายใน 3 วัน</small></div>
+      <div><b class="num">77</b><small>ภายใน 7 วัน</small></div>
+      <div><b class="num">119</b><small>ภายใน 14 วัน</small></div>
+      <div><b class="num">188</b><small>ภายใน 30 วัน</small></div>
+      <div><b class="num t-siren">141</b><small>ยังไม่ปิด</small></div>
+    </div>
+    <p class="urgent"><b>ทุกวันที่ช้าไป</b> มีคำร้องเรื่องสัตว์อันตรายใหม่เข้ามาราว <b class="num" data-count="21">21</b> เรื่อง <span class="muted">(332 เรื่องใน 16 วันของน้ำท่วม)</span></p>
+    <p class="lead">จำคำร้องจากบทที่ 2 ได้ไหม? นี่คือสถานะของพวกเขา ณ 27 ต.ค.</p>
+    <div class="tickets">
+      <div class="ticket red"><div class="meta"><b>26 ก.ย.</b><span class="status"><i></i>กำลังดำเนินการ</span></div><q>โดนปลิงกัดเลือดไหลไม่หยุด</q></div>
+      <div class="ticket red"><div class="meta"><b>29 ก.ย.</b><span class="status"><i></i>กำลังดำเนินการ</span></div><q>คุณลุงข้างบ้านโดนงูกัดค่ะ</q></div>
+      <div class="ticket red"><div class="meta"><b>30 ก.ย.</b><span class="status"><i></i>รอรับเรื่อง</span></div><q>มีผู้ป่วยโรคฉี่หนู ต้องการยารักษาด่วน</q></div>
+      <div class="ticket ok"><div class="meta"><b>29 ก.ย. 23:26</b><span class="status ok"><i></i>ปิดเรื่องใน 1 วัน</span></div><q>งูอยู่ในห้องน้ำค่ะ</q></div>
+    </div>
+    <p class="lead">กว่าคำร้องครึ่งหนึ่งจะปิด น้ำก็ลดไปแล้ว แต่<span class="sweep red">ปลิงกับงูไม่ได้รอใคร</span></p>
+    <details class="how"><summary>สถานะในระบบหมายถึงอะไร</summary><p>เป็นสถานะในระบบ Traffy ณ วันที่ได้ข้อมูล (27 ต.ค.) “กำลังดำเนินการ” อาจมีคนไปช่วยแล้วแต่ยังไม่ปิดเรื่อง และ “เสร็จสิ้น” คือปิดเรื่อง ไม่ได้แปลว่าแก้ปัญหาได้เสมอ</p></details>
+  </div>
+</section>
+
+<!-- ===== ถึงผู้มีอำนาจ ===== -->
+<section class="page" id="p-asks" data-ch="4">
+  <div class="eyebrow">ถึง รัฐบาล · กรุงเทพมหานคร · กรมป้องกันและบรรเทาสาธารณภัย</div>
+  <p class="goal">ทุกคำร้องสัตว์อันตรายในพื้นที่น้ำขังเกิน 3 วัน ต้องมีคนไปถึง<span class="sweep">ภายใน 72 ชั่วโมง</span></p>
+  <ol class="asks rise">
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-clock"/></svg><h3>นาฬิกา 72 ชั่วโมง</h3><p>พื้นที่ที่น้ำขังครบ 3 วัน ให้สูบน้ำ ส่งทีมจับสัตว์ และแจกบูทก่อนที่อื่น</p><span class="ev">ปลิงช่วงวันที่ 4–9 สูงกว่าปกติราว 45 เท่า และ 89% อยู่ในพื้นที่น้ำขังเกิน 3 วัน</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-elder"/></svg><h3>รู้ก่อนว่าใครอยู่ลำพัง</h3><p>ทำทะเบียนผู้สูงอายุและผู้ป่วยติดเตียงในเขตเสี่ยง แล้วเข้าถึงบ้านเหล่านี้เป็นลำดับแรก</p><span class="ev">คำร้องสัตว์อันตราย 40 เรื่องพูดถึงผู้สูงอายุในบ้าน</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-team"/></svg><h3>ทุกภาคส่วนร่วมมือกันรับมือเรื่องร้องเรียน</h3><p>หน่วยงานรัฐ สำนักงานเขต หน่วยแพทย์ และชุมชน ร่วมกันตอบคำร้องเรื่องสัตว์อันตรายให้เร็วขึ้น โดยเฉพาะช่วงวันที่ 4–9</p><span class="ev">ปิดเรื่องได้ภายใน 3 วันเพียง 1 ใน 10</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-mega"/></svg><h3>อย่าหยุดเตือนเมื่อน้ำลด</h3><p>สื่อสารเรื่องโรคฉี่หนูต่ออีกอย่างน้อย 2 สัปดาห์หลังน้ำลด</p><span class="ev">คำร้องเรื่องฉี่หนูแทบหายไปหลัง 2 ต.ค. ทั้งที่อาการเพิ่งเริ่มแสดง</span></li>
+  </ol>
+</section>
+
+<!-- ===== ถึงทุกคน: เช็กความพร้อม ===== -->
+<section class="page" id="p-ready" data-ch="4">
+  <div class="eyebrow">ถึงคนกรุงเทพฯ ทุกคน</div>
+  <h2>บ้านคุณพร้อมรับน้ำแค่ไหน?</h2>
+  <p class="muted">ระหว่างรอความช่วยเหลือ ดูแลตัวเองและเพื่อนบ้านให้ได้ แตะข้อที่บ้านคุณทำแล้วหรือรู้วิธีแล้ว ทำด้วยกันได้ทั้งเด็กและผู้ใหญ่</p>
+  <div class="meter" aria-live="polite"><div class="meter-top"><b id="rScore">0 / 12</b><span id="rMsg">เริ่มแตะข้อแรกได้เลย</span></div><div class="meter-bar"><i id="rBar"></i></div></div>
+  <div class="ready" id="ready">
+    <section style="--c:var(--silt)"><h3>ก่อนน้ำมา</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-boots"/></svg><span>เตรียมบูท ถุงมือ เกลือ ไฟฉาย</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-toilet"/></svg><span>ปิดฝาชักโครก ใส่ตะแกรงปลายท่อห้องน้ำชั้นล่าง</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-phone"/></svg><span>เซฟเบอร์ 199 (สัตว์เข้าบ้าน) และ 1669 (เจ็บป่วยฉุกเฉิน)</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-neighbor"/></svg><span>รู้ว่าเพื่อนบ้านคนไหนอยู่ลำพัง</span></button>
+    </section>
+    <section style="--c:var(--siren)"><h3>ระหว่างน้ำท่วม</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-night"/></svg><span>ไม่ลุยน้ำตอนกลางคืน</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-bandage"/></svg><span>ปิดแผลก่อนลุย ล้างตัวทันทีหลังลุย</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-salt"/></svg><span>ปลิงเกาะ อย่ากระชาก ใช้เกลือให้หลุดเอง แล้วกดแผล</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span>งูกัด อยู่นิ่ง ดาม ห้ามขันชะเนาะ รีบไปโรงพยาบาล</span></button>
+    </section>
+    <section style="--c:var(--safe)"><h3>หลังน้ำลด</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-calendar"/></svg><span>จดไว้ว่าลุยน้ำวันไหน</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-thermo"/></svg><span>2 สัปดาห์ถัดมา ถ้ามีไข้ ปวดน่อง ตาแดง บอกหมอว่าเคยลุยน้ำ</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-pill"/></svg><span>ไม่ซื้อยาป้องกันฉี่หนูกินเอง</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-trash"/></svg><span>ระวังงูในกองขยะ และซากสัตว์ในท่อ</span></button>
+    </section>
+  </div>
+  <p class="note">ไม่รู้ว่า “ขันชะเนาะ” คืออะไร? <button type="button" class="tip" data-term="ขันชะเนาะ" data-tip="การใช้เชือกหรือผ้ารัดแน่นเหนือแผล ทำให้เลือดไปเลี้ยงไม่ได้ อาจทำให้อวัยวะเสียหาย จึงห้ามทำเมื่อถูกงูกัด">แตะดู</button></p>
+
+  <!-- ช่องเกม: ลิงก์ไป game.html -->
+  <a class="gamecard" href="game.html">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-game"/></svg>
+    <span class="gc-text"><b>เกม: เอาตัวรอด 16 วัน</b><span>ลองตัดสินใจเองว่าจะรอดจากปลิง งู และฉี่หนูได้ไหม</span></span>
+    <span class="gc-go">เล่นเกม →</span>
+  </a>
+</section>
+
+<!-- ===== คำถามสุดท้าย ===== -->
+<section class="page end" id="p-end" data-ch="4">
+  <figure class="end-art"><svg viewBox="0 0 480 320" role="img" aria-label="บ้านหลังเดิมกลางน้ำ มีปลิงเกาะผนัง และเรือกู้ภัยกำลังมุ่งหน้ามา"><use href="#scene-night"/><use href="#boat" x="14" y="198" width="112" height="56"/></svg></figure>
+  <p class="lead">ย้อนกลับไปคืนวันที่ 26 ก.ย. ผู้สูงอายุวัย 80 ปีคนนั้นขอแค่อาหาร และได้ไปอยู่กับลูกสาว</p>
+  <h2>ถึงผู้มีอำนาจ: ครั้งหน้า จะไปถึงก่อนวันที่ 4 ได้ไหม?</h2>
+  <h2 class="q2">ถึงทุกคน: ครั้งหน้า เราจะพร้อมกว่านี้ไหม?</h2>
+  <p class="lead">ครั้งหน้า ใครจะไปถึงบ้านหลังนั้นก่อน <span class="sweep red">ระหว่างปลิง หรือความช่วยเหลือ</span></p>
+  <p class="muted">94,587 คำร้อง คือ 94,587 ครั้งที่ใครสักคนขอให้มีคนได้ยิน</p>
+  <div class="cta-row">
+    <a class="cta-btn primary" href="https://www.traffy.in.th/" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>แจ้งปัญหาใน Traffy Fondue</a>
+    <a class="cta-btn" href="tel:199"><b>199</b> งูหรือสัตว์อันตรายเข้าบ้าน</a>
+    <a class="cta-btn" href="tel:1669"><b>1669</b> เจ็บป่วยฉุกเฉิน</a>
+  </div>
+</section>
+</main>
+
+<!-- ===== เบื้องหลังข้อมูล ===== -->
+<footer class="behind" id="behind" data-ch="5">
+  <h2>เบื้องหลังข้อมูล</h2>
+  <ol class="pipe">
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-q"/></svg><b>1 · คำถาม</b><p>ตอนน้ำท่วม สัตว์อะไรอันตรายจริง อยู่ที่ไหน และความช่วยเหลือไปถึงทันไหม</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-db"/></svg><b>2 · เก็บข้อมูล</b><p>คำร้อง Traffy Fondue ที่มีพิกัดในกรุงเทพฯ 94,587 เรื่อง ช่วง 1 ก.ย.–27 ต.ค. 2569</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-funnel"/></svg><b>3 · เตรียมข้อมูล</b><p>ค้นชื่อสัตว์ 17 กลุ่ม ตัดคำที่ไม่ใช่สัตว์ เหลือคำร้องสัตว์อันตราย 738 เรื่อง ตัดบ้านเลขที่และชื่อหมู่บ้านออก</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-chart"/></svg><b>4 · วิเคราะห์</b><p>เทียบ 16 วันก่อนน้ำท่วมกับ 16 วันช่วงน้ำท่วม ดูรายวันและราย 50 เขต ซ้อนกับคำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป และนับเวลาปิดเรื่อง</p></li>
+  </ol>
+  <p class="arc"><b>โครงเรื่อง</b> ตาม Narrative Model ของ Brent Dykes: Setting (บทที่ 1 คืนที่น้ำมา) → Hook (จระเข้ 566 ตัว?) → Rising Insights (บทที่ 2 ผู้ต้องสงสัยตัวจริง) → Aha (บทที่ 3 น้ำที่ไม่ยอมไป) → Solution &amp; Next Steps (บทที่ 4 ใครจะไปถึงก่อน)</p>
+  <div class="cols">
+    <div><b>ข้อควรรู้</b><ul><li>ตัวเลขคือจำนวนคำร้องที่พูดถึงสัตว์ ไม่ใช่จำนวนสัตว์จริง</li><li>เขตที่คนใช้ Traffy Fondue มาก จะมีคำร้องมากตามไปด้วย</li><li>สถานะ “เสร็จสิ้น” คือปิดเรื่องในระบบ ไม่ได้แปลว่าแก้ปัญหาได้เสมอ</li></ul></div>
+    <div><b>แหล่งอ้างอิง</b><ul>
+      <li><a href="https://www.thansettakij.com/health-wellness/664849">ฐานเศรษฐกิจ: โรคไข้ฉี่หนู ระยะฟักตัว</a></li>
+      <li><a href="https://www.bangkokbiznews.com/health/1254276">กรุงเทพธุรกิจ: สธ.เตือนโรคฉี่หนูช่วงน้ำท่วม</a></li>
+      <li><a href="https://www.thaipbs.or.th/news/content/280457">Thai PBS: 4 ข้อห้ามถูกงูกัด</a></li>
+      <li><a href="https://scotlandisland.org.au/?p=284">Scotland Island: Leeches</a></li>
+    </ul></div>
+  </div>
+</footer>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheetT" hidden>
+  <b id="sheetT"></b><p id="sheetP"></p><button type="button" id="sheetX" aria-label="ปิด">ปิด</button>
+</div>
+
+<script>
+/* ภาพวาดทั้งหมดของเว็บ วาดเองด้วย SVG (ไม่ใช้รูปจากที่อื่น)
+   วิธีใช้ในหน้าเว็บ: <svg viewBox="0 0 120 80"><use href="#snake"/></svg>
+   ขนาด viewBox ของแต่ละภาพ:
+     สัตว์ 120×80 : snake งู · rat หนู · centipede ตะขาบ · leech ปลิง
+     จระเข้ 140×80 : croc (มีชีวิต) · croc-x (ตายแล้ว)
+     ฉาก 480×320  : scene-night บ้านกลางน้ำตอนกลางคืน
+     ฉาก 160×110  : scene-climb สัตว์หนีน้ำขึ้นบ้าน · scene-stagnant น้ำขัง · scene-germ เชื้อฉี่หนู
+     ไอคอน 64×64  : i-boots i-gloves i-salt i-torch i-toilet i-phone i-neighbor i-night
+                    i-bandage i-shower i-calendar i-thermo i-pill i-trash
+                    i-clock i-elder i-team i-mega i-q i-db i-funnel i-chart i-game
+     ไอคอน 32×32  : i-house (สีตาม color ของ CSS) */
+(() => {
+  const W = '#0D181C';
+  /* ตะขาบ: ปล้องเรียงตามเส้นโค้ง */
+  const seg = [[22,47],[31,44],[40,42],[49,41],[58,42],[67,44],[76,46],[85,47],[94,46]];
+  const legs = seg.map(([x, y]) => `M${x} ${y}l-4 -13M${x} ${y}l-4 13`).join('');
+  const body = seg.map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="6.4" ry="5.6" fill="#C4532E"/><ellipse cx="${x - 1}" cy="${y - 2.2}" rx="3.2" ry="1.6" fill="#E9875F" opacity=".85"/>`).join('');
+  /* ปลิง: วงปล้อง */
+  const rings = [[30,44,59],[40,41,59],[50,39,59],[60,38,59],[70,39,59],[80,40,59],[90,42,58]]
+    .map(([x, a, b]) => `<path d="M${x} ${a}q2.6 ${(b - a) / 2} 0 ${b - a}" fill="none" stroke="#5E1E1C" stroke-width="1.6" opacity=".7"/>`).join('');
+  /* จระเข้: เกล็ดหลังและฟัน */
+  const scutes = [24,33,42,51,60,69,78].map(x => `<path d="M${x - 3.5} ${45 - (x - 24) * 0.03}l3.5 -5.5l3.5 5.5Z" fill="#3C5E38"/>`).join('');
+  const teeth = [100,105,110,115,120,125].map(x => `<path d="M${x} 51.5l2 4l2 -4Z" fill="#E9E3D3"/>`).join('');
+  const wave = (y, a = 7) => { let d = `M0 ${y}`; for (let x = 0; x < 480; x += 40) d += `Q${x + 20} ${y - a} ${x + 40} ${y}`; return d; };
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B353C"/><stop offset="1" stop-color="#0F1F24"/></linearGradient>
+  <radialGradient id="g-glow"><stop offset="0" stop-color="#F2C46B" stop-opacity=".5"/><stop offset="1" stop-color="#F2C46B" stop-opacity="0"/></radialGradient>
+  <linearGradient id="g-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C626B"/><stop offset="1" stop-color="#14343B"/></linearGradient>
+  <linearGradient id="g-murk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5E5638"/><stop offset="1" stop-color="#2E2A1C"/></linearGradient>
+  <pattern id="p-rain" width="18" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(14)"><line x1="4" y1="2" x2="4" y2="13" stroke="#93A6A5" stroke-opacity=".32" stroke-width="1.2" stroke-linecap="round"/></pattern>
+</defs>
+
+<symbol id="snake" viewBox="0 0 120 80">
+  <ellipse cx="58" cy="73" rx="44" ry="4" fill="#000" opacity=".22"/>
+  <path d="M12 62C28 76 44 50 60 57S86 72 97 47" fill="none" stroke="#6E9A4E" stroke-width="13" stroke-linecap="round"/>
+  <path d="M12 62C28 76 44 50 60 57S86 72 97 47" fill="none" stroke="#4C7037" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10"/>
+  <path d="M15 58C29 70 44 46 60 52S85 66 94 44" fill="none" stroke="#A9C978" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>
+  <ellipse cx="101" cy="40" rx="13" ry="9.5" transform="rotate(-38 101 40)" fill="#6E9A4E"/>
+  <ellipse cx="99" cy="37" rx="7" ry="3" transform="rotate(-38 99 37)" fill="#A9C978" opacity=".55"/>
+  <circle cx="104.5" cy="36.5" r="2.7" fill="${W}"/><circle cx="105.3" cy="35.7" r=".9" fill="#fff"/>
+  <path d="M110.5 32l5.5 -4.5m0 0l3.5 .2m-3.5 -.2l.8 -3.4" fill="none" stroke="#D9534F" stroke-width="1.7" stroke-linecap="round"/>
+</symbol>
+
+<symbol id="rat" viewBox="0 0 120 80">
+  <ellipse cx="62" cy="73" rx="40" ry="4" fill="#000" opacity=".22"/>
+  <path d="M33 60C16 64 6 52 14 42C18 37 24 38 22 44" fill="none" stroke="#C98C8C" stroke-width="3.2" stroke-linecap="round"/>
+  <ellipse cx="58" cy="54" rx="29" ry="17" fill="#8E9298"/>
+  <ellipse cx="60" cy="61" rx="21" ry="8" fill="#AEB2B8"/>
+  <path d="M74 44C84 34 100 38 107 48C104 54 92 58 80 58Z" fill="#8E9298"/>
+  <circle cx="79" cy="36" r="8.5" fill="#8E9298"/><circle cx="79" cy="36" r="4.8" fill="#D99A9A"/>
+  <circle cx="91" cy="44" r="2.6" fill="${W}"/><circle cx="91.8" cy="43.2" r=".9" fill="#fff"/>
+  <circle cx="106.5" cy="48.5" r="2.4" fill="#D99A9A"/>
+  <path d="M101 51l11 -2M101 52.5l11 2.5" stroke="#D4D7DB" stroke-width=".9" stroke-linecap="round"/>
+  <ellipse cx="47" cy="70" rx="6" ry="2.6" fill="#C98C8C"/><ellipse cx="72" cy="70" rx="6" ry="2.6" fill="#C98C8C"/>
+  <path d="M40 44C50 38 64 37 74 41" fill="none" stroke="#B6BAC0" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
+</symbol>
+
+<symbol id="centipede" viewBox="0 0 120 80">
+  <ellipse cx="60" cy="72" rx="44" ry="3.5" fill="#000" opacity=".2"/>
+  <path d="${legs}" stroke="#E8893B" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <path d="M17 46l-9 -5M17 49l-9 5" stroke="#E8893B" stroke-width="1.8" stroke-linecap="round"/>
+  ${body}
+  <circle cx="101" cy="45" r="7" fill="#8A3520"/>
+  <path d="M105 41Q111 33 118 32M105 49Q112 55 118 56" fill="none" stroke="#E8893B" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="103" cy="42.5" r="1.4" fill="#F2C46B"/><circle cx="103" cy="47.5" r="1.4" fill="#F2C46B"/>
+</symbol>
+
+<symbol id="leech" viewBox="0 0 120 80">
+  <ellipse cx="62" cy="71" rx="44" ry="4" fill="#000" opacity=".22"/>
+  <path d="M16 54C16 40 40 33 63 35C86 37 104 40 106 50C108 60 88 63 63 62C40 61 16 66 16 54Z" fill="#8E3330"/>
+  <path d="M26 46C44 38 72 38 98 44" fill="none" stroke="#C0574F" stroke-width="3.5" stroke-linecap="round" opacity=".75"/>
+  ${rings}
+  <ellipse cx="18" cy="55" rx="6.5" ry="8" fill="#6E2624"/>
+  <circle cx="104" cy="50" r="4.5" fill="#6E2624"/>
+  <circle cx="98" cy="45" r="1.7" fill="#E9E3D3"/><circle cx="93.5" cy="44" r="1.4" fill="#E9E3D3" opacity=".8"/>
+  <path d="M113 52C116 57 117 60 113 63C109 60 110 57 113 52Z" fill="#D9534F"/>
+</symbol>
+
+<symbol id="croc-body" viewBox="0 0 140 80">
+  <ellipse cx="70" cy="72" rx="58" ry="4" fill="#000" opacity=".22"/>
+  <path d="M44 59l-5 10h9ZM84 59l-4 10h9Z" fill="#3C5E38"/>
+  <path d="M6 50C26 47 44 42 66 43L96 44C112 44 128 46 134 50C136 53 132 56 124 57L96 58C80 60 70 63 60 62C40 61 22 56 6 50Z" fill="#4F7A4A"/>
+  <path d="M30 55C46 61 62 63 80 60L124 57" fill="none" stroke="#8DB07A" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+  ${scutes}
+  <path d="M98 51.5L130 51" stroke="#2F4A2C" stroke-width="1.2"/>
+  ${teeth}
+  <circle cx="96" cy="41" r="6.5" fill="#4F7A4A"/>
+  <circle cx="131" cy="47" r="1.2" fill="#2F4A2C"/>
+</symbol>
+<symbol id="croc" viewBox="0 0 140 80"><use href="#croc-body"/><circle cx="97" cy="40" r="2.8" fill="#F2C46B"/><circle cx="97.6" cy="40" r="1.3" fill="${W}"/></symbol>
+<symbol id="croc-x" viewBox="0 0 140 80"><use href="#croc-body"/><path d="M94 37l6 6m0 -6l-6 6" stroke="${W}" stroke-width="1.8" stroke-linecap="round"/></symbol>
+
+<symbol id="scene-night" viewBox="0 0 480 320">
+  <rect width="480" height="320" rx="20" fill="url(#g-sky)"/>
+  <circle cx="392" cy="66" r="54" fill="#E9E3D3" opacity=".05"/>
+  <circle cx="392" cy="66" r="26" fill="#E9E3D3" opacity=".92"/>
+  <circle cx="384" cy="58" r="5" fill="#C9C2B0" opacity=".6"/><circle cx="399" cy="74" r="3.5" fill="#C9C2B0" opacity=".6"/>
+  <g fill="#E9E3D3" opacity=".7"><circle cx="60" cy="40" r="1.4"/><circle cx="122" cy="26" r="1"/><circle cx="300" cy="34" r="1.2"/><circle cx="446" cy="132" r="1"/><circle cx="250" cy="58" r=".9"/></g>
+  <rect width="480" height="250" rx="20" fill="url(#p-rain)"/>
+  <path d="M0 232V196l22 -16l22 16V232ZM332 232V188l26 -18l26 18V232ZM398 232V204l18 -12l18 12V232ZM440 232V194l20 -14l20 14V232Z" fill="#162A30"/>
+  <path d="M112 150L214 84L316 150Z" fill="#1C2C31"/>
+  <path d="M112 150L214 84L316 150" fill="none" stroke="#33494F" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="128" y="148" width="172" height="104" fill="#2A3D43"/>
+  <rect x="128" y="148" width="172" height="7" fill="#21343A"/>
+  <ellipse cx="184" cy="190" rx="72" ry="56" fill="url(#g-glow)"/>
+  <rect x="158" y="168" width="52" height="44" rx="2" fill="#F2C46B"/>
+  <circle cx="181" cy="185" r="7.5" fill="#5A4426"/><path d="M168 212C168 198 194 198 194 212Z" fill="#5A4426"/>
+  <path d="M194 199q6 3 6 13" fill="none" stroke="#5A4426" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="158" y="168" width="52" height="44" rx="2" fill="none" stroke="#1C2C31" stroke-width="3"/>
+  <rect x="236" y="168" width="44" height="44" rx="2" fill="#16262B" stroke="#1C2C31" stroke-width="3"/>
+  <ellipse cx="262" cy="230" rx="8" ry="3.4" transform="rotate(-62 262 230)" fill="#A33B37"/>
+  <ellipse cx="143" cy="234" rx="7" ry="3" transform="rotate(-78 143 234)" fill="#A33B37"/>
+  <path d="${wave(238)}V300a20 20 0 0 1 -20 20H20a20 20 0 0 1 -20 -20Z" fill="url(#g-water)" opacity=".97"/>
+  <path d="${wave(238)}" fill="none" stroke="#4E929C" stroke-width="2" opacity=".7"/>
+  <g fill="#F2C46B" opacity=".35"><rect x="160" y="248" width="46" height="3" rx="1.5"/><rect x="166" y="258" width="34" height="3" rx="1.5"/><rect x="172" y="268" width="22" height="3" rx="1.5"/></g>
+  <rect x="290" y="250" width="34" height="6" rx="2" transform="rotate(-8 307 253)" fill="#4A3B2A"/>
+  <path d="M334 266C344 256 352 270 362 260S378 252 384 258" fill="none" stroke="#6E9A4E" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="388" cy="255" rx="6.5" ry="4.6" transform="rotate(-25 388 255)" fill="#6E9A4E"/><circle cx="390" cy="253" r="1.3" fill="${W}"/>
+  <g fill="#E8893B"><circle cx="70" cy="282" r="7" opacity=".18"/><circle cx="80" cy="282" r="7" opacity=".18"/><circle cx="70" cy="282" r="2.4"/><circle cx="80" cy="282" r="2.4"/><circle cx="432" cy="296" r="2"/><circle cx="440" cy="296" r="2"/></g>
+</symbol>
+
+<symbol id="scene-climb" viewBox="0 0 160 110">
+  <rect x="104" y="6" width="56" height="64" fill="#22353A"/>
+  <rect x="116" y="16" width="30" height="52" rx="2" fill="#2E4449"/><circle cx="140" cy="44" r="2" fill="#E8893B"/>
+  <path d="M28 98V88H64V78H96V68H160V98Z" fill="#3A4F55"/>
+  <path d="M28 88H64M64 78H96M96 68H160" stroke="#5A7177" stroke-width="2"/>
+  <path d="M0 92Q12 87 24 92T48 92T72 92T96 92T120 92T144 92T168 92V110H0Z" fill="url(#g-water)"/>
+  <path d="M14 88C26 54 70 36 110 48" fill="none" stroke="#E8893B" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+  <path d="M103 42l8 6l-9 4" fill="none" stroke="#E8893B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40 90C48 82 56 90 64 84S76 74 84 76" stroke="#6E9A4E" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="88" cy="74.5" rx="5.5" ry="4" transform="rotate(-20 88 74.5)" fill="#6E9A4E"/><circle cx="90" cy="73" r="1.1" fill="${W}"/>
+  <use href="#centipede" x="100" y="44" width="40" height="27"/>
+</symbol>
+
+<symbol id="scene-stagnant" viewBox="0 0 160 110">
+  <path d="M0 70C30 62 130 62 160 70V110H0Z" fill="#26352F"/>
+  <ellipse cx="78" cy="84" rx="70" ry="20" fill="url(#g-murk)"/>
+  <g fill="#7A7646" opacity=".6"><ellipse cx="40" cy="80" rx="9" ry="2"/><ellipse cx="112" cy="88" rx="11" ry="2.4"/><ellipse cx="70" cy="95" rx="7" ry="1.6"/></g>
+  <g fill="none" stroke="#A9A57E" stroke-width="1.2"><circle cx="54" cy="74" r="2.6"/><circle cx="60" cy="70" r="1.8"/><circle cx="118" cy="77" r="2.2"/></g>
+  <use href="#leech" x="44" y="62" width="62" height="41"/>
+  <circle cx="132" cy="30" r="17" fill="#E9E3D3"/><circle cx="132" cy="30" r="13" fill="#16313A"/>
+  <rect x="129" y="8" width="6" height="6" rx="1.5" fill="#E9E3D3"/>
+  <path d="M132 17A13 13 0 1 1 119 30" fill="none" stroke="#D9534F" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M132 30V22M132 30l6 4" stroke="#E9E3D3" stroke-width="2.2" stroke-linecap="round"/>
+</symbol>
+
+<symbol id="scene-germ" viewBox="0 0 160 110">
+  <path d="M0 78C40 72 120 72 160 78V110H0Z" fill="#26352F"/>
+  <ellipse cx="54" cy="92" rx="44" ry="10" fill="#1F4A52"/>
+  <use href="#rat" x="74" y="52" width="72" height="48"/>
+  <circle cx="44" cy="54" r="19" fill="#16313A" stroke="#E9E3D3" stroke-width="4"/>
+  <path d="M58 68l11 11" stroke="#E9E3D3" stroke-width="6" stroke-linecap="round"/>
+  <g fill="none" stroke="#62B48D" stroke-width="2.2" stroke-linecap="round"><path d="M33 48q3 -4 6 0t6 0"/><path d="M38 60q3 -4 6 0t6 0"/></g>
+  <g fill="#62B48D"><circle cx="50" cy="47" r="1.8"/><circle cx="34" cy="60" r="1.6"/></g>
+  <rect x="132" y="6" width="10" height="38" rx="5" fill="#E9E3D3"/>
+  <circle cx="137" cy="46" r="8" fill="#D9534F"/><rect x="135" y="13" width="4" height="32" rx="2" fill="#D9534F"/>
+</symbol>
+
+<symbol id="boat" viewBox="0 0 120 60">
+  <path d="M93 21L120 5V41Z" fill="#F2C46B" opacity=".35"/>
+  <path d="M92 34V23" stroke="#93A6A5" stroke-width="2.5" stroke-linecap="round"/><circle cx="92" cy="21" r="3.6" fill="#F2C46B"/>
+  <circle cx="42" cy="16" r="5" fill="#E9E3D3"/><path d="M36 15a6 6 0 0 1 12 0Z" fill="#E8893B"/>
+  <path d="M35 34V25c0 -3 3 -5 7 -5s7 2 7 5v9Z" fill="#F2C46B"/>
+  <path d="M52 22l14 30" stroke="#8E6A3A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M6 33H112L101 51H17Z" fill="#E8893B"/><rect x="12" y="37" width="96" height="3" fill="#F2A562"/>
+  <path d="M0 52q8 -4 16 0t16 0t16 0t16 0t16 0t16 0t16 0" fill="none" stroke="#4E929C" stroke-width="2" opacity=".8"/>
+</symbol>
+
+<symbol id="i-boots" viewBox="0 0 64 64">
+  <g transform="translate(14 -3)"><path d="M14 10h14v30c0 2 2 3 4 4l8 4c3 1.5 4 4 4 7v1H14Z" fill="#B9662A"/></g>
+  <path d="M10 10h14v30c0 2 2 3 4 4l8 4c3 1.5 4 4 4 7v1H10Z" fill="#E8893B"/>
+  <rect x="10" y="52" width="30" height="5" rx="2" fill="#8E4A1C"/><rect x="10" y="10" width="14" height="5" fill="#F2A562"/>
+</symbol>
+<symbol id="i-gloves" viewBox="0 0 64 64">
+  <path d="M20 58V36c-4 -3 -8 -8 -9 -12c-1 -3 2 -5 4 -3l6 7V12c0 -3 4 -3 4 0v14V8c0 -3 4 -3 4 0v18V10c0 -3 4 -3 4 0v16V14c0 -3 4 -3 4 0v24c0 8 -3 12 -6 14v6Z" fill="#F2C46B"/>
+  <path d="M25 26V13M29 26V11M33 26V15" stroke="#D9A447" stroke-width="1.4"/>
+  <rect x="19" y="50" width="20" height="9" rx="2" fill="#D9A447"/>
+</symbol>
+<symbol id="i-salt" viewBox="0 0 64 64">
+  <path d="M20 22h24l3 34c0 2 -1 3 -3 3H20c-2 0 -3 -1 -3 -3Z" fill="#E9E3D3"/>
+  <rect x="19" y="12" width="26" height="11" rx="3" fill="#93A6A5"/>
+  <g fill="#4E5E5D"><circle cx="26" cy="17.5" r="1.4"/><circle cx="32" cy="17.5" r="1.4"/><circle cx="38" cy="17.5" r="1.4"/></g>
+  <rect x="22" y="34" width="20" height="12" rx="2" fill="#62B48D"/>
+  <g fill="#E9E3D3"><rect x="30" y="4" width="2" height="2"/><rect x="36" y="6" width="2" height="2"/><rect x="25" y="6" width="2" height="2"/></g>
+</symbol>
+<symbol id="i-torch" viewBox="0 0 64 64">
+  <path d="M42 23L62 11V45L42 33Z" fill="#F2C46B" opacity=".45"/>
+  <rect x="6" y="22" width="25" height="12" rx="3" fill="#93A6A5"/>
+  <path d="M30 20h8l4 2v12l-4 2h-8Z" fill="#E9E3D3"/>
+  <rect x="14" y="25" width="6" height="6" rx="1.5" fill="#E8893B"/>
+</symbol>
+<symbol id="i-toilet" viewBox="0 0 64 64">
+  <rect x="16" y="6" width="22" height="18" rx="3" fill="#C9C2B0"/>
+  <path d="M10 28h36c0 10 -6 16 -14 17l2 11H20l2 -11c-7 -2 -12 -7 -12 -17Z" fill="#E9E3D3"/>
+  <rect x="8" y="24" width="40" height="7" rx="3.5" fill="#93A6A5"/>
+  <path d="M50 40h8M50 46h8M50 52h8M54 38v16" stroke="#62B48D" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-phone" viewBox="0 0 64 64">
+  <rect x="18" y="4" width="28" height="56" rx="6" fill="#93A6A5"/>
+  <rect x="21" y="10" width="22" height="40" rx="2" fill="#16313A"/>
+  <circle cx="32" cy="55" r="2.2" fill="#16313A"/>
+  <text x="32" y="27" text-anchor="middle" font-size="10" font-weight="700" fill="#E8893B" font-family="IBM Plex Mono,monospace">199</text>
+  <text x="32" y="41" text-anchor="middle" font-size="9" font-weight="700" fill="#F07A74" font-family="IBM Plex Mono,monospace">1669</text>
+</symbol>
+<symbol id="i-neighbor" viewBox="0 0 64 64">
+  <path d="M4 34L16 24L28 34V54H4Z" fill="#93A6A5"/><rect x="12" y="42" width="8" height="12" fill="#16313A"/>
+  <path d="M36 34L48 24L60 34V54H36Z" fill="#E9E3D3"/><rect x="44" y="40" width="8" height="8" fill="#F2C46B"/>
+  <path d="M32 22c-3 -5 -10 -3 -9 2c1 4 9 8 9 8s8 -4 9 -8c1 -5 -6 -7 -9 -2Z" fill="#D9534F"/>
+</symbol>
+<symbol id="i-night" viewBox="0 0 64 64">
+  <path d="M14 4a10 10 0 1 0 10 14a8 8 0 1 1 -10 -14Z" fill="#E9E3D3"/>
+  <path d="M2 54q7 -5 14 0t14 0t14 0t14 0" fill="none" stroke="#5FA0AC" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="44" cy="25" r="15" fill="#16313A" stroke="#D9534F" stroke-width="3.5"/>
+  <circle cx="45" cy="16" r="2.6" fill="#E9E3D3"/>
+  <path d="M45 19l-2 8l4 6M43 27l-4 5M44 22l-5 2M44 22l5 3" stroke="#E9E3D3" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M33.5 35.5L54.5 14.5" stroke="#D9534F" stroke-width="3.5"/>
+</symbol>
+<symbol id="i-bandage" viewBox="0 0 64 64">
+  <g transform="rotate(-35 32 32)"><rect x="6" y="22" width="52" height="20" rx="10" fill="#E8C9A0"/><rect x="22" y="22" width="20" height="20" fill="#F5E2C6"/>
+  <g fill="#C9A57A"><circle cx="12" cy="29" r="1.2"/><circle cx="12" cy="35" r="1.2"/><circle cx="17" cy="32" r="1.2"/><circle cx="47" cy="32" r="1.2"/><circle cx="52" cy="29" r="1.2"/><circle cx="52" cy="35" r="1.2"/></g></g>
+</symbol>
+<symbol id="i-shower" viewBox="0 0 64 64">
+  <path d="M14 58V16c0 -6 4 -10 10 -10h8c5 0 8 3 8 8" fill="none" stroke="#93A6A5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M30 14h20l-3 8H33Z" fill="#E9E3D3"/>
+  <g fill="#6FB3C8"><ellipse cx="35" cy="30" rx="1.8" ry="3"/><ellipse cx="42" cy="32" rx="1.8" ry="3"/><ellipse cx="49" cy="30" rx="1.8" ry="3"/><ellipse cx="38" cy="40" rx="1.8" ry="3"/><ellipse cx="46" cy="42" rx="1.8" ry="3"/><ellipse cx="42" cy="51" rx="1.8" ry="3"/></g>
+</symbol>
+<symbol id="i-calendar" viewBox="0 0 64 64">
+  <rect x="8" y="12" width="48" height="44" rx="5" fill="#E9E3D3"/>
+  <path d="M8 24V17a5 5 0 0 1 5 -5h38a5 5 0 0 1 5 5v7Z" fill="#D9534F"/>
+  <rect x="18" y="6" width="5" height="12" rx="2" fill="#93A6A5"/><rect x="41" y="6" width="5" height="12" rx="2" fill="#93A6A5"/>
+  <g fill="#C9C2B0"><rect x="15" y="30" width="7" height="6" rx="1"/><rect x="28" y="30" width="7" height="6" rx="1"/><rect x="41" y="30" width="7" height="6" rx="1"/><rect x="15" y="42" width="7" height="6" rx="1"/><rect x="41" y="42" width="7" height="6" rx="1"/></g>
+  <circle cx="31.5" cy="45" r="6" fill="none" stroke="#E8893B" stroke-width="2.6"/>
+</symbol>
+<symbol id="i-thermo" viewBox="0 0 64 64">
+  <rect x="26" y="4" width="12" height="42" rx="6" fill="#E9E3D3"/>
+  <circle cx="32" cy="50" r="10" fill="#D9534F"/><rect x="29.5" y="14" width="5" height="34" rx="2.5" fill="#D9534F"/>
+  <path d="M40 12h6M40 20h4M40 28h6M40 36h4" stroke="#93A6A5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M12 22q4 -4 0 -8M19 26q4 -4 0 -8" stroke="#E8893B" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-pill" viewBox="0 0 64 64">
+  <g transform="rotate(-40 30 36)"><rect x="8" y="26" width="44" height="20" rx="10" fill="#E9E3D3"/><path d="M30 26h12a10 10 0 0 1 0 20H30Z" fill="#62B48D"/></g>
+  <circle cx="48" cy="15" r="11" fill="#D9534F"/><path d="M43 10l10 10M53 10l-10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-trash" viewBox="0 0 64 64">
+  <path d="M8 58C6 44 14 36 24 38C26 28 40 28 42 38C52 36 60 46 56 58Z" fill="#46595E"/>
+  <path d="M24 38l-2 -6l5 3M42 38l3 -6l-6 3" fill="none" stroke="#2C3B3F" stroke-width="2" stroke-linecap="round"/>
+  <path d="M30 54C30 46 38 46 40 38" stroke="#6E9A4E" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="42" cy="33" rx="6" ry="4.5" transform="rotate(-40 42 33)" fill="#6E9A4E"/><circle cx="44" cy="31.5" r="1.2" fill="${W}"/>
+  <path d="M46.5 28l3 -3m0 0l2 0m-2 0l0 -2" stroke="#D9534F" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-clock" viewBox="0 0 64 64">
+  <circle cx="32" cy="36" r="22" fill="#E9E3D3"/><circle cx="32" cy="36" r="17" fill="#16313A"/>
+  <rect x="27" y="6" width="10" height="7" rx="2" fill="#E9E3D3"/>
+  <path d="M32 19A17 17 0 0 1 49 36H32Z" fill="#E8893B" opacity=".9"/>
+  <path d="M32 36V24M32 36l8 5" stroke="#E9E3D3" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-elder" viewBox="0 0 64 64">
+  <path d="M6 30L32 8L58 30" fill="none" stroke="#93A6A5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 28V58H52V28" fill="none" stroke="#93A6A5" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="30" cy="29" r="5" fill="#E9E3D3"/>
+  <path d="M30 35c-6 0 -8 6 -8 12v9h5v-8h6v8h5v-11c0 -6 -2 -10 -8 -10Z" fill="#E8893B"/>
+  <path d="M41 41v15M41 41q0 -4 4 -4" stroke="#E9E3D3" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-team" viewBox="0 0 64 64">
+  <circle cx="15" cy="23" r="6" fill="#93A6A5"/><path d="M5 47c0 -9 4 -14 10 -14s10 5 10 14Z" fill="#93A6A5"/>
+  <circle cx="49" cy="23" r="6" fill="#62B48D"/><path d="M39 47c0 -9 4 -14 10 -14s10 5 10 14Z" fill="#62B48D"/>
+  <circle cx="32" cy="18" r="7" fill="#E9E3D3"/><path d="M20 49c0 -11 5 -17 12 -17s12 6 12 17Z" fill="#E8893B"/>
+  <path d="M8 55h48" stroke="#E9E3D3" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-mega" viewBox="0 0 64 64">
+  <path d="M10 26h10l24 -14v40l-24 -14h-10Z" fill="#E8893B"/>
+  <rect x="8" y="24" width="14" height="16" rx="3" fill="#E9E3D3"/>
+  <path d="M20 40l4 14h7l-4 -14Z" fill="#93A6A5"/>
+  <path d="M50 24q6 8 0 16M54 18q10 14 0 28" stroke="#E9E3D3" stroke-width="3" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-q" viewBox="0 0 64 64">
+  <path d="M8 10h48a4 4 0 0 1 4 4v28a4 4 0 0 1 -4 4H26l-12 10v-10H8a4 4 0 0 1 -4 -4V14a4 4 0 0 1 4 -4Z" fill="#E8893B"/>
+  <path d="M25 22c0 -5 3 -7 7 -7s7 3 7 6c0 5 -7 5 -7 10" fill="none" stroke="${W}" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="38" r="2.6" fill="${W}"/>
+</symbol>
+<symbol id="i-db" viewBox="0 0 64 64">
+  <ellipse cx="32" cy="14" rx="20" ry="7" fill="#E9E3D3"/>
+  <path d="M12 14v12c0 4 9 7 20 7s20 -3 20 -7V14c0 4 -9 7 -20 7S12 18 12 14Z" fill="#93A6A5"/>
+  <path d="M12 29v11c0 4 9 7 20 7s20 -3 20 -7V29c0 4 -9 7 -20 7S12 33 12 29Z" fill="#7E9291"/>
+  <path d="M12 43v8c0 4 9 7 20 7s20 -3 20 -7v-8c0 4 -9 7 -20 7S12 47 12 43Z" fill="#6A7D7C"/>
+</symbol>
+<symbol id="i-funnel" viewBox="0 0 64 64">
+  <g fill="#93A6A5"><circle cx="16" cy="7" r="3"/><circle cx="28" cy="4" r="3"/><circle cx="40" cy="8" r="3"/></g>
+  <circle cx="50" cy="5" r="3" fill="#E8893B"/>
+  <path d="M6 15H58L38 37V53L26 59V37Z" fill="#E9E3D3"/>
+  <path d="M51 25l7 7m0 -7l-7 7" stroke="#D9534F" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-chart" viewBox="0 0 64 64">
+  <path d="M6 56H58" stroke="#93A6A5" stroke-width="3" stroke-linecap="round"/>
+  <rect x="10" y="38" width="9" height="16" rx="2" fill="#93A6A5"/><rect x="24" y="28" width="9" height="26" rx="2" fill="#93A6A5"/><rect x="38" y="16" width="9" height="38" rx="2" fill="#E8893B"/>
+  <circle cx="46" cy="22" r="11" fill="none" stroke="#E9E3D3" stroke-width="3.5"/><path d="M54 30l7 7" stroke="#E9E3D3" stroke-width="4.5" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-game" viewBox="0 0 64 64">
+  <path d="M16 20h32c8 0 12 8 12 18c0 8 -4 12 -8 12c-4 0 -6 -4 -10 -8H22c-4 4 -6 8 -10 8c-4 0 -8 -4 -8 -12c0 -10 4 -18 12 -18Z" fill="#E9E3D3"/>
+  <path d="M18 28v10M13 33h10" stroke="#16313A" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="44" cy="30" r="3" fill="#E8893B"/><circle cx="50" cy="36" r="3" fill="#D9534F"/>
+</symbol>
+<symbol id="i-house" viewBox="0 0 32 32">
+  <path d="M4 15L16 5L28 15V28H4Z" fill="currentColor"/><rect x="13" y="19" width="6" height="9" fill="${W}" opacity=".35"/>
+</symbol>
+</svg>`;
+  document.body.insertAdjacentHTML('afterbegin', svg);
+})();
+
+</script>
+<script>
+/* ตัวเลขทั้งหมดที่ใช้วาดกราฟ แก้ที่นี่แล้วกราฟจะเปลี่ยนตาม
+   แหล่งข้อมูล: คำร้อง Traffy Fondue ที่มีพิกัดในกรุงเทพฯ 1 ก.ย.–27 ต.ค. 2569 (94,587 เรื่อง)
+   ช่วงก่อนน้ำท่วม = 9–24 ก.ย. (16 วัน) · ช่วงน้ำท่วม = 25 ก.ย.–10 ต.ค. (16 วัน) */
+window.STORY = {
+  /* หน้า "คืนที่น้ำมา": คำร้องเรื่องน้ำท่วมรายวัน 18 ก.ย.–14 ต.ค. */
+  floodDaily: [57,62,90,61,90,108,84,1883,5089,3167,2784,1522,1337,1210,1080,857,631,593,737,552,349,282,190,239,370,433,855],
+
+  /* หน้า "น้ำที่ไม่ยอมไป": คำร้องสัตว์อันตราย และคำร้องเรื่องปลิง รายวัน 18 ก.ย.–14 ต.ค. */
+  lag: {
+    danger: [6,11,11,11,13,15,10,15,25,23,29,31,29,34,22,17,24,12,19,8,15,14,15,9,14,10,7],
+    leech:  [1,0,0,0,0,0,0,2,5,3,10,11,7,8,10,6,2,2,6,1,0,1,1,1,0,1,0]
+  },
+
+  /* รายเขต: [ชื่อเขต, สัตว์อันตราย 16 วันก่อนน้ำท่วม, 16 วันช่วงน้ำท่วม,
+              ปลิง, งู, ตะขาบ, หนู/ฉี่หนู (ช่วงน้ำท่วม), คำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป] */
+  districts: [
+    ["คลองสาน", 1, 0, 0, 0, 0, 0, 0],
+    ["คลองสามวา", 3, 19, 4, 3, 1, 5, 161],
+    ["คลองเตย", 2, 3, 0, 0, 0, 2, 1],
+    ["คันนายาว", 0, 9, 3, 4, 1, 1, 90],
+    ["จตุจักร", 11, 11, 0, 2, 0, 5, 43],
+    ["จอมทอง", 3, 5, 0, 3, 0, 1, 3],
+    ["ดอนเมือง", 3, 4, 1, 1, 0, 2, 72],
+    ["ดินแดง", 6, 8, 0, 1, 0, 6, 3],
+    ["ดุสิต", 2, 0, 0, 0, 0, 0, 1],
+    ["ตลิ่งชัน", 1, 1, 0, 0, 0, 0, 2],
+    ["ทวีวัฒนา", 3, 4, 0, 2, 0, 0, 9],
+    ["ทุ่งครุ", 0, 0, 0, 0, 0, 0, 6],
+    ["ธนบุรี", 1, 2, 0, 0, 0, 0, 0],
+    ["บางกอกน้อย", 4, 3, 0, 0, 0, 1, 2],
+    ["บางกอกใหญ่", 2, 0, 0, 0, 0, 0, 0],
+    ["บางกะปิ", 3, 22, 1, 8, 2, 5, 202],
+    ["บางขุนเทียน", 4, 5, 0, 2, 0, 1, 15],
+    ["บางคอแหลม", 0, 1, 0, 1, 0, 0, 2],
+    ["บางซื่อ", 3, 2, 0, 1, 0, 1, 4],
+    ["บางนา", 0, 2, 0, 1, 0, 0, 1],
+    ["บางบอน", 2, 3, 0, 2, 0, 0, 8],
+    ["บางพลัด", 2, 4, 0, 3, 0, 0, 2],
+    ["บางรัก", 4, 4, 0, 0, 0, 4, 1],
+    ["บางเขน", 4, 14, 1, 9, 1, 1, 108],
+    ["บางแค", 11, 4, 1, 3, 1, 0, 8],
+    ["บึงกุ่ม", 5, 15, 2, 7, 1, 2, 149],
+    ["ปทุมวัน", 0, 2, 0, 0, 0, 2, 0],
+    ["ประเวศ", 11, 17, 6, 2, 0, 2, 415],
+    ["ป้อมปราบศัตรูพ่าย", 0, 2, 0, 1, 0, 1, 1],
+    ["พญาไท", 0, 2, 0, 0, 0, 1, 2],
+    ["พระนคร", 1, 0, 0, 0, 0, 0, 1],
+    ["พระโขนง", 3, 4, 0, 1, 0, 1, 25],
+    ["ภาษีเจริญ", 8, 5, 0, 1, 0, 0, 1],
+    ["มีนบุรี", 19, 20, 13, 4, 2, 0, 386],
+    ["ยานนาวา", 1, 1, 0, 1, 0, 0, 0],
+    ["ราชเทวี", 2, 6, 0, 1, 0, 5, 2],
+    ["ราษฎร์บูรณะ", 1, 3, 0, 3, 0, 0, 1],
+    ["ลาดกระบัง", 0, 13, 9, 0, 0, 3, 460],
+    ["ลาดพร้าว", 5, 4, 0, 2, 1, 0, 18],
+    ["วังทองหลาง", 3, 10, 0, 4, 2, 1, 31],
+    ["วัฒนา", 4, 4, 0, 1, 1, 2, 6],
+    ["สวนหลวง", 3, 10, 0, 1, 3, 3, 116],
+    ["สะพานสูง", 9, 19, 8, 4, 3, 2, 409],
+    ["สัมพันธวงศ์", 0, 1, 0, 0, 0, 0, 0],
+    ["สาทร", 1, 1, 0, 0, 0, 1, 1],
+    ["สายไหม", 3, 17, 8, 8, 2, 1, 135],
+    ["หนองจอก", 5, 31, 17, 5, 3, 2, 394],
+    ["หนองแขม", 1, 5, 0, 3, 0, 0, 8],
+    ["หลักสี่", 2, 8, 1, 1, 0, 2, 27],
+    ["ห้วยขวาง", 2, 2, 0, 0, 0, 1, 4]
+  ],
+
+  /* หน้า "ใครจะไปถึงก่อน": คำร้องสัตว์อันตรายช่วงน้ำท่วม 332 เรื่อง ปิดเรื่องได้ภายในกี่วัน
+     [จากวันที่, ถึงวันที่, จำนวนเรื่อง] · open = ยังไม่ปิด ณ 27 ต.ค. */
+  closing: { bins: [[0,1,13],[1,3,21],[3,7,43],[7,14,42],[14,30,69],[30,33,3]], open: 141 },
+
+  /* แผนที่: ช่องละราว 900×900 เมตร ทำจากพิกัดคำร้อง
+     runs = แถบช่องที่มีคำร้องน้ำท่วม [แถว, คอลัมน์เริ่ม, คอลัมน์จบ, น้ำขัง 3 วัน+ (1/0)]
+     pts = [คอลัมน์, แถว, คำร้องปลิง, คำร้องสัตว์อันตรายอื่น] · labs = ป้ายชื่อเขต */
+  map: {"runs":[[0,29,30,0],[0,31,32,1],[0,33,33,0],[0,34,34,1],[0,35,35,0],[0,36,36,1],[1,30,30,0],[1,31,33,1],[1,34,34,0],[1,35,36,1],[1,72,72,0],[2,29,29,0],[2,31,37,1],[2,38,38,0],[3,29,29,0],[3,30,31,1],[3,32,34,0],[3,36,36,0],[3,37,44,1],[3,57,57,0],[3,65,65,0],[3,67,67,0],[3,70,70,1],[3,71,72,0],[4,29,30,1],[4,31,32,0],[4,33,34,1],[4,37,38,0],[4,39,40,1],[4,41,41,0],[4,42,43,1],[4,44,45,0],[4,48,49,0],[4,54,54,1],[4,57,57,1],[4,72,72,0],[5,28,30,0],[5,31,33,1],[5,35,37,0],[5,38,38,1],[5,39,40,0],[5,41,42,1],[5,43,43,0],[5,44,45,1],[5,46,47,0],[5,48,48,1],[5,50,50,0],[5,55,56,0],[5,57,58,1],[5,60,60,0],[5,64,64,0],[5,67,68,1],[5,72,72,0],[6,28,32,0],[6,35,38,1],[6,39,39,0],[6,40,44,1],[6,45,46,0],[6,47,48,1],[6,49,50,0],[6,52,53,0],[6,57,57,0],[6,61,61,1],[6,62,62,0],[6,64,64,0],[6,67,68,1],[6,70,71,1],[7,28,29,0],[7,30,31,1],[7,32,33,0],[7,34,38,1],[7,39,40,0],[7,41,42,1],[7,43,43,0],[7,44,45,1],[7,47,47,1],[7,48,48,0],[7,52,52,1],[7,54,54,0],[7,56,56,1],[7,58,58,0],[7,62,62,0],[7,66,67,0],[8,28,28,1],[8,30,30,1],[8,31,31,0],[8,32,41,1],[8,42,42,0],[8,44,44,1],[8,47,47,0],[8,48,48,1],[8,50,50,0],[8,52,52,1],[8,54,54,1],[8,55,55,0],[8,60,60,0],[8,64,64,0],[8,67,67,1],[8,68,68,0],[8,70,70,1],[9,27,30,0],[9,31,32,1],[9,33,33,0],[9,34,40,1],[9,41,42,0],[9,43,44,1],[9,47,48,0],[9,49,51,1],[9,52,52,0],[9,56,56,0],[9,59,62,1],[9,69,69,0],[9,71,72,1],[10,27,28,0],[10,29,32,1],[10,33,33,0],[10,34,45,1],[10,47,48,0],[10,53,53,1],[10,54,54,0],[10,57,57,0],[10,60,61,1],[10,62,62,0],[10,66,66,0],[10,68,69,1],[10,71,71,0],[11,27,27,0],[11,28,28,1],[11,29,30,0],[11,31,32,1],[11,35,37,1],[11,38,38,0],[11,39,39,1],[11,40,40,0],[11,41,45,1],[11,46,46,0],[11,47,47,1],[11,48,51,0],[11,54,54,0],[11,59,59,1],[11,60,60,0],[11,61,61,1],[11,62,62,0],[11,65,66,0],[11,67,67,1],[11,71,71,0],[12,26,26,0],[12,27,28,1],[12,29,29,0],[12,30,31,1],[12,32,32,0],[12,34,34,1],[12,35,36,0],[12,37,37,1],[12,38,41,0],[12,42,42,1],[12,43,43,0],[12,44,44,1],[12,45,48,0],[12,49,49,1],[12,50,50,0],[12,51,51,1],[12,53,56,1],[12,57,57,0],[12,58,60,1],[12,61,61,0],[12,62,63,1],[12,65,65,0],[12,66,71,1],[13,26,27,0],[13,28,28,1],[13,29,30,0],[13,31,31,1],[13,32,33,0],[13,34,34,1],[13,35,40,0],[13,41,41,1],[13,42,43,0],[13,44,47,1],[13,48,48,0],[13,49,53,1],[13,54,56,0],[13,58,60,1],[13,63,63,0],[13,64,65,1],[13,66,66,0],[13,67,67,1],[13,69,69,0],[13,70,70,1],[13,71,71,0],[13,72,72,1],[14,24,26,0],[14,27,27,1],[14,28,30,0],[14,31,31,1],[14,32,32,0],[14,33,38,1],[14,39,41,0],[14,42,43,1],[14,44,44,0],[14,45,48,1],[14,49,49,0],[14,50,50,1],[14,52,54,1],[14,55,55,0],[14,56,60,1],[14,62,62,0],[14,63,63,1],[14,64,64,0],[14,65,65,1],[14,69,69,0],[14,70,72,1],[15,24,25,0],[15,26,27,1],[15,28,30,0],[15,31,31,1],[15,32,32,0],[15,33,34,1],[15,35,41,0],[15,42,53,1],[15,54,54,0],[15,55,59,1],[15,61,61,1],[15,63,63,1],[15,64,64,0],[15,66,68,0],[15,71,72,1],[16,22,27,0],[16,28,28,1],[16,29,30,0],[16,31,32,1],[16,33,35,0],[16,37,37,0],[16,38,38,1],[16,39,40,0],[16,41,41,1],[16,43,43,0],[16,45,55,1],[16,56,56,0],[16,57,57,1],[16,59,59,1],[16,61,61,0],[16,62,62,1],[16,63,63,0],[16,64,65,1],[16,67,67,0],[17,24,26,0],[17,28,30,0],[17,31,33,1],[17,34,34,0],[17,35,36,1],[17,37,37,0],[17,38,38,1],[17,39,39,0],[17,40,44,1],[17,45,45,0],[17,46,49,1],[17,50,50,0],[17,51,53,1],[17,54,55,0],[17,56,56,1],[17,57,57,0],[17,58,58,1],[17,60,60,0],[17,62,62,0],[17,63,65,1],[17,67,67,1],[17,68,68,0],[17,70,70,1],[17,71,71,0],[18,0,0,1],[18,23,24,0],[18,25,25,1],[18,26,26,0],[18,28,29,0],[18,30,30,1],[18,31,33,0],[18,34,34,1],[18,35,35,0],[18,36,36,1],[18,37,38,0],[18,39,45,1],[18,46,46,0],[18,47,51,1],[18,53,56,1],[18,57,57,0],[18,58,65,1],[18,66,73,0],[19,-1,-1,0],[19,1,1,1],[19,3,3,0],[19,5,6,0],[19,9,10,0],[19,12,13,0],[19,15,17,0],[19,19,19,0],[19,20,20,1],[19,21,25,0],[19,27,31,0],[19,32,32,1],[19,33,33,0],[19,34,36,1],[19,37,38,0],[19,39,42,1],[19,43,43,0],[19,44,45,1],[19,46,46,0],[19,47,54,1],[19,55,55,0],[19,56,56,1],[19,57,57,0],[19,58,69,1],[19,70,70,0],[19,74,74,0],[20,1,1,0],[20,2,3,1],[20,4,5,0],[20,6,6,1],[20,7,7,0],[20,12,13,0],[20,15,20,0],[20,21,21,1],[20,22,22,0],[20,24,24,1],[20,25,25,0],[20,27,35,0],[20,36,54,1],[20,55,55,0],[20,56,64,1],[20,66,69,1],[20,71,72,1],[21,3,4,0],[21,6,8,0],[21,12,13,0],[21,16,16,1],[21,17,18,0],[21,20,23,0],[21,25,25,0],[21,26,26,1],[21,27,32,0],[21,33,33,1],[21,34,34,0],[21,35,49,1],[21,50,50,0],[21,51,54,1],[21,56,56,1],[21,57,57,0],[21,58,63,1],[21,65,68,1],[21,70,71,1],[22,0,0,0],[22,2,4,0],[22,7,7,0],[22,9,9,0],[22,11,11,0],[22,12,12,1],[22,13,13,0],[22,15,15,0],[22,17,17,1],[22,18,20,0],[22,22,22,0],[22,24,26,0],[22,28,32,0],[22,33,33,1],[22,34,35,0],[22,36,55,1],[22,58,64,1],[22,66,66,1],[22,67,67,0],[22,68,68,1],[23,0,0,0],[23,4,4,0],[23,8,8,1],[23,9,12,0],[23,14,20,0],[23,22,22,0],[23,24,24,0],[23,25,25,1],[23,26,27,0],[23,28,28,1],[23,29,30,0],[23,33,34,1],[23,35,36,0],[23,37,52,1],[23,55,55,0],[23,58,60,1],[23,61,63,0],[23,68,68,1],[24,0,0,0],[24,3,3,0],[24,5,5,0],[24,6,7,1],[24,8,9,0],[24,11,12,0],[24,16,17,0],[24,18,18,1],[24,19,20,0],[24,23,27,0],[24,28,28,1],[24,29,30,0],[24,32,32,1],[24,33,33,0],[24,34,56,1],[24,57,57,0],[24,58,59,1],[24,60,60,0],[24,62,62,0],[24,63,63,1],[24,67,67,0],[24,68,68,1],[24,69,69,0],[24,70,70,1],[25,2,3,0],[25,7,10,0],[25,14,14,0],[25,16,20,0],[25,21,22,1],[25,23,25,0],[25,27,27,0],[25,28,28,1],[25,29,30,0],[25,31,31,1],[25,32,34,0],[25,35,35,1],[25,36,36,0],[25,37,47,1],[25,48,48,0],[25,50,50,0],[25,51,51,1],[25,52,52,0],[25,53,59,1],[25,61,61,1],[25,67,69,1],[26,0,3,0],[26,4,4,1],[26,6,6,0],[26,7,7,1],[26,8,8,0],[26,11,11,0],[26,12,12,1],[26,13,13,0],[26,15,18,0],[26,20,25,0],[26,27,30,0],[26,31,33,1],[26,34,34,0],[26,35,50,1],[26,51,52,0],[26,53,53,1],[26,54,56,0],[26,57,58,1],[26,61,61,0],[26,65,65,1],[26,67,67,1],[26,69,69,1],[27,0,1,0],[27,3,3,1],[27,4,5,0],[27,11,14,0],[27,16,17,0],[27,19,19,0],[27,21,21,0],[27,23,30,0],[27,32,33,0],[27,34,34,1],[27,35,36,0],[27,37,43,1],[27,44,44,0],[27,45,46,1],[27,47,47,0],[27,48,49,1],[27,50,50,0],[27,51,52,1],[27,54,57,1],[27,58,59,0],[27,60,60,1],[27,62,63,0],[27,65,65,1],[27,66,66,0],[28,1,2,0],[28,4,5,0],[28,7,7,1],[28,8,13,0],[28,17,17,0],[28,19,22,0],[28,25,25,1],[28,28,30,0],[28,31,31,1],[28,32,32,0],[28,33,35,1],[28,36,36,0],[28,37,46,1],[28,47,47,0],[28,48,52,1],[28,53,54,0],[28,55,60,1],[28,65,66,1],[29,0,0,0],[29,1,1,1],[29,2,2,0],[29,4,5,0],[29,10,12,0],[29,14,16,0],[29,18,18,0],[29,20,20,0],[29,22,23,0],[29,31,32,0],[29,33,33,1],[29,34,34,0],[29,35,45,1],[29,46,46,0],[29,47,58,1],[29,59,60,0],[29,61,61,1],[29,62,62,0],[29,65,66,1],[30,0,0,0],[30,2,2,0],[30,3,3,1],[30,4,13,0],[30,17,21,0],[30,22,23,1],[30,24,25,0],[30,27,30,0],[30,32,33,0],[30,34,38,1],[30,39,40,0],[30,41,47,1],[30,58,58,0],[30,59,59,1],[30,60,60,0],[30,61,62,1],[30,63,63,0],[30,65,65,0],[31,0,2,0],[31,4,5,0],[31,7,12,0],[31,15,15,0],[31,17,18,0],[31,20,20,0],[31,21,21,1],[31,22,22,0],[31,32,34,0],[31,35,36,1],[31,37,37,0],[31,38,38,1],[31,39,41,0],[31,42,42,1],[31,43,43,0],[31,44,45,1],[31,46,46,0],[31,47,47,1],[31,61,61,0],[31,62,62,1],[31,63,63,0],[31,65,65,1],[32,0,0,0],[32,2,3,0],[32,5,5,0],[32,6,7,1],[32,8,9,0],[32,10,10,1],[32,11,13,0],[32,15,16,0],[32,19,20,0],[32,24,26,0],[32,32,32,0],[32,34,34,0],[32,35,39,1],[32,40,40,0],[32,42,45,1],[32,46,46,0],[32,47,47,1],[32,64,64,1],[32,65,65,0],[32,66,66,1],[33,1,1,0],[33,3,6,0],[33,9,11,0],[33,12,12,1],[33,13,14,0],[33,16,16,0],[33,18,18,0],[33,19,19,1],[33,20,20,0],[33,23,23,0],[33,25,27,0],[33,34,37,0],[33,38,38,1],[33,39,40,0],[33,42,45,1],[33,46,46,0],[34,2,2,0],[34,6,7,0],[34,10,12,0],[34,13,13,1],[34,14,18,0],[34,19,19,1],[34,20,21,0],[34,23,24,0],[34,32,37,0],[34,38,38,1],[34,39,41,0],[34,42,46,1],[35,1,2,0],[35,4,4,0],[35,6,7,0],[35,9,13,0],[35,15,16,0],[35,18,20,0],[35,21,21,1],[35,22,22,0],[35,26,26,0],[35,32,35,0],[35,36,36,1],[35,37,38,0],[35,39,39,1],[35,40,40,0],[35,41,41,1],[35,42,42,0],[35,43,46,1],[36,1,1,0],[36,2,3,1],[36,4,5,0],[36,6,7,1],[36,8,16,0],[36,17,17,1],[36,18,18,0],[36,20,22,0],[36,32,40,0],[36,42,45,0],[37,1,1,0],[37,2,2,1],[37,3,3,0],[37,4,4,1],[37,5,7,0],[37,8,8,1],[37,9,14,0],[37,17,19,0],[37,21,21,0],[37,22,22,1],[37,33,39,0],[38,3,3,0],[38,5,6,0],[38,8,11,0],[38,13,14,0],[38,16,16,0],[38,18,22,0],[38,23,23,1],[39,3,3,1],[39,5,6,0],[39,8,11,0],[39,13,15,0],[39,21,22,0],[40,5,7,0],[40,9,10,0],[40,13,14,0],[40,18,18,0],[40,19,19,1],[40,20,21,0],[41,6,7,0],[41,9,10,0],[41,11,13,1],[41,14,15,0],[41,17,19,0],[41,20,20,1],[41,22,23,0],[42,6,6,1],[42,7,8,0],[42,12,15,0],[42,17,17,0],[42,20,20,0],[42,21,21,1],[42,22,23,0],[43,6,6,1],[43,7,7,0],[43,12,12,0],[43,13,13,1],[43,14,14,0],[43,15,15,1],[43,16,16,0],[43,20,20,1],[43,22,22,0],[44,6,6,0]],"pts":[[0,22,0,1],[1,31,0,4],[2,33,0,1],[6,25,0,1],[6,32,0,1],[6,38,0,1],[7,20,0,1],[7,41,0,1],[8,28,0,1],[9,20,0,1],[9,24,0,1],[10,31,1,0],[11,39,0,1],[12,33,0,1],[12,36,0,1],[13,29,0,2],[13,30,0,1],[13,33,0,1],[14,23,0,1],[14,29,0,1],[14,34,0,1],[14,39,0,1],[14,41,0,1],[15,30,0,1],[15,36,0,1],[16,33,0,1],[17,23,0,1],[17,32,0,2],[18,23,0,2],[18,29,0,1],[19,20,0,1],[19,29,0,1],[19,35,0,1],[20,20,0,1],[20,32,0,1],[20,35,0,2],[21,19,0,2],[21,26,0,1],[22,24,0,1],[22,26,0,1],[23,17,0,2],[23,25,0,1],[23,27,0,1],[23,28,0,1],[23,30,0,1],[24,27,0,1],[24,33,0,1],[25,22,0,2],[25,28,0,2],[26,13,0,1],[26,24,0,1],[26,25,0,5],[27,23,0,1],[27,24,0,1],[27,26,0,1],[28,14,0,1],[28,15,0,1],[28,23,0,2],[28,27,0,1],[29,7,0,1],[29,11,0,1],[29,16,0,1],[29,22,0,1],[29,24,0,1],[29,25,0,1],[29,29,0,1],[30,7,0,1],[30,14,0,1],[30,17,0,3],[30,22,0,1],[30,23,0,1],[30,28,0,1],[31,4,0,1],[31,5,0,1],[31,8,0,1],[31,9,1,0],[31,15,0,1],[31,17,0,2],[31,20,0,1],[31,29,0,1],[32,1,0,1],[32,9,0,2],[32,11,0,1],[32,16,0,1],[32,20,0,2],[32,28,0,1],[33,13,0,2],[33,19,0,1],[33,20,0,2],[33,29,0,1],[33,31,0,1],[34,8,0,2],[34,18,0,1],[34,19,0,1],[34,23,0,1],[34,24,0,1],[34,25,0,1],[35,1,1,0],[35,12,0,2],[35,21,0,1],[35,24,0,1],[35,29,0,1],[35,31,0,2],[35,33,0,1],[36,4,0,1],[36,6,1,0],[36,7,1,0],[36,8,1,1],[36,11,0,1],[36,12,0,3],[36,24,0,2],[36,25,0,1],[36,33,0,1],[37,6,1,0],[37,7,1,0],[37,13,0,1],[37,21,0,1],[37,23,0,1],[37,24,0,1],[37,25,0,3],[37,26,0,4],[37,27,0,1],[37,38,0,1],[38,2,1,0],[38,16,0,4],[38,20,0,2],[38,21,0,2],[38,22,0,2],[38,23,0,1],[38,30,0,2],[39,7,0,1],[39,9,0,1],[39,18,0,1],[39,20,0,1],[39,22,0,2],[39,24,0,1],[39,25,0,2],[39,28,0,1],[40,3,1,0],[40,5,1,0],[40,9,0,1],[40,18,0,1],[40,21,1,2],[40,22,0,1],[40,25,1,0],[40,33,0,1],[41,3,0,1],[41,6,0,1],[41,8,0,1],[41,17,1,0],[41,19,0,1],[41,21,1,0],[41,28,1,0],[41,35,0,1],[42,4,0,3],[42,9,1,0],[42,12,0,1],[42,15,0,1],[42,20,0,2],[42,27,1,1],[42,30,0,2],[43,20,0,3],[43,21,1,2],[43,22,0,1],[43,26,1,0],[43,28,0,1],[43,33,0,1],[43,34,0,1],[43,35,1,0],[44,13,0,1],[44,15,2,0],[44,18,0,1],[44,23,2,0],[44,24,0,1],[44,31,1,0],[44,32,1,0],[44,34,1,0],[44,35,0,1],[45,15,0,1],[45,20,0,1],[45,23,0,2],[45,26,1,3],[45,27,1,0],[45,35,0,1],[46,15,0,2],[46,21,0,1],[46,22,0,1],[46,25,0,1],[46,26,1,0],[46,35,0,1],[47,7,0,1],[47,8,0,1],[47,12,0,1],[47,13,0,1],[47,16,1,0],[47,21,1,0],[47,25,1,0],[48,15,1,0],[48,16,0,1],[48,18,1,0],[48,21,1,1],[48,23,0,1],[48,29,0,1],[49,15,0,1],[49,17,2,1],[49,19,0,1],[49,21,0,2],[49,24,1,1],[50,20,1,0],[51,23,1,0],[52,29,2,0],[53,16,1,1],[53,18,1,0],[54,14,1,1],[54,16,1,0],[55,14,1,1],[55,22,1,0],[55,27,1,0],[55,29,2,0],[57,5,0,1],[57,15,1,0],[58,4,0,1],[58,13,0,3],[58,17,1,0],[58,18,1,0],[58,19,1,1],[59,12,0,1],[59,15,1,0],[59,18,1,0],[59,20,2,0],[60,4,0,1],[60,5,0,1],[60,19,1,0],[60,20,1,0],[61,10,0,1],[61,15,1,0],[61,18,0,1],[61,29,0,1],[63,5,0,1],[63,15,1,0],[63,16,0,1],[63,18,1,0],[63,20,1,0],[63,21,1,0],[64,17,2,0],[65,19,0,1],[65,32,1,0],[66,20,0,1],[67,3,0,1],[67,12,0,1],[68,5,0,1],[68,18,1,0],[69,10,1,0],[69,12,1,0],[71,3,1,0]],"labs":[["หนองจอก",64.11,15.86],["มีนบุรี",49.92,17.96],["ลาดกระบัง",51.7,25.2],["สายไหม",38.46,6.66],["คลองสามวา",47.57,12.6],["บางกะปิ",38.52,23.62],["ประเวศ",43.22,30.98],["จตุจักร",29.6,16.49],["บางแค",8.68,30.52],["ปทุมวัน",25.62,26.49]]}
+};
+
+</script>
+<script>
+/* การเคลื่อนไหวและปุ่มกดทั้งหมดของเว็บ
+   ตัวเลขกราฟอยู่ใน story-data.js · ข้อความอยู่ใน index.html */
+(() => {
+document.documentElement.classList.add('js');
+const S = window.STORY;
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+const txt = (s, attrs, parent) => { const t = el('text', attrs, parent); t.textContent = s; return t; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const tween = (dur, fn, delay = 0, ease = easeOut) => new Promise(res => setTimeout(() => {
+  const t0 = performance.now();
+  const step = now => { const t = Math.max(0, Math.min(1, (now - t0) / dur)); fn(ease(t)); if (t < 1) requestAnimationFrame(step); else res(); };
+  requestAnimationFrame(step);
+}, delay));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const mix = (a, b, p) => `color-mix(in oklab, ${a}, ${b} ${Math.round(p * 100)}%)`;
+const nf = n => n.toLocaleString('en-US');
+/* วันที่ของกราฟรายวัน 18 ก.ย.–14 ต.ค. */
+const DAYS = Array.from({ length: 27 }, (_, i) => i < 13 ? `${18 + i} ก.ย.` : `${i - 12} ต.ค.`);
+
+/* ทะเบียนแอนิเมชัน: element -> { arm: ตั้งสถานะเริ่ม, play: เล่นเมื่อเลื่อนถึง } */
+const A = new Map();
+const reg = (node, arm, play) => { if (node) A.set(node, { arm, play }); };
+
+/* ตัวเลขนับขึ้น และค่อยๆ เปลี่ยนสีถ้ามี data-heat */
+const fmt = (v, n) => { const d = +(n.dataset.dec || 0); return (n.dataset.pre || '') + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }) + (n.dataset.suf || ''); };
+const countUp = n => {
+  const to = +n.dataset.count, from = +(n.dataset.from || 0), heat = n.dataset.heat;
+  const dur = +(n.dataset.dur || (to > 1000 ? 1800 : 1200));
+  return tween(dur, t => {
+    const v = from + (to - from) * t, d = +(n.dataset.dec || 0);
+    n.textContent = fmt(d ? Math.round(v * 10 ** d) / 10 ** d : Math.round(v), n);
+    if (heat) n.style.color = mix(css('--bone'), css('--' + heat), t);
+  }, +(n.dataset.delay || 0)).then(() => { n.textContent = fmt(to, n); if (heat) n.style.color = ''; });
+};
+document.querySelectorAll('[data-count]').forEach(n => {
+  const arm = () => { n.textContent = fmt(+(n.dataset.from || 0), n); if (n.dataset.heat) n.style.color = css('--bone'); };
+  if ('now' in n.dataset) { if (!reduce) { arm(); countUp(n); } return; }
+  reg(n, arm, () => countUp(n));
+});
+const classAnim = n => reg(n, () => n.classList.add('armed'), () => { n.classList.remove('armed'); n.classList.add('in'); });
+document.querySelectorAll('.rise').forEach(n => { [...n.children].forEach((c, i) => c.style.setProperty('--i', i)); classAnim(n); });
+document.querySelectorAll('.sweep, .wanted, #cal').forEach(classAnim);
+document.querySelectorAll('.wanted .poster, #cal span').forEach(c => c.style.setProperty('--i', [...c.parentNode.children].indexOf(c)));
+
+/* ===== จระเข้: พิมพ์คำค้น แล้วตัวเลขวิ่งจาก 0 จนหยุดที่ 566 (แตะตัวเลขเพื่อดูอีกครั้ง) ===== */
+(() => {
+  const box = $('p-croc'), q = $('q'), n = $('n566'), st = $('qStatus'), bar = box.querySelector('.search');
+  const word = q.textContent, parts = 'Segmenter' in Intl ? [...new Intl.Segmenter('th', { granularity: 'grapheme' }).segment(word)].map(s => s.segment) : [...word];
+  const run = () => {
+    q.textContent = ''; n.textContent = '0'; n.classList.remove('landed'); n.classList.add('ticking'); st.textContent = ' '; bar.classList.add('searching');
+    let i = 0;
+    const type = () => {
+      if (i < parts.length) { q.textContent += parts[i++]; setTimeout(type, 110); return; }
+      st.textContent = 'กำลังค้นหา…';
+      setTimeout(() => {
+        bar.classList.remove('searching');
+        tween(3000, t => { const v = Math.round(566 * t); n.textContent = v; st.textContent = `พบ ${v} คำร้อง`; }, 0, t => 1 - Math.pow(1 - t, 4))
+          .then(() => { n.textContent = '566'; st.textContent = 'พบ 566 คำร้อง'; n.classList.remove('ticking'); n.classList.add('landed'); });
+      }, 500);
+    };
+    type();
+  };
+  reg(box, () => { q.textContent = ''; n.textContent = '0'; st.textContent = ' '; }, run);
+  n.title = 'แตะเพื่อดูอีกครั้ง'; n.addEventListener('click', () => { if (!reduce) run(); });
+})();
+
+/* ===== คำร้องน้ำท่วมรายวัน: แท่งค่อยๆ พุ่งขึ้น แตะแท่งเพื่อดูตัวเลข ===== */
+(() => {
+  const v = S.floodDaily;
+  const S0 = 7, E = 22, keep = [0, S0, 8, 9, E];          // S0 = 25 ก.ย. · E = 10 ต.ค.
+  const W = 900, H = 360, L = 50, B = 300, T = 60, max = 5500, bw = (W - L - 20) / v.length, top = Math.max(...v), PK = v.indexOf(top);
+  const box = $('floodBars'), head = $('h5089'), read = $('barRead'), s = el('svg', { viewBox: `0 0 ${W} ${H}` }, box);
+  const silt = css('--silt'), siren = css('--siren'), bone = css('--bone');
+  const xl = i => L + i * bw;
+  [0, 2500, 5000].forEach(t => { const y = B - t / max * (B - T); el('line', { x1: L, x2: W - 10, y1: y, y2: y, stroke: css('--line') }, s); txt(nf(t), { x: L - 8, y: y + 4, 'text-anchor': 'end' }, s); });
+  const band = el('rect', { x: xl(S0), y: 30, width: xl(E + 1) - xl(S0), height: B - 30, fill: siren, 'fill-opacity': 0.13 }, s);
+  const mk = (x, anchor, l1, l2) => {
+    const g = el('g', {}, s);
+    el('line', { x1: x, x2: x, y1: 14, y2: B, stroke: siren, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, g);
+    const dx = anchor === 'start' ? 6 : -6;
+    txt(l1, { x: x + dx, y: 18, 'text-anchor': anchor, class: 'hl', style: `fill:${siren}` }, g);
+    txt(l2, { x: x + dx, y: 36, 'text-anchor': anchor }, g);
+    g.style.transition = 'opacity 0.6s'; return g;
+  };
+  const mStart = mk(xl(S0), 'start', 'วันแรกที่น้ำท่วม · 25 ก.ย.', 'คำร้องกระโดดจาก 84 เป็น 1,883');
+  const mEnd = mk(xl(E + 1), 'end', 'ปิดช่วงน้ำท่วม · 10 ต.ค.', 'คำร้องลดเหลือ 190 ต่ำสุดหลังพีค');
+  const mid = txt('ช่วงน้ำท่วม 16 วัน', { x: (xl(S0) + xl(E + 1)) / 2 + 90, y: 80, 'text-anchor': 'middle', class: 'hl' }, s);
+  mid.style.transition = 'opacity 0.6s';
+  const opac = i => i === PK ? 1 : i > E ? 0.25 : 0.55;
+  const bars = v.map((n, i) => {
+    const h = n / max * (B - T), x = xl(i) + 4, w = bw - 8, cx = x + w / 2;
+    const r = el('rect', { x, y: B - h, width: w, height: h, rx: 2, style: `fill:${i === PK ? siren : silt};fill-opacity:${opac(i)}` }, s);
+    const lab = txt(nf(n), { x: cx, y: B - h - 8, 'text-anchor': 'middle', class: i === PK ? 'hl' : '' }, s);
+    if (!keep.includes(i)) lab.style.opacity = 0;
+    const day = txt(DAYS[i].split(' ')[0], { x: cx, y: B + 20, 'text-anchor': 'middle' }, s);
+    return { n, h, r, lab, day, i };
+  });
+  txt('ก.ย. 2569', { x: xl(0) + 4, y: B + 44 }, s);
+  txt('ต.ค.', { x: xl(13) + 4, y: B + 44 }, s);
+  el('line', { x1: xl(13), x2: xl(13), y1: B + 4, y2: B + 50, stroke: css('--line') }, s);
+
+  let running = false, sel = -1;
+  const pick = i => {
+    if (running) return;
+    if (sel >= 0) { const o = bars[sel]; o.r.style.fillOpacity = opac(sel); o.day.classList.remove('hl'); if (!keep.includes(sel)) o.lab.style.opacity = 0; }
+    sel = i; const b = bars[i];
+    b.r.style.fillOpacity = 1; b.day.classList.add('hl'); b.lab.style.opacity = 1;
+    const inFlood = i >= S0 && i <= E ? ` · วันที่ ${i - S0 + 1} ของน้ำท่วม` : i < S0 ? ' · ก่อนน้ำท่วม' : ' · หลังช่วงน้ำท่วม';
+    read.innerHTML = `<b>${DAYS[i]}</b> คำร้องเรื่องน้ำท่วม <b>${nf(b.n)}</b> เรื่อง${inFlood}`;
+  };
+  bars.forEach((b, i) => {
+    const hit = el('rect', { x: xl(i), y: 20, width: bw, height: B - 20 + 26, class: 'hit' }, s);
+    hit.addEventListener('pointerenter', () => pick(i));
+    hit.addEventListener('click', () => pick(i));
+  });
+
+  const setBand = i => band.setAttribute('width', Math.max(0, xl(Math.min(i, E) + 1) - xl(S0)));
+  const grow = (b, dur, ease) => {
+    b.day.classList.add('hl'); b.lab.style.transition = 'none'; b.lab.style.opacity = 1;
+    if (b.i >= S0 && b.i <= E) setBand(b.i);
+    return tween(dur, t => {
+      const hh = b.h * t; b.r.setAttribute('y', B - hh); b.r.setAttribute('height', hh);
+      b.lab.setAttribute('y', B - hh - 8); b.lab.textContent = nf(Math.round(b.n * t));
+      if (b.i === PK) { b.r.style.fill = mix(silt, siren, t); head.textContent = nf(Math.round(b.n * t)); head.style.color = mix(bone, siren, t); }
+    }, 0, ease).then(() => {
+      b.day.classList.remove('hl'); b.lab.style.transition = '';
+      if (!keep.includes(b.i)) b.lab.style.opacity = 0;
+      if (b.i === PK) { head.style.color = ''; b.lab.textContent = nf(top); }
+    });
+  };
+  const arm = () => {
+    bars.forEach(b => { b.r.setAttribute('y', B); b.r.setAttribute('height', 0); b.lab.style.opacity = 0; b.r.style.fillOpacity = opac(b.i); if (b.i === PK) b.r.style.fill = silt; });
+    head.textContent = '0'; head.style.color = bone; band.setAttribute('width', 0); sel = -1;
+    [mStart, mEnd, mid].forEach(g => g.style.opacity = 0);
+  };
+  const play = async () => {
+    if (running) return; arm(); running = true;
+    for (const b of bars.slice(0, S0)) { grow(b, 500, easeOut); await wait(240); }
+    await wait(600);
+    mStart.style.opacity = 1; await wait(500);
+    await grow(bars[S0], 1800, easeInOut);
+    await wait(300);
+    await grow(bars[PK], 4200, t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+    mid.style.opacity = 1; await wait(400);
+    for (const b of bars.slice(PK + 1, E + 1)) { grow(b, 800, easeOut); await wait(300); }
+    await wait(700);
+    mEnd.style.opacity = 1; await wait(600);
+    for (const b of bars.slice(E + 1)) { grow(b, 500, easeOut); await wait(200); }
+    running = false;
+  };
+  reg(box, arm, play);
+  $('barReplay').addEventListener('click', () => { if (!reduce) play(); });
+})();
+
+/* ===== จับผิดคำร้อง ===== */
+(() => {
+  const cards = [...document.querySelectorAll('.fake')], score = $('fakeScore');
+  let done = 0, right = 0;
+  cards.forEach(f => {
+    const why = f.querySelector('.fake-why'), base = why.textContent;
+    f.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      if (f.classList.contains('done')) return;
+      const ok = b.dataset.a === f.dataset.real;
+      f.classList.add('done', ok ? 'right' : 'wrong'); b.classList.add('picked');
+      f.querySelectorAll('button').forEach(x => x.setAttribute('aria-disabled', 'true'));
+      why.innerHTML = `<b>${ok ? 'ถูกต้อง' : 'ไม่ใช่นะ'}</b> · ${esc(base)}`;
+      done++; if (ok) right++;
+      if (done === cards.length) score.textContent = `จับผิดถูก ${right} จาก ${cards.length} ข้อ · ` + (right === cards.length ? 'เก่งกว่าคอมพิวเตอร์แล้ว' : 'ไม่เป็นไร คอมพิวเตอร์ก็พลาดแบบนี้เหมือนกัน');
+    }));
+  });
+})();
+
+/* ===== ทายสิ ===== */
+(() => {
+  const q = $('quiz'), msg = $('quizMsg');
+  q.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    q.classList.add('done'); q.querySelector('.ans').classList.add('win');
+    msg.innerHTML = b.classList.contains('ans')
+      ? '<b class="t-leech">ถูกต้อง!</b> ปลิงเพิ่มขึ้น 25 เท่า มากกว่างูเกือบ 15 เท่า'
+      : `คำตอบคือ <b class="t-leech">ปลิง</b> เพิ่มขึ้น 25 เท่า ส่วน${esc(b.dataset.name)}เพิ่ม ${esc(b.dataset.x)} เท่า`;
+  }));
+})();
+
+/* ===== รายเขต: ค้นหาเขตของคุณ ===== */
+const showDistrict = (() => {
+  const D = S.districts, sel = $('dSel'), card = $('dCard');
+  const max = Math.max(...D.map(r => Math.max(r[1], r[2])));
+  [...D].sort((a, b) => a[0].localeCompare(b[0], 'th')).forEach(r => { const o = document.createElement('option'); o.value = r[0]; o.textContent = 'เขต' + r[0]; sel.appendChild(o); });
+  const animals = [['leech', 'ปลิง', 3], ['snake', 'งู', 4], ['centipede', 'ตะขาบ', 5], ['rat', 'หนู/ฉี่หนู', 6]];
+  const render = name => {
+    const r = D.find(x => x[0] === name); if (!r) return;
+    const [n, b, f, , , , , st] = r;
+    const rank = 1 + D.filter(x => x[2] > f).length, srank = 1 + D.filter(x => x[7] > st).length;
+    let chip;
+    if (f > b) chip = b ? `<span class="chip up">เพิ่มขึ้น ${f / b >= 1.95 ? 'ราว ' + Math.round(f / b) : (f / b).toFixed(1)} เท่า</span>` : `<span class="chip up">จาก 0 เป็น ${f} เรื่อง</span>`;
+    else chip = f === b ? '<span class="chip flat">เท่าเดิม</span>' : '<span class="chip down">ลดลง</span>';
+    const an = animals.filter(a => r[a[2]] > 0);
+    card.innerHTML = `
+      <div class="fc-head"><h3>เขต${esc(n)}</h3>${chip}</div>
+      <div class="fc-bars">
+        <div class="fc-row"><span>ก่อนน้ำท่วม</span><div class="fc-track"><i style="background:var(--silt)" data-w="${b / max * 100}"></i></div><b>${b}</b></div>
+        <div class="fc-row"><span>ช่วงน้ำท่วม</span><div class="fc-track"><i style="background:var(--leech)" data-w="${f / max * 100}"></i></div><b>${f}</b></div>
+      </div>
+      <p class="muted">คำร้องสัตว์อันตราย นับ 16 วันเท่ากัน · ช่วงน้ำท่วมมากเป็นอันดับ ${rank} จาก 50 เขต</p>
+      ${an.length ? `<div class="fc-animals">${an.map(a => `<span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#${a[0]}"/></svg>${a[1]} <b>${r[a[2]]}</b></span>`).join('')}</div>` : '<p class="muted">ช่วงน้ำท่วมไม่มีคำร้องที่ระบุว่าเป็นงู ปลิง ตะขาบ หรือหนู</p>'}
+      <p class="fc-stand">${st > 0 ? `มีคำร้องที่บอกว่า<b>น้ำขัง 3 วันขึ้นไป ${nf(st)} เรื่อง</b> มากเป็นอันดับ ${srank} จาก 50 เขต` : 'ไม่มีคำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป'}</p>`;
+    requestAnimationFrame(() => requestAnimationFrame(() => card.querySelectorAll('.fc-track i').forEach(i => i.style.width = i.dataset.w + '%')));
+  };
+  sel.addEventListener('change', () => { render(sel.value); mark(sel.value); });
+  let mark = () => {};
+  const show = name => { sel.value = name; render(name); mark(name); };
+  show('หนองจอก');
+  return { show, onMark: fn => { mark = fn; fn(sel.value); } };
+})();
+
+/* ===== dumbbell 14 เขต: จุดช่วงน้ำท่วมวิ่งออกจากจุดก่อนน้ำท่วม แตะแถวเพื่อดูเขตนั้น ===== */
+(() => {
+  const rows = [...S.districts].sort((a, b) => b[2] - a[2] || b[1] - a[1] || a[0].localeCompare(b[0], 'th')).slice(0, 14).map(r => [r[0], r[1], r[2], r[3]]);
+  const W = 900, rh = 32, T = 50, H = T + rows.length * rh + 30, x0 = 150, x1 = 760, vmax = 35, x = v => x0 + v / vmax * (x1 - x0);
+  const box = $('dumbbell'), s = el('svg', { viewBox: `0 0 ${W} ${H}` }, box);
+  const bone = css('--bone'), red = css('--leech'), heat = d => Math.min(1, Math.max(0, d) / 26);
+  el('circle', { cx: 160, cy: 18, r: 6, fill: css('--silt'), 'fill-opacity': 0.45 }, s); txt('ก่อนน้ำท่วม', { x: 172, y: 23 }, s);
+  el('circle', { cx: 280, cy: 18, r: 7, fill: bone }, s); txt('ช่วงน้ำท่วม', { x: 292, y: 23 }, s);
+  el('circle', { cx: 400, cy: 18, r: 7, fill: red }, s); txt('ยิ่งแดง ยิ่งเพิ่มมาก', { x: 412, y: 23 }, s);
+  txt('ปลิง', { x: 850, y: 23, 'text-anchor': 'middle' }, s);
+  const parts = rows.map(([n, b, f, l], i) => {
+    const y = T + i * rh, c = mix(bone, red, heat(f - b));
+    const bg = el('rect', { x: 4, y: y - rh / 2, width: W - 8, height: rh, rx: 6, fill: css('--siren'), 'fill-opacity': 0 }, s);
+    el('line', { x1: x0, x2: x1, y1: y, y2: y, stroke: css('--line') }, s);
+    const name = txt(n, { x: x0 - 12, y: y + 5, 'text-anchor': 'end' }, s);
+    const seg = el('line', { x1: x(b), x2: x(f), y1: y, y2: y, 'stroke-width': 3, style: `stroke:${c};stroke-opacity:0.6` }, s);
+    el('circle', { cx: x(b), cy: y, r: 6, fill: css('--silt'), 'fill-opacity': 0.45 }, s);
+    const dot = el('circle', { cx: x(f), cy: y, r: 7, style: `fill:${c}` }, s);
+    const lab = txt(`${b} → ${f}`, { x: x(Math.max(b, f)) + 14, y: y + 5 }, s);
+    const lt = txt(String(l), { x: 850, y: y + 5, 'text-anchor': 'middle' }, s); if (l >= 8) lt.setAttribute('style', `fill:${red};font-weight:600`);
+    const hit = el('rect', { x: 0, y: y - rh / 2, width: W, height: rh, class: 'hit' }, s);
+    hit.addEventListener('click', () => { showDistrict.show(n); $('finder').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' }); });
+    return { n, b, f, seg, dot, lab, lt, bg, name };
+  });
+  showDistrict.onMark(sel => parts.forEach(p => { const on = p.n === sel; p.bg.setAttribute('fill-opacity', on ? 0.12 : 0); p.name.classList.toggle('hl', on); p.lab.classList.toggle('hl', on); }));
+  [0, 10, 20, 30].forEach(v => txt(String(v), { x: x(v), y: H - 6, 'text-anchor': 'middle' }, s));
+  reg(box, () => parts.forEach(p => { p.seg.setAttribute('x2', x(p.b)); p.dot.setAttribute('cx', x(p.b)); p.dot.style.fill = bone; p.seg.style.stroke = bone; p.lab.style.opacity = 0; p.lt.style.opacity = 0; }),
+    () => parts.forEach((p, i) => tween(1000, t => {
+      const xv = x(p.b) + (x(p.f) - x(p.b)) * t, c = mix(bone, red, heat(p.f - p.b) * t);
+      p.seg.setAttribute('x2', xv); p.dot.setAttribute('cx', xv); p.dot.style.fill = c; p.seg.style.stroke = c;
+    }, i * 110).then(() => { p.lab.style.opacity = 1; p.lt.style.opacity = 1; })));
+})();
+
+/* ===== Aha: เส้นวาดตัวเอง จุดพีคเด้ง แตะหรือลากเพื่อดูตัวเลขแต่ละวัน ===== */
+(() => {
+  const danger = S.lag.danger, leech = S.lag.leech;
+  const W = 900, H = 380, L = 50, R = 870, T = 60, B = 330, ymax = 40, n = danger.length;
+  const x = i => L + i * (R - L) / (n - 1), y = v => B - v / ymax * (B - T);
+  const box = $('lag'), read = $('lagRead'), s = el('svg', { viewBox: `0 0 ${W} ${H}` }, box);
+  const fi = 8, di = danger.indexOf(Math.max(...danger));
+  const band = el('rect', { x: x(10), y: T - 24, width: x(15) - x(10), height: B - T + 24, fill: css('--leech'), 'fill-opacity': 0.1 }, s);
+  const bandT = txt('วันที่ 4–9 น้ำขัง', { x: (x(10) + x(15)) / 2, y: T - 30, 'text-anchor': 'middle' }, s);
+  [0, 10, 20, 30, 40].forEach(v => { el('line', { x1: L, x2: R, y1: y(v), y2: y(v), stroke: css('--line') }, s); txt(String(v), { x: L - 8, y: y(v) + 4, 'text-anchor': 'end' }, s); });
+  el('line', { x1: x(fi), x2: x(fi), y1: 20, y2: B, stroke: css('--silt'), 'stroke-dasharray': '5 5' }, s);
+  txt('น้ำท่วมสูงสุด 26 ก.ย. · 5,089 คำร้อง', { x: x(fi) - 8, y: 24, 'text-anchor': 'end' }, s);
+  const path = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ');
+  const pl = el('path', { d: path(leech), fill: 'none', stroke: css('--leech'), 'stroke-width': 2.5 }, s);
+  const ll = txt('ปลิง', { x: x(11) + 10, y: y(11) + 4, style: `fill:${css('--leech')}` }, s);
+  const pd = el('path', { d: path(danger), fill: 'none', stroke: css('--bone'), 'stroke-width': 3.5 }, s);
+  const ring = el('circle', { cx: x(di), cy: y(danger[di]), r: 7, stroke: css('--siren'), class: 'pulse' }, s);
+  const dot = el('circle', { cx: x(di), cy: y(danger[di]), r: 7, fill: css('--siren') }, s);
+  const pk = txt(`พีค 1 ต.ค. · ${danger[di]} คำร้อง`, { x: x(di) + 12, y: y(danger[di]) - 10, class: 'hl' }, s);
+  txt('สัตว์อันตรายทั้งหมด', { x: x(0), y: y(19), class: 'hl' }, s);
+  DAYS.forEach((t, i) => { if (i % 3 === 0) txt(t, { x: x(i), y: B + 22, 'text-anchor': 'middle' }, s); });
+  /* เส้นชี้วัน */
+  const cross = el('g', { style: 'opacity:0;pointer-events:none' }, s);
+  const cl = el('line', { y1: T - 10, y2: B, stroke: css('--siren'), 'stroke-width': 1.5 }, cross);
+  const cd = el('circle', { r: 6, fill: css('--bone'), stroke: css('--night'), 'stroke-width': 2 }, cross);
+  const cle = el('circle', { r: 5, fill: css('--leech'), stroke: css('--night'), 'stroke-width': 2 }, cross);
+  const hit = el('rect', { x: L - 10, y: T - 30, width: R - L + 20, height: B - T + 40, class: 'hit', style: 'touch-action:pan-y' }, s);
+  const at = e => { const r = s.getBoundingClientRect(); const sx = (e.clientX - r.left) / r.width * W; return Math.max(0, Math.min(n - 1, Math.round((sx - L) / (R - L) * (n - 1)))); };
+  const show = i => {
+    cross.style.opacity = 1; cl.setAttribute('x1', x(i)); cl.setAttribute('x2', x(i));
+    cd.setAttribute('cx', x(i)); cd.setAttribute('cy', y(danger[i])); cle.setAttribute('cx', x(i)); cle.setAttribute('cy', y(leech[i]));
+    const ph = i < 7 ? 'ก่อนน้ำท่วม' : i <= 22 ? `วันที่ ${i - 6} ของน้ำท่วม` : 'หลังช่วงน้ำท่วม';
+    read.innerHTML = `<b>${DAYS[i]}</b> (${ph}) · สัตว์อันตราย <b>${danger[i]}</b> เรื่อง · ปลิง <b>${leech[i]}</b> เรื่อง`;
+  };
+  hit.addEventListener('pointermove', e => show(at(e)));
+  hit.addEventListener('pointerdown', e => show(at(e)));
+  const lens = [pd, pl].map(p => Math.ceil(p.getTotalLength()) + 2);
+  reg(box, () => {
+    [pd, pl].forEach((p, i) => { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i]; });
+    [dot, pk, ll, bandT].forEach(e => e.style.opacity = 0); ring.style.display = 'none'; band.setAttribute('fill-opacity', 0);
+  }, () => {
+    tween(600, t => band.setAttribute('fill-opacity', 0.1 * t)); bandT.style.opacity = 1;
+    tween(2600, t => { pd.style.strokeDashoffset = lens[0] * (1 - t); pl.style.strokeDashoffset = lens[1] * (1 - t); }, 200, easeInOut)
+      .then(() => { ll.style.opacity = 1; dot.style.opacity = 1; return tween(500, t => dot.setAttribute('r', 7 + 6 * Math.sin(Math.PI * t))); })
+      .then(() => { pk.style.opacity = 1; ring.style.display = ''; });
+  });
+})();
+
+/* ===== ช่องว่าง: นาฬิกา 30 วัน ช่องค่อยๆ ติดเมื่อคำร้องถูกปิด ที่เหลือกะพริบแดง ===== */
+(() => {
+  const days = [];
+  S.closing.bins.forEach(([lo, hi, n]) => { for (let k = 0; k < n; k++) days.push(lo + (hi - lo) * (k + 1) / n); });
+  const OPEN = S.closing.open, total = days.length + OPEN;
+  const cols = 37, gap = 24, box = $('dots');
+  const s = el('svg', { viewBox: `0 0 ${cols * gap} ${Math.ceil(total / cols) * gap}` }, box);
+  const water = css('--water'), silt = css('--silt'), safe = css('--safe');
+  const rects = [];
+  for (let k = 0; k < total; k++) rects.push(el('rect', { x: (k % cols) * gap + 3, y: Math.floor(k / cols) * gap + 3, width: gap - 6, height: gap - 6, rx: 3 }, s));
+  const setOpen = r => { r.setAttribute('class', 'open'); r.style.fill = water; r.style.fillOpacity = 1; r.setAttribute('stroke', silt); r.setAttribute('stroke-opacity', 0.5); };
+  const setClosed = (r, d) => { r.setAttribute('class', ''); r.style.fill = d <= 3 ? safe : silt; r.style.fillOpacity = d <= 3 ? 1 : 0.75; r.removeAttribute('stroke'); };
+  rects.forEach((r, k) => k < days.length ? setClosed(r, days[k]) : setOpen(r));
+  rects.slice(days.length).forEach(r => r.classList.add('alarm'));
+  const steps = [...document.querySelectorAll('#steps div')], thr = [1, 3, 7, 14, 30, 99];
+  const dayEl = $('clkDay'), cEl = $('clkClosed'), oEl = $('clkOpen');
+  reg(box, () => { rects.forEach(setOpen); $('steps').classList.add('armed'); dayEl.textContent = 'วันที่ 0 หลังแจ้ง'; cEl.textContent = 0; oEl.textContent = total; },
+    () => {
+      let k = 0; $('steps').classList.remove('armed');
+      tween(6500, t => {
+        const d = t * 33;
+        while (k < days.length && days[k] <= d) { setClosed(rects[k], days[k]); k++; }
+        steps.forEach((st, i) => st.classList.toggle('lit', d >= thr[i]));
+        dayEl.textContent = d > 30 ? 'เกิน 30 วัน' : `วันที่ ${Math.floor(d)} หลังแจ้ง`; cEl.textContent = k; oEl.textContent = total - k;
+      }, 200, t => t).then(() => {
+        dayEl.textContent = 'ณ 27 ต.ค.'; steps.forEach(st => st.classList.add('lit'));
+        rects.slice(days.length).forEach(r => r.classList.add('alarm'));
+      });
+    });
+})();
+
+/* ===== แผนที่: น้ำท่วม → น้ำขัง → สัตว์อื่น → ปลิงเด้งขึ้นทีละจุด ===== */
+(() => {
+  const M = S.map, box = $('map'), sx = 0.97;
+  const s = el('svg', { viewBox: `${-1.5 * sx} -1 ${77 * sx} 47` }, box);
+  const g1 = el('g', { class: 'g' }, s), g2 = el('g', { class: 'g g2' }, s), g3 = el('g', { class: 'g g3' }, s), g4 = el('g', {}, s), g6 = el('g', { class: 'g g6' }, s), g5 = el('g', { class: 'g g5' }, s);
+  M.runs.forEach(([yy, a, b, st]) => el('rect', { x: a * sx, y: yy, width: (b - a + 1) * sx, height: 1.02, fill: st ? 'rgba(84,150,196,0.75)' : 'rgba(147,166,165,0.28)' }, st ? g2 : g1));
+  M.pts.filter(p => p[3] > 0).forEach(([gx, gy, , o]) => el('circle', { cx: (gx + 0.5) * sx, cy: gy + 0.5, r: 0.22 + Math.sqrt(o) * 0.16, fill: css('--bone'), 'fill-opacity': 0.7 }, g3));
+  const lp = M.pts.filter(p => p[2] > 0).sort((a, b) => a[0] - b[0]);
+  lp.forEach(([gx, gy, l], i) => { const c = el('circle', { cx: (gx + 0.5) * sx, cy: gy + 0.5, r: 0.3 + Math.sqrt(l) * 0.22, fill: css('--leech'), class: 'lp' }, g4); c.style.setProperty('--i', i); });
+  [...lp].sort((a, b) => b[2] - a[2]).slice(0, 3).forEach(([gx, gy, l]) => el('circle', { cx: (gx + 0.5) * sx, cy: gy + 0.5, r: 0.3 + Math.sqrt(l) * 0.22, stroke: css('--leech'), class: 'pulse' }, g6));
+  M.labs.forEach(([nm, gx, gy]) => txt(nm, { x: gx * sx, y: gy - 0.9, 'text-anchor': 'middle', 'font-size': 1.25 }, g5));
+  classAnim(box);
+})();
+
+/* ===== ทายก่อนเฉลย: ปิดได้ภายใน 3 วันกี่เรื่องจาก 10 ===== */
+const unlockGap = (() => {
+  const inp = $('gIn'), out = $('gOut'), btn = $('gBtn'), msg = $('gMsg'), wrap = $('gHouses'), res = $('gapResult');
+  const houses = Array.from({ length: 10 }, () => { const sv = el('svg', { viewBox: '0 0 32 32' }, wrap); el('use', { href: '#i-house' }, sv); return sv; });
+  const paint = v => houses.forEach((h, i) => { h.classList.toggle('on', i < v); h.classList.remove('wait'); });
+  paint(+inp.value);
+  res.classList.add('locked');
+  inp.addEventListener('input', () => { out.textContent = `${inp.value} จาก 10`; paint(+inp.value); });
+  let open = null;
+  btn.addEventListener('click', () => {
+    const v = +inp.value; btn.disabled = true; inp.disabled = true;
+    houses.forEach((h, i) => { h.classList.toggle('on', i < 1); h.classList.toggle('wait', i >= 1); });
+    out.textContent = 'ความจริง: 1 จาก 10';
+    msg.innerHTML = v === 1 ? '<b>ทายถูก!</b> ปิดได้ภายใน 3 วันแค่ 1 ใน 10 เรื่อง'
+      : v === 0 ? 'เกือบถูก! ความจริงคือ <b>1 ใน 10</b> อีก 9 เรื่องต้องรอนานกว่า 3 วัน หรือยังไม่ได้ปิด'
+      : `คุณทายไว้ ${v} แต่ความจริงมีแค่ <b>1 ใน 10</b> อีก 9 เรื่องต้องรอนานกว่า 3 วัน หรือยังไม่ได้ปิด`;
+    res.classList.remove('locked');
+    if (open) open(res);
+  });
+  return fn => { open = fn; };
+})();
+
+/* ===== เช็กความพร้อม (จำไว้ในเครื่องของผู้อ่าน) ===== */
+(() => {
+  const btns = [...document.querySelectorAll('#ready button')], KEY = 'whoswims-ready';
+  const score = $('rScore'), bar = $('rBar'), msg = $('rMsg');
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { saved = []; }
+  const upd = () => {
+    const on = btns.map((b, i) => b.getAttribute('aria-pressed') === 'true' ? i : -1).filter(i => i >= 0), n = on.length;
+    score.textContent = `${n} / ${btns.length}`; bar.style.width = n / btns.length * 100 + '%';
+    msg.textContent = n === 0 ? 'เริ่มแตะข้อแรกได้เลย' : n <= 4 ? 'เริ่มต้นดีแล้ว ยังเหลืออีกหลายข้อ' : n <= 8 ? 'มาได้ครึ่งทางแล้ว' : n < btns.length ? 'อีกนิดเดียวจะพร้อมเต็มที่' : 'พร้อมรับน้ำเต็มที่ ชวนเพื่อนบ้านทำด้วยกัน';
+    try { localStorage.setItem(KEY, JSON.stringify(on)); } catch (e) { /* ไม่มีที่เก็บก็ใช้ได้ */ }
+  };
+  btns.forEach((b, i) => {
+    if (Array.isArray(saved) && saved.includes(i)) b.setAttribute('aria-pressed', 'true');
+    b.addEventListener('click', () => { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); upd(); });
+  });
+  upd();
+})();
+
+/* ===== คำศัพท์: แตะคำที่ขีดเส้นประเพื่อดูความหมาย ===== */
+(() => {
+  const sheet = $('sheet'), t = $('sheetT'), p = $('sheetP'), x = $('sheetX');
+  let y0 = 0, from = null;
+  const close = () => { if (sheet.hidden) return; sheet.hidden = true; if (from) from.focus({ preventScroll: true }); };
+  document.querySelectorAll('.tip').forEach(b => b.addEventListener('click', () => {
+    t.textContent = b.dataset.term || b.textContent; p.textContent = b.dataset.tip; sheet.hidden = false; y0 = scrollY; from = b; x.focus({ preventScroll: true });
+  }));
+  x.addEventListener('click', close);
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  addEventListener('scroll', () => { if (!sheet.hidden && Math.abs(scrollY - y0) > 260) { sheet.hidden = true; } }, { passive: true });
+})();
+
+/* ===== เมนูบท + ระดับน้ำ + ความแดงของทั้งหน้า + แถบความคืบหน้า ===== */
+(() => {
+  const flood = $('flood'), rust = $('rust'), heatEl = $('heat'), fill = $('gaugeFill'), day = $('gaugeDay'), root = document.documentElement, pf = document.querySelector('#prog .fill');
+  /* [id, ระดับน้ำ 0–1, วันที่ของน้ำท่วม, ความแดง 0–1] */
+  const marks = [['p-open',0,0,0],['p-surge',0.5,1,0.1],['p-croc',0.5,1,0.12],['p-fake',0.55,2,0.18],['ch2',0.6,2,0.25],['p-quiz',0.62,3,0.3],['p-wanted',0.68,4,0.45],['p-voices',0.75,5,0.6],['p-home',0.85,7,0.72],['ch3',0.9,8,0.8],['p-lag',1,9,1],['p-map',0.9,10,0.9],['p-district',0.75,12,0.8],['ch4',0.6,13,0.7],['p-gap',0.5,14,0.65],['p-asks',0.3,16,0.5],['p-ready',0.15,20,0.25],['p-end',0.06,30,0.05],['behind',0.06,30,0]]
+    .filter(m => $(m[0]));
+  const nodes = marks.map(m => $(m[0]));
+  const nav = $('chap'), now = $('chapNow'), list = $('chapList'), num = $('chapNum'), name = $('chapName');
+  const NAMES = { 1: 'คืนที่น้ำมา', 2: 'ผู้ต้องสงสัยตัวจริง', 3: 'น้ำที่ไม่ยอมไป', 4: 'ใครจะไปถึงก่อน', 5: 'เบื้องหลังข้อมูล' };
+  const chs = [...document.querySelectorAll('[data-ch]')], links = [...list.querySelectorAll('a')];
+  const topOf = n => n.getBoundingClientRect().top + scrollY;
+  let cur = 0, ticking = false;
+  const update = () => {
+    ticking = false;
+    const mid = scrollY + innerHeight * 0.5; let lvl = 0.06, dd = 0, h = 0;
+    const tops = nodes.map(topOf);
+    for (let i = 0; i < marks.length; i++) {
+      const ta = tops[i], tb = i + 1 < marks.length ? tops[i + 1] : document.documentElement.scrollHeight;
+      if (mid >= ta) {
+        const p = i + 1 < marks.length ? Math.min(1, (mid - ta) / Math.max(1, tb - ta)) : 0, a = marks[i], b = marks[i + 1] || a;
+        lvl = a[1] + (b[1] - a[1]) * p; dd = Math.round(a[2] + (b[2] - a[2]) * p); h = a[3] + (b[3] - a[3]) * p;
+      }
+    }
+    lvl = Math.max(lvl, 0.06);
+    flood.style.height = (reduce ? 6 : lvl * 38) + 'vh';
+    rust.style.opacity = (h * 0.7).toFixed(3); heatEl.style.opacity = (h * 0.55).toFixed(3);
+    root.style.setProperty('--heat', h.toFixed(3));
+    fill.style.height = (lvl * 100) + '%'; fill.style.background = mix(css('--siren'), css('--leech'), h);
+    day.textContent = dd > 16 ? 'หลังน้ำลด' : 'วันที่ ' + dd;
+    pf.style.width = (Math.min(1, scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)) * 100).toFixed(1) + '%';
+    /* บทปัจจุบัน */
+    let ch = 1; const line = scrollY + innerHeight * 0.35;
+    chs.forEach(c => { if (topOf(c) <= line) ch = +c.dataset.ch; });
+    if (ch !== cur) {
+      cur = ch; num.textContent = ch <= 4 ? `บทที่ ${ch}/4` : 'ท้ายเรื่อง'; name.textContent = NAMES[ch];
+      links.forEach((a, i) => a.setAttribute('aria-current', i + 1 === ch ? 'true' : 'false'));
+    }
+    nav.classList.toggle('show', scrollY > innerHeight * 0.6);
+  };
+  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  const setOpen = o => { list.hidden = !o; now.setAttribute('aria-expanded', String(o)); };
+  now.addEventListener('click', () => setOpen(list.hidden));
+  links.forEach(a => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('click', e => { if (!nav.contains(e.target)) setOpen(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+  addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); update();
+  document.querySelectorAll('details').forEach(d => d.addEventListener('toggle', req));
+})();
+
+/* ===== เริ่ม: ตั้งสถานะเริ่มเฉพาะส่วนที่ยังอยู่ใต้จอ แล้วเล่นเมื่อเลื่อนถึง ===== */
+if (!reduce && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); A.get(e.target).play(); } }), { threshold: 0.25, rootMargin: '0px 0px -15% 0px' });
+  const start = (n, v) => { const r = n.getBoundingClientRect(); if (r.bottom > 0) { v.arm(); if (r.top < innerHeight * 0.85) setTimeout(() => v.play(), 500); else io.observe(n); } };
+  A.forEach((v, n) => { if (!n.closest('.locked')) start(n, v); });
+  /* ส่วนที่ซ่อนไว้จนกว่าจะกดเฉลย */
+  unlockGap(box => A.forEach((v, n) => { if (box.contains(n)) start(n, v); }));
+}
+})();
+
+</script>
+</body>
+</html>
