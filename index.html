@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ใครว่ายมากับน้ำ?</title>
+<meta name="description" content="คำร้อง Traffy Fondue 94,587 เรื่องช่วงน้ำท่วมกรุงเทพฯ 2569 บอกอะไรเรื่องสัตว์อันตราย: คำร้องเรื่องปลิงเพิ่ม 25 เท่า และปิดเรื่องได้ภายใน 3 วันแค่ 1 ใน 10">
+<meta property="og:title" content="ใครว่ายมากับน้ำ?">
+<meta property="og:description" content="คำร้อง Traffy Fondue 94,587 เรื่องช่วงน้ำท่วมกรุงเทพฯ 2569 บอกอะไรเรื่องสัตว์อันตราย: คำร้องเรื่องปลิงเพิ่ม 25 เท่า และปิดเรื่องได้ภายใน 3 วันแค่ 1 ใน 10">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0D181C">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230D181C'/%3E%3Cpath d='M0 40q8-6 16 0t16 0t16 0t16 0V64H0Z' fill='%232C626B'/%3E%3Cellipse cx='32' cy='29' rx='17' ry='7.5' fill='%23D9534F'/%3E%3Ccircle cx='44' cy='27' r='1.8' fill='%23E9E3D3'/%3E%3C/svg%3E">
+<!--
+  ===== ไฟล์นี้รวม style.css, art.js, story-data.js, story.js ไว้ในไฟล์เดียวแล้ว อัปไฟล์นี้ไฟล์เดียวก็ใช้ได้ =====
+  ===== วิธีแก้เนื้อหาเว็บนี้ =====
+  • ข้อความทั้งหมดอยู่ในไฟล์นี้ แก้ได้ตรงๆ แต่ละหน้าคั่นด้วยบรรทัด  ===== ชื่อหน้า =====
+  • ตัวเลขที่วิ่งนับ (มี data-count="...") : แก้ทั้งตัวเลขที่เห็น และค่า data-count ให้ตรงกัน
+  • ตัวเลขในกราฟ รายเขต และแผนที่ : story-data.js
+  • ภาพวาด : art.js  เรียกใช้ด้วย <svg viewBox="0 0 64 64"><use href="#ชื่อภาพ"/></svg>
+  • สีและหน้าตา : style.css   • การเคลื่อนไหวและปุ่มกด : story.js
+  • เพิ่มหน้าใหม่ : คัดลอก <section class="page"> ... </section> ทั้งก้อนไปวาง แล้วตั้ง data-ch ตามบท (1–4)
+  • เกม : ทำในไฟล์ game.html (ปุ่ม "เล่นเกม" ท้ายเรื่องลิงก์ไปไฟล์นี้แล้ว)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE   : เล่าเหมือนข่าวสืบสวนตอนกลางคืน จริงจังแต่อ่านง่าย เด็กก็ตามทัน
+   IDEA    : เลื่อนผ่านคำร้องจริงทีละใบ ระดับน้ำด้านหลังขึ้นลงตามวันของน้ำท่วม
+   PICTURE : ภาพวาดบ้านกลางน้ำ สัตว์ 4 ตัว และฉาก 3 ระลอก วาดเองด้วย SVG (art.js)
+   COLOUR  : คืนสีน้ำเงินเขียวเข้ม ตัวหนังสือสีกระดูก ส้มไซเรนคือสีเด่น แดงปลิงใช้กับอันตรายเท่านั้น
+   LAYOUT  : คอลัมน์เดียว 1080px แบ่ง 4 บท ทุกบทมีจุดให้แตะเล่น */
+:root {
+  --night: #0D181C;
+  --water: #16313A;
+  --bone: #E9E3D3;
+  --silt: #9DB0AF;
+  --siren: #E8893B;
+  --leech: #D9534F;
+  --safe: #62B48D;
+  --line: rgba(233, 227, 211, 0.14);
+  --card: rgba(233, 227, 211, 0.04);
+  --font-display: "Bai Jamjuree", "Sarabun", system-ui, sans-serif;
+  --font-body: "Sarabun", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; min-width: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body { margin: 0; background: var(--night); color: var(--bone); font-family: var(--font-body); font-size: 19px; line-height: 1.75; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.25; text-wrap: balance; margin: 0; }
+p { margin: 0; max-width: 64ch; }
+a { color: var(--siren); }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid var(--siren); outline-offset: 3px; }
+button { font: inherit; }
+.num { font-variant-numeric: tabular-nums; }
+.t-siren { color: var(--siren); }
+.t-leech { color: var(--leech); }
+
+/* ฉากหลัง: ระดับน้ำ ความแดง แถบความคืบหน้า */
+#flood { position: fixed; left: 0; right: 0; bottom: 0; height: 6vh; z-index: 0; pointer-events: none; transition: height 0.25s linear; }
+#flood svg { position: absolute; top: -18px; left: 0; width: 200%; height: 20px; animation: drift 9s linear infinite; }
+#flood .body { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(38, 84, 92, 0.55), rgba(22, 49, 58, 0.85)); }
+#flood .rust { position: absolute; inset: 0; opacity: 0; background: linear-gradient(180deg, rgba(122, 64, 42, 0.6), rgba(68, 34, 28, 0.9)); }
+#heat { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0; background: radial-gradient(130% 75% at 50% 115%, rgba(217, 83, 79, 0.6), rgba(217, 83, 79, 0) 70%), radial-gradient(60% 50% at 100% 0%, rgba(217, 83, 79, 0.18), rgba(217, 83, 79, 0) 70%); }
+#gauge { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); z-index: 3; font-family: var(--font-mono); font-size: 13px; color: var(--silt); display: flex; flex-direction: column; align-items: center; gap: 6px; }
+#gauge .bar { width: 4px; height: 160px; background: var(--line); border-radius: 2px; position: relative; overflow: hidden; }
+#gauge .fill { position: absolute; left: 0; right: 0; bottom: 0; background: var(--siren); height: 0%; }
+#prog { position: fixed; top: 0; left: 0; right: 0; height: 4px; z-index: 20; pointer-events: none; background: rgba(233, 227, 211, 0.06); }
+#prog .fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--siren), var(--leech)); }
+@keyframes drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* เมนูบท */
+.chap { position: fixed; top: 12px; left: 50%; z-index: 15; transform: translate(-50%, -90px); transition: transform 0.35s ease; }
+.chap.show { transform: translate(-50%, 0); }
+.chap-now { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 6px 16px; border-radius: 40px; border: 1px solid var(--line); background: rgba(13, 24, 28, 0.9); backdrop-filter: blur(8px); color: var(--bone); font-family: var(--font-display); font-size: 16px; cursor: pointer; white-space: nowrap; }
+#chapNum { font-family: var(--font-mono); font-size: 13px; color: var(--siren); }
+#chapList { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); min-width: 250px; margin: 0; padding: 8px; list-style: none; background: #13252B; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5); }
+#chapList a { display: block; padding: 10px 14px; border-radius: 8px; color: var(--bone); text-decoration: none; font-family: var(--font-display); font-size: 17px; }
+#chapList a:hover { background: rgba(233, 227, 211, 0.07); }
+#chapList a[aria-current="true"] { color: var(--siren); }
+
+/* โครงหน้า */
+main { position: relative; z-index: 1; }
+.page { max-width: 1080px; margin: 0 auto; padding: 88px 24px; display: flex; flex-direction: column; gap: 28px; }
+.eyebrow { font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.04em; color: color-mix(in oklab, var(--siren), var(--leech) calc(var(--heat, 0) * 100%)); }
+.page h2 { font-size: clamp(30px, 4.4vw, 48px); font-weight: 700; }
+.lead { font-size: 22px; }
+.muted { color: var(--silt); }
+.note, .hint { font-size: 15.5px; color: var(--silt); }
+.chapter { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 120px 24px 24px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
+.chapter-n { font-family: var(--font-mono); font-size: 14px; color: var(--siren); }
+.chapter-t { font-size: clamp(42px, 7vw, 84px); font-weight: 700; line-height: 1.1; }
+.chapter-q { font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 3vw, 34px); line-height: 1.4; color: var(--silt); max-width: 30ch; }
+.chapter-q em { font-style: normal; color: var(--siren); }
+
+/* กล่อง "นับยังไง" พับได้ */
+.how { border: 1px solid var(--line); border-radius: 12px; padding: 0 18px; max-width: 72ch; }
+.how summary { cursor: pointer; list-style: none; padding: 12px 0; font-size: 16px; color: var(--silt); display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.how summary::-webkit-details-marker { display: none; }
+.how summary::before { content: ""; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform 0.2s; flex: none; }
+.how[open] summary::before { transform: rotate(45deg); }
+.how summary:hover { color: var(--bone); }
+.how p { padding-bottom: 16px; font-size: 16px; color: var(--silt); }
+
+/* คำที่แตะเพื่อดูความหมาย */
+.tip { color: inherit; background: none; border: 0; padding: 0; border-bottom: 2px dotted var(--siren); cursor: help; font-weight: 600; line-height: inherit; }
+.tip:hover { color: var(--siren); }
+.sheet { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 30; width: min(560px, calc(100% - 24px)); background: var(--bone); color: #1E1A14; border-radius: 16px; padding: 18px 20px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; }
+.sheet[hidden] { display: none; }
+.sheet b { font-family: var(--font-display); font-size: 19px; }
+.sheet p { grid-column: 1; font-size: 17px; line-height: 1.6; }
+.sheet button { grid-column: 2; grid-row: 1 / 3; align-self: start; min-height: 40px; padding: 6px 16px; border: 0; border-radius: 20px; background: #1E1A14; color: var(--bone); cursor: pointer; }
+
+/* ใบคำร้อง */
+.ticket { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+.ticket:has(.t-ico) { padding-right: 86px; }
+.ticket .t-ico { position: absolute; right: 14px; top: 14px; width: 62px; }
+.ticket .meta { font-family: var(--font-mono); font-size: 13.5px; color: var(--silt); display: flex; gap: 14px; flex-wrap: wrap; }
+.ticket .meta b { color: var(--siren); font-weight: 500; }
+.ticket q { font-size: 20px; quotes: "“" "”"; }
+.ticket q.loud { font-size: 27px; font-weight: 600; }
+.ticket.red { border-color: rgba(217, 83, 79, 0.55); }
+.ticket.red .meta b { color: var(--leech); }
+.ticket.ok { border-color: rgba(98, 180, 141, 0.6); }
+.ticket.ok .meta b { color: var(--safe); }
+.tickets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+/* เปิดเรื่อง */
+.hero { padding-top: 96px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+.hero-art { margin: 0; }
+.hero-art svg, .end-art svg { display: block; width: 100%; height: auto; }
+.bubble { position: relative; background: var(--bone); color: #1E1A14; border-radius: 16px; padding: 22px 24px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45); }
+.bubble::before { content: ""; position: absolute; left: -12px; top: 38%; border: 12px solid transparent; border-left: 0; border-right-color: var(--bone); }
+.bubble-meta { font-family: var(--font-mono); font-size: 13px; color: #5B544A; margin-bottom: 8px; }
+.bubble .lines { display: flex; flex-direction: column; gap: 6px; font-size: clamp(19px, 2.1vw, 23px); line-height: 1.55; }
+.bubble .t-leech { color: #B0302C; }
+.bubble .t-siren { color: #A9520F; }
+.bubble.armed .lines span { opacity: 0; }
+.bubble.go .lines span { animation: type 0.9s ease-out both; }
+.bubble.go .lines span:nth-child(2) { animation-delay: 0.7s; }
+.bubble.go .lines span:nth-child(3) { animation-delay: 1.4s; }
+.bubble.go .lines span:nth-child(4) { animation-delay: 2.1s; }
+@keyframes type { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.hero h1 { font-size: clamp(52px, 9vw, 112px); font-weight: 700; line-height: 1.05; margin-top: 8px; }
+.hero h1 em { font-style: normal; color: var(--siren); }
+.scroll-hint { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--silt); font-size: 15px; padding-top: 12px; }
+.scroll-hint svg { animation: sh-bounce 2.2s ease-in-out infinite; }
+@keyframes sh-bounce { 0%, 100% { transform: translateY(0); } 55% { transform: translateY(10px); } }
+
+/* จระเข้ */
+.search { display: flex; align-items: center; gap: 14px; background: var(--bone); color: var(--night); border-radius: 40px; padding: 12px 22px; width: fit-content; font-size: 22px; font-weight: 600; }
+.caret { width: 2px; height: 1.1em; background: var(--night); margin-left: -10px; opacity: 0; }
+.searching .caret { opacity: 1; animation: blink 0.8s steps(1) infinite; }
+#qStatus { min-height: 1.7em; font-family: var(--font-mono); }
+.big { font-family: var(--font-display); font-weight: 700; font-size: clamp(90px, 18vw, 200px); line-height: 1; color: var(--siren); }
+.croc-row { display: flex; align-items: flex-end; gap: 12px 28px; flex-wrap: wrap; }
+.croc-art { width: clamp(150px, 24vw, 260px); }
+#n566 { transition: color 0.6s; transform-origin: left bottom; cursor: pointer; }
+#n566.ticking { color: var(--bone); }
+#n566.landed { animation: land 0.45s cubic-bezier(0.3, 1.6, 0.5, 1); }
+@keyframes land { 40% { transform: scale(1.08); } }
+mark { background: var(--siren); color: var(--night); padding: 0 3px; border-radius: 3px; }
+mark.red { background: var(--leech); color: var(--bone); }
+
+/* จับผิดคำร้อง */
+.fakes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.fake { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; transition: border-color 0.3s, background 0.3s; }
+.fake q { font-size: 21px; quotes: "“" "”"; }
+.fake-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.fake-btns button { min-height: 44px; padding: 6px 18px; border-radius: 30px; border: 1px solid rgba(233, 227, 211, 0.3); background: transparent; color: var(--bone); font-family: var(--font-display); font-size: 16px; cursor: pointer; }
+.fake-btns button:hover { border-color: var(--siren); }
+.fake.done .fake-btns button { cursor: default; opacity: 0.45; }
+.fake.done .fake-btns button.picked { opacity: 1; background: rgba(233, 227, 211, 0.12); }
+.fake.right { border-color: rgba(98, 180, 141, 0.7); background: rgba(98, 180, 141, 0.07); }
+.fake.wrong { border-color: rgba(232, 137, 59, 0.7); background: rgba(232, 137, 59, 0.07); }
+.fake-why { font-size: 16.5px; color: var(--silt); }
+.fake-why b { color: var(--bone); }
+.js .fake:not(.done) .fake-why { visibility: hidden; }
+.fake-score { font-family: var(--font-display); font-size: 21px; min-height: 1.5em; }
+.funnel { display: flex; align-items: flex-end; gap: 20px 32px; flex-wrap: wrap; }
+.funnel > div { display: flex; flex-direction: column; gap: 4px; max-width: 16em; }
+.funnel .n { font-family: var(--font-display); font-weight: 700; line-height: 1; }
+.funnel-end svg { width: 130px; }
+.clean { border-top: 1px solid var(--line); padding-top: 28px; display: flex; flex-direction: column; gap: 16px; }
+.clean-t { font-size: 22px; }
+.sieve { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.sieve li { display: grid; grid-template-columns: 112px minmax(0, 1fr); align-items: baseline; gap: 18px; padding: 12px 18px; border-left: 5px solid rgba(233, 227, 211, 0.25); background: var(--card); border-radius: 0 10px 10px 0; }
+.sieve li:nth-child(2) { margin-left: 3%; }
+.sieve li:nth-child(3) { margin-left: 6%; }
+.sieve li:nth-child(4) { margin-left: 9%; }
+.sieve b { font-family: var(--font-display); font-size: 30px; text-align: right; }
+.sieve span { font-size: 17.5px; }
+.sieve li.hl { border-left-color: var(--leech); background: rgba(217, 83, 79, 0.08); }
+.sieve li.hl b { color: var(--leech); }
+
+/* กราฟ */
+.chart { width: 100%; overflow-x: auto; }
+.chart svg { display: block; width: 100%; height: auto; min-width: 560px; }
+.chart text { fill: var(--silt); font-family: var(--font-body); font-size: 13.5px; transition: opacity 0.4s; }
+.chart .hl { fill: var(--bone); font-weight: 600; }
+.chart-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.readout { font-size: 17px; color: var(--silt); min-height: 1.7em; }
+.readout b { color: var(--bone); }
+.replay { min-height: 40px; padding: 6px 16px; border-radius: 30px; border: 1px solid var(--line); background: transparent; color: var(--bone); font-family: var(--font-display); font-size: 15px; cursor: pointer; }
+.replay:hover { border-color: var(--siren); }
+.hit { fill: transparent; cursor: pointer; }
+.swipe { display: none; font-size: 15px; color: var(--silt); margin-top: -14px; }
+
+/* ทายสิ */
+.quiz { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.quiz button { color: var(--bone); background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; transition: border-color 0.2s, transform 0.2s; }
+.quiz button:hover { border-color: var(--siren); transform: translateY(-3px); }
+.quiz svg { width: 100%; max-width: 130px; }
+.quiz .nm { font-family: var(--font-display); font-size: 23px; font-weight: 600; }
+.quiz .x { font-family: var(--font-mono); font-size: 15px; color: var(--silt); visibility: hidden; }
+.quiz.done .x { visibility: visible; }
+.quiz.done button.win { border-color: var(--leech); background: rgba(217, 83, 79, 0.12); animation: quiz-pop 0.55s cubic-bezier(0.3, 1.5, 0.5, 1); }
+@keyframes quiz-pop { 35% { transform: scale(1.1); } 75% { transform: scale(0.97); } }
+.quiz-msg { font-size: 21px; min-height: 1.7em; }
+.guess-msg { min-height: 3.4em; }
+
+/* หมายจับ */
+.wanted { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.poster { width: 150px; background: #E6DCC4; color: #1E1A14; border-radius: 4px; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 2px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4); }
+.poster svg { width: 100%; }
+.poster .w { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.18em; font-size: 15px; }
+.poster .who { font-weight: 600; font-size: 18px; }
+.poster .k { display: inline-block; font-family: var(--font-display); font-weight: 700; line-height: 1.05; }
+.poster .f { font-family: var(--font-mono); font-size: 13px; }
+.poster.top { width: 230px; padding: 20px 14px; border: 5px solid var(--leech); }
+.poster.top .w { font-size: 22px; }
+.poster.top .who { font-size: 21px; }
+.poster.top .w, .poster.top .k { color: #B0302C; }
+.fact { display: flex; align-items: center; gap: 18px; border: 1px dashed rgba(217, 83, 79, 0.55); border-radius: 14px; padding: 14px 20px; background: rgba(217, 83, 79, 0.06); max-width: 760px; }
+.fact svg { width: 96px; flex: none; }
+.fact p { font-size: 18px; }
+.fact b { color: var(--leech); }
+
+/* 10 วันในบ้าน */
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 32px; align-items: start; }
+.home-left { display: flex; flex-direction: column; gap: 22px; }
+.cal { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.cal span { position: relative; font-family: var(--font-display); font-weight: 700; font-size: 20px; text-align: center; padding: 12px 0; border-radius: 8px; background: rgba(233, 227, 211, 0.05); color: var(--silt); }
+.cal span::after { content: ""; position: absolute; left: 18%; right: 18%; top: 52%; height: 2px; background: var(--leech); transform-origin: left; transition: transform 0.25s ease-out; transition-delay: calc(var(--i, 0) * 260ms); }
+.cal span:last-child { color: var(--siren); border: 2px solid var(--siren); }
+.cal span:last-child::after { display: none; }
+.cal.armed span::after { transform: scaleX(0); }
+.cal.in span:last-child { animation: glow 1.4s ease-in-out 2.6s 3; }
+@keyframes glow { 50% { box-shadow: 0 0 0 6px rgba(232, 137, 59, 0.25); background: rgba(232, 137, 59, 0.15); } }
+.letter { background: var(--bone); color: #1E1A14; border-radius: 6px; padding: 28px; font-size: 21px; line-height: 1.75; display: flex; flex-direction: column; gap: 10px; }
+.letter .meta { font-family: var(--font-mono); font-size: 13.5px; color: #5B544A; }
+
+/* Aha */
+.aha { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.3; max-width: none; }
+.aha em { font-style: normal; color: var(--siren); }
+.waves { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.wave { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 8px; background: var(--card); }
+.wave svg { width: 100%; border-radius: 10px; background: rgba(0, 0, 0, 0.18); }
+.wave h3 { font-size: 22px; }
+.wave .k { font-family: var(--font-display); font-weight: 700; font-size: 44px; line-height: 1; }
+.wave p { font-size: 17px; }
+.wave.peak { border: 2px solid var(--siren); background: rgba(232, 137, 59, 0.07); }
+.wave.peak .k { color: var(--siren); }
+.wave.ghost { border-style: dashed; }
+
+/* แผนที่ */
+.map-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-bottom: -12px; }
+.map-top b { font-family: var(--font-display); font-size: 26px; color: var(--siren); font-variant-numeric: tabular-nums; }
+.map-top span { color: var(--silt); font-size: 16px; }
+.map svg { width: 100%; height: auto; display: block; max-height: 700px; }
+.map .dist { fill: #1D2F34; transition: fill 0.35s ease; cursor: pointer; }
+.map .edge { fill: none; stroke: var(--night); stroke-width: 1.3; stroke-linejoin: round; pointer-events: none; }
+.map .lab { font-family: var(--font-display); font-weight: 600; fill: var(--bone); paint-order: stroke; stroke: var(--night); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.map .bub circle { fill: var(--leech); stroke: var(--night); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; transform: scale(0); transition: transform 0.35s ease; pointer-events: none; }
+.map .bub text { fill: #fff; font-family: var(--font-display); font-weight: 700; pointer-events: none; }
+.map .hl { fill: none; stroke: var(--bone); stroke-width: 2.5; stroke-linejoin: round; pointer-events: none; }
+.map-ctrl { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: -8px; }
+.map-ctrl input { flex: 1 1 240px; max-width: 520px; height: 44px; accent-color: var(--siren); cursor: pointer; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.heatkey { display: grid; gap: 6px; font-size: 15.5px; color: var(--silt); max-width: 560px; }
+.hk-row { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 2px; height: 14px; }
+.hk-row i { display: block; border-radius: 2px; outline: 1px solid rgba(233, 227, 211, 0.12); }
+.hk-lab { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); font-size: 13.5px; text-align: center; font-variant-numeric: tabular-nums; }
+.hk-dot { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.hk-dot svg { width: 20px; height: 20px; flex: none; }
+.legend { display: flex; gap: 10px 20px; flex-wrap: wrap; font-size: 15.5px; color: var(--silt); }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 8px; vertical-align: -1px; }
+
+/* รายเขต */
+.finder { border: 1px solid var(--line); border-radius: 16px; padding: 22px; background: var(--card); display: grid; gap: 14px; }
+.finder-q { font-family: var(--font-display); font-size: 24px; font-weight: 700; }
+.finder select { width: min(100%, 380px); min-height: 50px; padding: 8px 44px 8px 16px; font: inherit; font-size: 18px; color: var(--bone); background-color: var(--water); border: 1px solid rgba(233, 227, 211, 0.3); border-radius: 12px; appearance: none; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--bone) 50%), linear-gradient(135deg, var(--bone) 50%, transparent 50%); background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%; background-size: 6px 6px; background-repeat: no-repeat; }
+.finder-card { display: grid; gap: 16px; }
+.fc-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
+.fc-head h3 { font-size: 30px; }
+.chip { display: inline-block; font-family: var(--font-display); font-size: 16px; font-weight: 600; padding: 3px 14px; border-radius: 20px; }
+.chip.up { background: rgba(217, 83, 79, 0.2); color: #F08A86; }
+.chip.flat { background: rgba(157, 176, 175, 0.2); color: var(--silt); }
+.chip.down { background: rgba(98, 180, 141, 0.2); color: var(--safe); }
+.fc-bars { display: grid; gap: 8px; max-width: 640px; }
+.fc-row { display: grid; grid-template-columns: 8.5em minmax(0, 1fr) 3ch; align-items: center; gap: 12px; font-size: 16.5px; }
+.fc-row b { text-align: right; font-family: var(--font-display); font-size: 20px; }
+.fc-track { height: 16px; background: rgba(233, 227, 211, 0.08); border-radius: 8px; overflow: hidden; }
+.fc-track i { display: block; height: 100%; width: 0; border-radius: 8px; transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.fc-animals { display: flex; flex-wrap: wrap; gap: 10px; }
+.fc-animals span { display: inline-flex; align-items: center; gap: 8px; padding: 4px 14px 4px 6px; border: 1px solid var(--line); border-radius: 30px; font-size: 16px; }
+.fc-animals svg { width: 50px; }
+.fc-animals b { font-family: var(--font-display); font-size: 18px; }
+.fc-stand { font-size: 17px; color: var(--silt); }
+.fc-stand b { color: var(--bone); }
+
+/* ช่องว่าง: ทายก่อน */
+.guess { border: 1px solid rgba(232, 137, 59, 0.5); border-radius: 18px; padding: 24px; background: rgba(232, 137, 59, 0.05); display: grid; gap: 16px; }
+.guess-q { font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 2.8vw, 30px); line-height: 1.4; max-width: 34ch; }
+.houses { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 8px; max-width: 560px; }
+.houses svg { width: 100%; color: rgba(233, 227, 211, 0.18); transition: color 0.3s, transform 0.3s; }
+.houses svg.on { color: var(--safe); }
+.houses svg.wait { color: var(--leech); }
+.guess-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.guess-row input { width: min(100%, 420px); height: 44px; accent-color: var(--siren); cursor: pointer; }
+.guess-row output { font-family: var(--font-display); font-size: 24px; font-weight: 700; min-width: 6ch; }
+.guess-msg { font-size: 20px; min-height: 1.6em; }
+.guess-msg b { color: var(--siren); }
+.gap-result { position: relative; display: flex; flex-direction: column; gap: 28px; }
+.gap-result > :not(.gap-cover) { transition: filter 0.7s ease, opacity 0.7s ease; }
+.js .gap-result.locked > :not(.gap-cover) { filter: blur(10px); opacity: 0.3; pointer-events: none; user-select: none; }
+.gap-cover { display: none; }
+.js .gap-result.locked .gap-cover { display: flex; position: absolute; inset: 0; z-index: 2; justify-content: center; align-items: flex-start; padding-top: 48px; }
+.gap-cover span { font-family: var(--font-display); font-weight: 600; font-size: 19px; background: var(--night); border: 1px solid var(--siren); color: var(--siren); padding: 10px 22px; border-radius: 40px; }
+.clock { font-family: var(--font-mono); font-size: 15px; color: var(--silt); display: flex; gap: 22px; flex-wrap: wrap; align-items: baseline; }
+.clock b { color: var(--bone); font-size: 27px; font-family: var(--font-display); font-variant-numeric: tabular-nums; }
+.clock .open b { color: var(--leech); }
+.dots svg { width: 100%; height: auto; display: block; }
+.dots rect { transition: fill 0.35s, fill-opacity 0.35s; }
+.dots .open.alarm { animation: alarm 1.8s ease-in-out infinite; }
+@keyframes alarm { 50% { stroke: #D9534F; stroke-opacity: 1; fill: #3A1E20; } }
+.steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.steps div { border-left: 3px solid var(--line); padding-left: 12px; display: flex; flex-direction: column; transition: border-color 0.3s, background 0.3s; }
+.steps b { font-family: var(--font-display); font-size: 28px; }
+.steps small { color: var(--silt); font-size: 15px; }
+.steps.armed div { border-left-color: var(--line); }
+.steps div.lit { border-left-color: var(--siren); background: rgba(232, 137, 59, 0.06); }
+.urgent { font-size: 22px; border-left: 6px solid var(--leech); padding: 6px 0 6px 18px; max-width: 46ch; }
+.urgent > b:first-child { color: var(--leech); }
+.urgent .muted { font-size: 16px; }
+.status { display: inline-flex; align-items: center; gap: 7px; }
+.status i { width: 8px; height: 8px; border-radius: 50%; background: var(--leech); animation: blink 1.3s ease-in-out infinite; }
+.status.ok i { background: var(--safe); animation: none; }
+@keyframes blink { 50% { opacity: 0.15; } }
+
+/* ถึงผู้มีอำนาจ */
+.goal { font-family: var(--font-display); font-size: clamp(24px, 3.2vw, 34px); font-weight: 700; border-left: 6px solid var(--siren); padding: 6px 0 6px 20px; max-width: 34ch; }
+.asks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.asks li { border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 8px; background: var(--card); }
+.asks svg { width: 56px; }
+.asks h3 { font-size: 22px; }
+.asks .ev { font-size: 15.5px; color: var(--silt); }
+
+/* ถึงทุกคน: เช็กความพร้อม */
+.meter { position: sticky; top: 64px; z-index: 2; background: rgba(13, 24, 28, 0.94); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 14px; padding: 12px 18px 14px; display: grid; gap: 8px; }
+.meter-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.meter-top b { font-family: var(--font-display); font-size: 26px; }
+.meter-top span { font-size: 17px; color: var(--silt); }
+.meter-bar { height: 12px; border-radius: 6px; background: rgba(233, 227, 211, 0.1); overflow: hidden; }
+.meter-bar i { display: block; height: 100%; width: 0; border-radius: 6px; background: linear-gradient(90deg, var(--siren), var(--safe)); transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.ready { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.ready section { border-top: 4px solid var(--c); background: var(--card); border-radius: 0 0 14px 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.ready h3 { font-size: 21px; }
+.ready button { display: grid; grid-template-columns: 52px minmax(0, 1fr) 26px; align-items: center; gap: 12px; text-align: left; font-size: 16.5px; line-height: 1.5; color: var(--bone); background: rgba(233, 227, 211, 0.03); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; min-height: 68px; transition: border-color 0.2s, background 0.2s; }
+.ready button:hover { border-color: rgba(233, 227, 211, 0.4); }
+.ready button svg { width: 52px; }
+.ready button::after { content: ""; width: 24px; height: 24px; border-radius: 50%; border: 2px solid rgba(233, 227, 211, 0.35); justify-self: end; }
+.ready button[aria-pressed="true"] { border-color: var(--safe); background: rgba(98, 180, 141, 0.1); }
+.ready button[aria-pressed="true"]::after { content: "✓"; border-color: var(--safe); background: var(--safe); color: var(--night); font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+.gamecard { display: grid; grid-template-columns: 76px minmax(0, 1fr) auto; align-items: center; gap: 18px; padding: 18px 22px; border-radius: 18px; text-decoration: none; color: var(--bone); background: linear-gradient(120deg, rgba(232, 137, 59, 0.2), rgba(217, 83, 79, 0.12)); border: 1px solid rgba(232, 137, 59, 0.55); transition: transform 0.2s; }
+.gamecard:hover { transform: translateY(-3px); }
+.gamecard svg { width: 76px; }
+.gc-text b { display: block; font-family: var(--font-display); font-size: 25px; }
+.gc-text span { display: block; color: var(--silt); font-size: 17px; }
+.gc-go { font-family: var(--font-display); font-weight: 600; font-size: 18px; background: var(--siren); color: var(--night); padding: 10px 20px; border-radius: 30px; white-space: nowrap; }
+.btn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 600; font-size: 19px; color: var(--night); background: var(--siren); border: 0; border-radius: 40px; padding: 12px 28px; min-height: 48px; cursor: pointer; width: fit-content; }
+.btn:hover { filter: brightness(1.08); }
+.btn[disabled] { opacity: 0.5; cursor: default; }
+
+/* คำถามสุดท้าย */
+.end-art { margin: 0; width: min(100%, 520px); }
+.end h2 { font-size: clamp(30px, 4.8vw, 54px); }
+.end .q2 { color: var(--siren); }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.cta-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; font-family: var(--font-display); font-weight: 600; font-size: 17px; padding: 10px 22px; border-radius: 40px; border: 1px solid var(--siren); color: var(--siren); background: transparent; text-decoration: none; transition: background 0.2s; }
+.cta-btn:hover { background: rgba(232, 137, 59, 0.15); }
+.cta-btn b { font-family: var(--font-mono); font-size: 18px; color: var(--bone); }
+.cta-btn.primary { background: var(--siren); color: var(--night); }
+.cta-btn.primary:hover { filter: brightness(1.1); }
+
+/* เบื้องหลังข้อมูล */
+.behind { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 72px 24px 150px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 26px; font-size: 16px; color: var(--silt); }
+.behind h2 { color: var(--bone); font-size: 34px; }
+.pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.pipe li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.pipe svg { width: 48px; }
+.pipe b { color: var(--bone); font-family: var(--font-display); font-size: 19px; }
+.pipe p { font-size: 15.5px; line-height: 1.6; }
+.arc { font-size: 15.5px; max-width: none; }
+.arc b, .cols b { color: var(--bone); }
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.cols ul { margin: 6px 0 0; padding-left: 20px; }
+
+/* การเคลื่อนไหว: สถานะพักคือภาพสุดท้ายเสมอ .armed ใส่ด้วย JS เฉพาะส่วนที่ยังอยู่ใต้จอ แล้วเปลี่ยนเป็น .in เมื่อเลื่อนถึง */
+.heat-leech { color: var(--leech); }
+.heat-siren { color: var(--siren); }
+.sweep { background-image: linear-gradient(var(--siren), var(--siren)); background-repeat: no-repeat; background-size: 100% 0.28em; background-position: 0 92%; transition: background-size 1.1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s; }
+.sweep.red { background-image: linear-gradient(var(--leech), var(--leech)); }
+.sweep.armed { background-size: 0% 0.28em; }
+.rise > * { transition: opacity 0.6s ease-out, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: calc(var(--i, 0) * 140ms); }
+.rise.armed > * { opacity: 0; transform: translateY(28px); }
+.wanted .poster { transition: transform 0.7s cubic-bezier(0.3, 1.4, 0.5, 1), opacity 0.4s; transition-delay: calc(var(--i, 0) * 230ms); }
+.wanted.armed .poster { opacity: 0; transform: translateY(-70px) rotate(-9deg); }
+.wanted.in .poster.top .k { animation: stamp 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 1.1s both; }
+.wanted.in .poster.top { animation: shake 0.4s ease-in-out 1.45s; }
+@keyframes stamp { from { transform: scale(2.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes shake { 25% { translate: -4px 0; } 75% { translate: 4px 0; } }
+.pulse { fill: none; stroke-width: 0.25; transform-box: fill-box; transform-origin: center; animation: pulse 2s ease-out infinite; }
+.chart .pulse { stroke-width: 2; }
+@keyframes pulse { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(3.2); } }
+
+@media (max-width: 1240px) { #gauge { display: none; } }
+@media (max-width: 760px) {
+  body { font-size: 18px; }
+  .page { padding: 64px 18px; gap: 24px; }
+  .chapter { padding: 88px 18px 12px; }
+  .lead { font-size: 20px; }
+  .hero { padding-top: 64px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .bubble::before { left: 48px; top: -12px; border: 12px solid transparent; border-top: 0; border-bottom-color: var(--bone); }
+  .fakes, .tickets, .split, .waves, .asks, .ready, .cols { grid-template-columns: minmax(0, 1fr); }
+  .quiz { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .sieve li { grid-template-columns: minmax(0, 1fr); gap: 2px; margin-left: 0 !important; }
+  .sieve b { text-align: left; }
+  .poster { width: calc(50% - 8px); }
+  .poster.top { width: 100%; }
+  .poster.top svg { width: 60%; }
+  .wanted.armed .poster { transform: translateY(-50px); }
+  .gamecard { grid-template-columns: 56px minmax(0, 1fr); }
+  .gamecard svg { width: 56px; }
+  .gc-go { grid-column: 1 / -1; justify-self: start; }
+  .fc-row { grid-template-columns: 6.5em minmax(0, 1fr) 3ch; }
+  .houses { gap: 4px; }
+  .meter { top: 62px; }
+  .swipe { display: block; }
+  .map { overflow-x: auto; }
+  .map svg { min-width: 680px; }
+  .hk-lab { font-size: 12px; white-space: nowrap; }
+  .quiz-msg { min-height: 3.4em; }
+  .guess-msg { min-height: 5em; }
+}
+@media (max-width: 480px) {
+  .pipe { grid-template-columns: minmax(0, 1fr); }
+  .chap-now { font-size: 15px; padding: 6px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+</style>
+</head>
+<body>
+<div id="heat" aria-hidden="true"></div>
+<div id="flood" aria-hidden="true"><div class="body"></div><div class="rust" id="rust"></div><svg viewBox="0 0 400 20" preserveAspectRatio="none"><path d="M0 10 Q 25 0 50 10 T 100 10 T 150 10 T 200 10 T 250 10 T 300 10 T 350 10 T 400 10 V 20 H 0 Z" fill="rgba(38,84,92,0.55)"/></svg></div>
+<div id="gauge" aria-hidden="true"><span>ระดับน้ำ</span><div class="bar"><div class="fill" id="gaugeFill"></div></div><span id="gaugeDay">วันที่ 0</span></div>
+<div id="prog" aria-hidden="true"><div class="fill"></div></div>
+
+<nav class="chap" id="chap" aria-label="บทของเรื่อง">
+  <button type="button" class="chap-now" id="chapNow" aria-expanded="false" aria-controls="chapList"><span id="chapNum">บทที่ 1/4</span><b id="chapName">คืนที่น้ำมา</b><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <ol id="chapList" hidden>
+    <li><a href="#p-open">1 · คืนที่น้ำมา</a></li>
+    <li><a href="#ch2">2 · ผู้ต้องสงสัยตัวจริง</a></li>
+    <li><a href="#ch3">3 · น้ำที่ไม่ยอมไป</a></li>
+    <li><a href="#ch4">4 · ใครจะไปถึงก่อน</a></li>
+    <li><a href="#behind">เบื้องหลังข้อมูล</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ======================= บทที่ 1 · คืนที่น้ำมา ======================= -->
+
+<!-- ===== เปิดเรื่อง: ตัวละคร ===== -->
+<section class="page hero" id="p-open" data-ch="1">
+  <div class="hero-grid">
+    <figure class="hero-art"><svg viewBox="0 0 480 320" role="img" aria-label="ภาพวาดบ้านกลางน้ำท่วมตอนกลางคืน มีคนอยู่ในหน้าต่างที่เปิดไฟ ในน้ำมีงูและปลิง"><use href="#scene-night"/></svg></figure>
+    <div class="bubble">
+      <div class="bubble-meta">คำร้องจริงใน Traffy Fondue · 26 ก.ย. 2569 · 20:07 · เขตสะพานสูง</div>
+      <div class="lines">
+        <span>ผู้สูงอายุประมาณ 80 ปี อยู่บ้านเพียงลำพัง</span>
+        <span>น้ำท่วมสูง <b class="t-leech">ปลิง</b>เข้ามาในบ้าน และเกาะตามร่างกาย</span>
+        <span>ต้องตัดไฟเพื่อความปลอดภัย จึงทำอาหารไม่ได้</span>
+        <span>สิ่งที่ขอ คือ อาหาร และ<b class="t-siren">ได้ไปอยู่กับลูกสาว</b></span>
+      </div>
+    </div>
+  </div>
+  <h1>ใครว่าย<em>มากับน้ำ?</em></h1>
+  <p class="lead">คำร้องนี้เป็น 1 ใน <b class="num" data-count="94587" data-now>94,587</b> เรื่องที่คนกรุงเทพฯ ส่งเข้า <button type="button" class="tip" data-tip="แอปที่ให้ทุกคนถ่ายรูปและแจ้งปัญหาในเมืองถึงหน่วยงานได้ทันที เช่น น้ำท่วม ถนนพัง สัตว์เข้าบ้าน แต่ละเรื่องที่แจ้งเรียกว่า “คำร้อง”">Traffy Fondue</button> ช่วง 1 ก.ย.–27 ต.ค. 2569</p>
+  <p class="lead">เราค้นในคำร้องทั้งหมดเพื่อตอบ 2 คำถาม <b>ตอนน้ำท่วม สัตว์อะไรอันตรายจริงๆ</b> และ <b>ความช่วยเหลือไปถึงทันไหม</b></p>
+  <div class="scroll-hint" aria-hidden="true"><span>เลื่อนลงเพื่อเริ่มเรื่อง</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 13l7 7 7-7"/></svg></div>
+</section>
+
+<!-- ===== น้ำมา: คำร้องน้ำท่วมรายวัน ===== -->
+<section class="page" id="p-surge" data-ch="1">
+  <div class="eyebrow">25 ก.ย. 2569 · วันแรกที่น้ำมา</div>
+  <h2>ก่อนน้ำมา คนแจ้งเรื่องน้ำท่วมวันละราว 60–110 เรื่อง แต่วันที่ 26 ก.ย. พุ่งเป็น <span class="num heat-siren" id="h5089">5,089</span> เรื่อง</h2>
+  <div class="chart" id="floodBars" role="img" aria-label="คำร้องเรื่องน้ำท่วมรายวัน 18 กันยายน ถึง 14 ตุลาคม 2569 ช่วงน้ำท่วม 25 กันยายน ถึง 10 ตุลาคม สูงสุด 5,089 เรื่องวันที่ 26 กันยายน"></div>
+  <p class="swipe">ปัดกราฟไปทางซ้าย–ขวาเพื่อดูทั้งหมด</p>
+  <div class="chart-foot"><p class="readout" id="barRead" aria-live="polite">แตะแท่งกราฟเพื่อดูตัวเลขแต่ละวัน</p><button type="button" class="replay" id="barReplay">เล่นอีกครั้ง</button></div>
+  <details class="how"><summary>ช่วงน้ำท่วม 16 วัน นับยังไง</summary><p>เริ่ม 25 ก.ย. วันที่คำร้องน้ำท่วมกระโดดขึ้นจากระดับปกติ และปิดช่วง 10 ต.ค. วันที่คำร้องลดลงต่ำสุดหลังพีค ทั้งเรื่องเราเทียบ 16 วันนี้กับ 16 วันก่อนหน้า (9–24 ก.ย.) หลัง 10 ต.ค. คำร้องกลับเพิ่มขึ้นอีกช่วงสั้นๆ (855 เรื่องวันที่ 14 ต.ค.)</p></details>
+</section>
+
+<!-- ===== Hook: จระเข้ 566 ตัว? ===== -->
+<section class="page" id="p-croc" data-ch="1">
+  <p class="lead">พอน้ำท่วม สัตว์ตัวแรกที่เรานึกถึงคือ “จระเข้” ลองค้นในคำร้องดู</p>
+  <div class="search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg><span id="q">จระเข้, จรเข้</span><span class="caret" aria-hidden="true"></span></div>
+  <div class="note" id="qStatus" aria-hidden="true">พบ 566 คำร้อง</div>
+  <div class="croc-row">
+    <div class="big num" id="n566">566</div>
+    <svg class="croc-art" viewBox="0 0 140 80" aria-hidden="true"><use href="#croc"/></svg>
+  </div>
+  <h2>กรุงเทพฯ มีจระเข้ 566 ตัว?</h2>
+</section>
+
+<!-- ===== หักมุม: จับผิดคำร้อง (การเตรียมข้อมูล) ===== -->
+<section class="page" id="p-fake" data-ch="1">
+  <div class="eyebrow">หักมุม · ลองจับผิด</div>
+  <h2>คำร้องเหล่านี้พูดถึงสัตว์จริงไหม?</h2>
+  <p class="muted">คอมพิวเตอร์ค้นคำได้เร็ว แต่แยกไม่ออกว่าคำไหนคือสัตว์ ลองช่วยแยกดู</p>
+  <div class="fakes" id="fakes">
+    <div class="fake" data-real="0"><q>…รถไม่สามารถสัญ<mark>จรเข้</mark>า-ออกได้…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">“จรเข้” ซ่อนอยู่ในคำว่า สัญจรเข้า-ออก แบบนี้มีถึง 553 เรื่อง</p></div>
+    <div class="fake" data-real="0"><q><mark>หนู</mark>เป็นนักเรียน…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">“หนู” ตรงนี้คือคนที่เขียนคำร้อง เรียกตัวเองว่าหนู</p></div>
+    <div class="fake" data-real="0"><q>…สุนัข<mark>เห่า</mark>เสียงดัง…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">ระบบเห็นคำว่า “เห่า” แล้วคิดว่าเป็น “งูเห่า” แต่จริงๆ คือหมาเห่า</p></div>
+    <div class="fake" data-real="1"><q>…พบ<mark class="red">จระเข้ตาย</mark> จำนวน 1 ตัว…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">ตัวนี้จริง คำร้อง 5 ต.ค. ย่านศรีนครินทร์</p></div>
+  </div>
+  <p class="fake-score" id="fakeScore" aria-live="polite"></p>
+
+  <div class="funnel rise">
+    <div><span class="n num" data-count="566" data-delay="300" style="font-size:60px;color:var(--silt);text-decoration:line-through">566</span><small class="muted">เจอคำว่า จระเข้/จรเข้</small></div>
+    <div><span class="n num" data-count="13" data-from="566" data-delay="700" style="font-size:60px;color:var(--silt)">13</span><small class="muted">เป็นคำว่าจระเข้จริงๆ ส่วนใหญ่คือชื่อคลอง</small></div>
+    <div class="funnel-end"><svg viewBox="0 0 140 80" aria-hidden="true"><use href="#croc-x"/></svg><span class="n num heat-siren" data-count="1" data-from="13" data-delay="1100" data-heat="siren" style="font-size:112px">1</span><small class="muted">จระเข้ตัวจริง และมันตายแล้ว</small></div>
+  </div>
+
+  <div class="clean">
+    <p class="clean-t">บทเรียนจากจระเข้: <b>ข้อมูลดิบหลอกเราได้</b> เราจึงคัดคำร้องทั้งหมดใหม่ทีละขั้น</p>
+    <ol class="sieve rise">
+      <li><b class="num" data-count="94587">94,587</b><span>คำร้องทั้งหมดในกรุงเทพฯ</span></li>
+      <li><b class="num" data-count="14105">14,105</b><span>มีคำที่ดูเหมือนชื่อสัตว์</span></li>
+      <li><b class="num" data-count="4996">4,996</b><span>พูดถึงสัตว์จริง หลังตัดคำแบบ “สัญจรเข้า-ออก” “หนูเป็นนักเรียน” “หมาเห่า”</span></li>
+      <li class="hl"><b class="num" data-count="738">738</b><span>พูดถึงสัตว์ที่อันตรายต่อคน: งู ปลิง ตะขาบ แมงป่อง หนู/ฉี่หนู</span></li>
+    </ol>
+    <details class="how"><summary>เราคัดอย่างไร</summary><p>ค้นชื่อสัตว์ 17 กลุ่มด้วยคำค้น แล้วตัดคำที่ไม่ได้หมายถึงสัตว์ออก จากนั้นเลือกเฉพาะสัตว์ที่อันตรายต่อคน 5 กลุ่ม รวมถึงคำร้องที่เขียนกว้างๆ ว่า “สัตว์มีพิษ” หรือ “สัตว์เลื้อยคลาน” ตัวเลขทั้งหมดในเรื่องนี้คือจำนวนคำร้อง ไม่ใช่จำนวนสัตว์จริง และคำร้องหนึ่งเรื่องอาจพูดถึงสัตว์หลายชนิด</p></details>
+  </div>
+</section>
+
+<!-- ======================= บทที่ 2 · ผู้ต้องสงสัยตัวจริง ======================= -->
+<header class="chapter" id="ch2" data-ch="2">
+  <span class="chapter-n">บทที่ 2 / 4</span>
+  <h2 class="chapter-t">ผู้ต้องสงสัยตัวจริง</h2>
+  <p class="chapter-q">ขณะที่เราเถียงกันเรื่องจระเข้ มีบางอย่างกำลัง<em>ว่ายมากับน้ำ</em></p>
+</header>
+
+<!-- ===== ทายสิ ===== -->
+<section class="page" id="p-quiz" data-ch="2">
+  <div class="eyebrow">ทายสิ</div>
+  <h2>ช่วงน้ำท่วม คำร้องเรื่องสัตว์ตัวไหน “เพิ่มขึ้น” มากที่สุด?</h2>
+  <div class="quiz" id="quiz">
+    <button type="button" data-name="งู" data-x="1.7"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span class="nm">งู</span><span class="x">×1.7</span></button>
+    <button type="button" data-name="หนู" data-x="2.3"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><span class="nm">หนู</span><span class="x">×2.3</span></button>
+    <button type="button" data-name="ตะขาบ" data-x="4"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#centipede"/></svg><span class="nm">ตะขาบ</span><span class="x">×4</span></button>
+    <button type="button" data-name="ปลิง" data-x="25" class="ans"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><span class="nm">ปลิง</span><span class="x">×25</span></button>
+  </div>
+  <p id="quizMsg" aria-live="polite" class="quiz-msg">แตะเลือกคำตอบ</p>
+</section>
+
+<!-- ===== หมายจับ ===== -->
+<section class="page" id="p-wanted" data-ch="2">
+  <div class="eyebrow">หมายจับ · เทียบ 16 วันก่อนน้ำท่วม กับ 16 วันช่วงน้ำท่วม</div>
+  <div class="wanted">
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span class="who">งู</span><span class="k num" style="font-size:34px" data-count="1.7" data-dec="1" data-pre="×" data-delay="300">×1.7</span><span class="f num">57 → 96 เรื่อง</span></div>
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><span class="who">หนู / ฉี่หนู</span><span class="k num" style="font-size:38px" data-count="2.3" data-dec="1" data-pre="×" data-delay="500">×2.3</span><span class="f num">29 → 67 เรื่อง</span></div>
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#centipede"/></svg><span class="who">ตะขาบ</span><span class="k num" style="font-size:44px" data-count="4" data-pre="×" data-delay="700">×4</span><span class="f num">6 → 24 เรื่อง</span></div>
+    <div class="poster top"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><span class="who">ปลิงควาย</span><span class="k num" style="font-size:84px" data-count="25" data-pre="×" data-delay="1100" data-dur="900">×25</span><span class="f num">3 → 75 เรื่อง</span></div>
+  </div>
+  <p class="lead">ปกติคนกรุงเทพฯ แทบไม่เคยแจ้งเรื่องปลิง ราว 1 เรื่องต่อสัปดาห์ พอน้ำมา กลายเป็น<span class="sweep red">เกือบ 5 เรื่องทุกวัน</span></p>
+  <div class="fact"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><p><b>รู้ไหม?</b> ปลิงกัดไม่เจ็บ เพราะน้ำลายของมันมีสารชา และสารที่ทำให้เลือดไม่แข็งตัว หลายคนจึงรู้ตัวตอนเห็นเลือดไหลไม่หยุดแล้ว</p></div>
+  <details class="how"><summary>×25 คิดจากอะไร</summary><p>คำร้องที่พูดถึงปลิง 16 วันก่อนน้ำท่วมมี 3 เรื่อง ช่วงน้ำท่วม 16 วันมี 75 เรื่อง ช่วงเดียวกันคำร้องทุกประเภทเพิ่มขึ้นราว 2 เท่า สัตว์ที่เพิ่มเร็วกว่าภาพรวมมากคือปลิงและตะขาบ</p></details>
+</section>
+
+<!-- ===== เสียงจากคำร้อง ===== -->
+<section class="page" id="p-voices" data-ch="2">
+  <div class="eyebrow">เสียงจากคำร้อง</div>
+  <h2>ตัวเลขเหล่านี้คือข้อความจริง ที่คนพิมพ์ขอความช่วยเหลือ</h2>
+  <div class="tickets rise">
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><div class="meta"><b>26 ก.ย. 04:43</b><span>สะพานสูง</span></div><q>ผู้อาศัย…โดนปลิงกัดเลือดไหลไม่หยุด</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><div class="meta"><b>29 ก.ย. 18:45</b><span>สะพานสูง</span></div><q>คุณลุงข้างบ้านโดนงูกัดค่ะ ตะขาบจะถึงขาแล้วค่ะ ช่วยด้วย</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><div class="meta"><b>29 ก.ย. 23:26</b><span>มีนบุรี</span></div><q class="loud">งูอยู่ในห้องน้ำค่ะ</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><div class="meta"><b>30 ก.ย. 10:42</b><span>ลาดกระบัง</span></div><q>มีผู้ป่วยโรคฉี่หนู ต้องการยารักษาด่วน</q></div>
+  </div>
+  <p class="note">ตัดบ้านเลขที่และชื่อหมู่บ้านออก เหลือแค่เขตและเวลา</p>
+</section>
+
+<!-- ===== 10 วันในบ้าน ===== -->
+<section class="page" id="p-home" data-ch="2">
+  <div class="eyebrow">10 วันในบ้าน</div>
+  <div class="split">
+    <div class="home-left">
+      <div class="cal" id="cal" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+      <div><span class="big num heat-leech" style="font-size:72px" data-count="40" data-heat="leech">40</span><p class="muted">คำร้องเรื่องสัตว์อันตรายที่พูดถึงผู้สูงอายุในบ้าน</p></div>
+    </div>
+    <div class="letter">
+      <span class="meta">คำร้อง 15 ต.ค. · เขตสะพานสูง</span>
+      <span>“เราติดอยู่ในบ้าน 10 วัน ออกไปใช้ชีวิตภายนอกไม่ได้เพราะน้ำล้อม</span>
+      <span>เราไม่อยากพาลูกลุยน้ำไปรับ เพราะกลัวสัตว์มีพิษและโรคฉี่หนู</span>
+      <b>ได้แต่อดทนให้มันผ่านไป”</b>
+    </div>
+  </div>
+  <h2>สัตว์ไม่ได้ทำร้ายแค่ตอนกัด แต่ทำให้คน<span class="sweep red">ไม่กล้าก้าวออกจากบ้าน</span></h2>
+</section>
+
+<!-- ======================= บทที่ 3 · น้ำที่ไม่ยอมไป ======================= -->
+<header class="chapter" id="ch3" data-ch="3">
+  <span class="chapter-n">บทที่ 3 / 4</span>
+  <h2 class="chapter-t">น้ำที่ไม่ยอมไป</h2>
+  <p class="chapter-q">น้ำท่วมสูงสุดวันที่ 26 ก.ย. แต่ทำไมคำร้องเรื่องสัตว์<em>ยังไม่หยุด?</em></p>
+</header>
+
+<!-- ===== Aha: ภัยมาช้ากว่าน้ำ ===== -->
+<section class="page" id="p-lag" data-ch="3">
+  <h2>หลังน้ำท่วมสูงสุด คำร้องสัตว์อันตรายยังเพิ่มต่ออีก 5 วัน</h2>
+  <div class="chart" id="lag" role="img" aria-label="คำร้องสัตว์อันตรายรายวัน พีควันที่ 1 ตุลาคม 34 เรื่อง หลังน้ำท่วมสูงสุดวันที่ 26 กันยายน"></div>
+  <p class="swipe">ปัดกราฟไปทางซ้าย–ขวาเพื่อดูทั้งหมด</p>
+  <p class="readout" id="lagRead" aria-live="polite">แตะหรือลากนิ้วบนกราฟเพื่อดูตัวเลขแต่ละวัน</p>
+  <p class="aha">อันตรายไม่ได้มากับน้ำที่มา<br><em class="sweep red">แต่มากับน้ำที่ไม่ยอมไป</em></p>
+  <p class="lead">แปลว่าช่วงที่ต้องรีบช่วยที่สุด ไม่ใช่วันแรก แต่คือ<b>วันที่ 4–9</b> ตอนที่น้ำเริ่มขังและเน่า</p>
+  <div class="waves rise">
+    <div class="wave"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-climb"/></svg><span class="note">ระลอก 1 · วันที่ 1–3</span><h3>สัตว์หนีน้ำขึ้นบ้าน</h3><span class="k num" data-count="8" data-pre="×" data-delay="200">×8</span><p>คำร้องเรื่องตะขาบต่อวัน เทียบกับก่อนน้ำท่วม</p></div>
+    <div class="wave peak"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-stagnant"/></svg><span class="note">ระลอก 2 · วันที่ 4–9</span><h3>น้ำขัง น้ำเน่า</h3><span class="k num" data-count="45" data-pre="×" data-delay="500" data-dur="1400">×45</span><p>คำร้องเรื่องปลิงต่อวัน หนูเพิ่มราว 3 เท่า ช่วงที่คำร้องสัตว์อันตรายสูงที่สุด</p></div>
+    <div class="wave ghost"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-germ"/></svg><span class="note">ระลอก 3 · หลังน้ำลด</span><h3>อันตรายที่มองไม่เห็น</h3><span class="k">1–2 สัปดาห์</span><p>ระยะที่เชื้อ<button type="button" class="tip" data-tip="โรคเลปโตสไปโรซิส ติดจากเชื้อในฉี่หนูที่ปนอยู่ในน้ำ เข้าทางแผลหรือผิวที่แช่น้ำนาน อาการเช่น ไข้สูง ปวดน่อง ตาแดง">โรคฉี่หนู</button>ใช้กว่าจะแสดงอาการ คือตอนที่ทุกคนคิดว่าจบแล้ว</p></div>
+  </div>
+</section>
+
+<!-- ===== แผนที่น้ำขังเกิน 3 วัน × สัตว์อันตราย ===== -->
+<section class="page" id="p-map" data-ch="3">
+  <p class="lead">ถ้าน้ำขังคือต้นเหตุ ปลิงก็ควรอยู่ตรงที่น้ำขัง ลองดูบนแผนที่</p>
+  <h2>ปลิง <span class="num heat-leech" data-count="67" data-heat="leech">67</span> จาก 75 เรื่อง อยู่ในพื้นที่ที่น้ำขังเกิน 3 วัน</h2>
+  <div class="map-top"><b id="mapDay">วันที่ 16 · 10 ต.ค.</b><span>นับคำร้องสะสมตั้งแต่วันแรกที่น้ำมา</span></div>
+  <div class="map" id="map" role="img" aria-label="แผนที่ 50 เขตของกรุงเทพฯ สีของเขตคือจำนวนคำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป วงกลมแดงคือคำร้องเรื่องปลิง เขตที่น้ำขังมากที่สุดคือลาดกระบัง ประเวศ สะพานสูง หนองจอก และมีนบุรี ซึ่งเป็นเขตที่มีคำร้องเรื่องปลิงมากด้วย"></div>
+  <p class="swipe">ปัดแผนที่ไปทางซ้าย–ขวาเพื่อดูทั้งหมด</p>
+  <div class="map-ctrl">
+    <button type="button" class="replay" id="mapPlay">เล่นอีกครั้ง</button>
+    <label for="mapDayIn" class="sr">เลือกวันของน้ำท่วม</label>
+    <input type="range" id="mapDayIn" min="1" max="16" step="1" value="16">
+  </div>
+  <p class="readout" id="mapRead" aria-live="polite">แตะเขตบนแผนที่เพื่อดูตัวเลข หรือเลื่อนแถบเพื่อดูทีละวัน</p>
+  <div class="heatkey">
+    <span class="hk-t">สีของเขต = คำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป</span>
+    <span class="hk-row"><i style="background:#1D2F34"></i><i style="background:#3D3A2C"></i><i style="background:#6E4F26"></i><i style="background:#A86A2B"></i><i style="background:#DB8A3A"></i><i style="background:#F6C76E"></i></span>
+    <span class="hk-lab"><span>0</span><span>1–49</span><span>50–99</span><span>100–199</span><span>200–349</span><span>350+</span></span>
+    <span class="hk-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="#D9534F" stroke="#0D181C" stroke-width="1.5"/></svg>วงกลมแดง = คำร้องเรื่องปลิง ตัวเลขในวงคือจำนวนเรื่อง</span>
+  </div>
+  <details class="how"><summary>แผนที่นี้ทำยังไง</summary><p>ช่วงน้ำท่วม 25 ก.ย.–10 ต.ค. มีคำร้อง 3,336 เรื่องที่ระบุว่าน้ำขัง 3 วันขึ้นไป มากที่สุดที่ลาดกระบัง ประเวศ สะพานสูง หนองจอก และมีนบุรี เส้นแบ่งเขตบนแผนที่เป็นค่าประมาณ เราคำนวณจากพิกัดของคำร้องทั้ง 94,587 เรื่องที่ระบุว่าอยู่เขตไหน จึงอาจไม่ตรงกับแผนที่ทางการทุกจุด ส่วนตัวเลข 67 จาก 75 ในหัวข้อ นับละเอียดกว่ารายเขต โดยแบ่งเมืองเป็นช่องละราว 900 × 900 เมตร แล้วดูว่าคำร้องเรื่องปลิงอยู่ในช่องที่มีคนแจ้งว่าน้ำขัง 3 วันขึ้นไปหรือไม่</p></details>
+</section>
+
+<!-- ===== รายเขต + ค้นหาเขตของคุณ ===== -->
+<section class="page" id="p-district" data-ch="3">
+  <div class="eyebrow">ก่อน · ช่วงน้ำท่วม รายเขต</div>
+  <h2><span class="num" data-count="33">33</span> จาก 50 เขตเจอสัตว์อันตรายมากขึ้น หนองจอกเพิ่มมากที่สุด จาก 5 เป็น <span class="num heat-leech" data-count="31" data-from="5" data-heat="leech">31</span> เรื่อง</h2>
+  <div class="chart" id="dumbbell" role="img" aria-label="คำร้องสัตว์อันตรายก่อนและช่วงน้ำท่วม 14 เขตที่มีคำร้องมากที่สุด"></div>
+  <p class="swipe">ปัดกราฟไปทางซ้าย–ขวาเพื่อดูทั้งหมด</p>
+  <p class="hint">แตะชื่อเขตในกราฟ หรือเลือกเขตของคุณด้านล่าง</p>
+  <div class="finder" id="finder">
+    <label for="dSel" class="finder-q">เขตของคุณเป็นยังไง?</label>
+    <select id="dSel"></select>
+    <div class="finder-card" id="dCard" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ======================= บทที่ 4 · ใครจะไปถึงก่อน ======================= -->
+<header class="chapter" id="ch4" data-ch="4">
+  <span class="chapter-n">บทที่ 4 / 4</span>
+  <h2 class="chapter-t">ใครจะไปถึงก่อน</h2>
+  <p class="chapter-q">เรารู้แล้วว่าภัยมาเมื่อไหร่ และอยู่ที่ไหน คำถามต่อไปคือ<em>ความช่วยเหลือไปถึงทันไหม?</em></p>
+</header>
+
+<!-- ===== ช่องว่าง: ทายก่อน แล้วเฉลย ===== -->
+<section class="page" id="p-gap" data-ch="4">
+  <div class="guess" id="guess">
+    <p class="guess-q">ลองทายก่อน: ถ้ามีคำร้องเรื่องสัตว์อันตราย 10 เรื่อง จะมีกี่เรื่องที่ปิดได้ภายใน 3 วัน?</p>
+    <div class="houses" id="gHouses" aria-hidden="true"></div>
+    <div class="guess-row">
+      <input type="range" id="gIn" min="0" max="10" step="1" value="5" aria-label="ทายจำนวนเรื่องจาก 10 เรื่อง">
+      <output id="gOut" for="gIn">5 จาก 10</output>
+    </div>
+    <button type="button" class="btn" id="gBtn">เฉลย</button>
+    <p id="gMsg" class="guess-msg" aria-live="polite">เลื่อนแถบเพื่อทาย แล้วกดเฉลย</p>
+  </div>
+  <div class="gap-result" id="gapResult">
+    <div class="gap-cover" aria-hidden="true"><span>ทายก่อน แล้วกดเฉลยเพื่อดูคำตอบ ↑</span></div>
+    <h2>คำร้องสัตว์อันตรายช่วงน้ำท่วม <span class="num" data-count="332">332</span> เรื่อง ปิดเรื่องได้ภายใน 3 วันแค่ 1 ใน 10</h2>
+    <div class="clock" aria-live="off"><span id="clkDay">ณ 27 ต.ค.</span><span>ปิดเรื่องแล้ว <b id="clkClosed">191</b></span><span class="open">ยังไม่ปิด <b id="clkOpen">141</b></span></div>
+    <div class="dots" id="dots" role="img" aria-label="332 ช่อง แต่ละช่องคือหนึ่งคำร้อง 34 ปิดภายใน 3 วัน 157 ปิดหลัง 3 วัน 141 ยังไม่ปิด"></div>
+    <div class="legend"><span><i style="background:var(--safe)"></i>ปิดเรื่องภายใน 3 วัน · 34</span><span><i style="background:var(--silt)"></i>ปิดเรื่องหลัง 3 วัน · 157</span><span><i style="background:var(--water);outline:1px solid var(--silt)"></i>ยังไม่ปิด ณ 27 ต.ค. · 141</span></div>
+    <div class="steps" id="steps">
+      <div><b class="num">13</b><small>ภายใน 1 วัน</small></div>
+      <div><b class="num">34</b><small>ภายใน 3 วัน</small></div>
+      <div><b class="num">77</b><small>ภายใน 7 วัน</small></div>
+      <div><b class="num">119</b><small>ภายใน 14 วัน</small></div>
+      <div><b class="num">188</b><small>ภายใน 30 วัน</small></div>
+      <div><b class="num t-siren">141</b><small>ยังไม่ปิด</small></div>
+    </div>
+    <p class="urgent"><b>ทุกวันที่ช้าไป</b> มีคำร้องเรื่องสัตว์อันตรายใหม่เข้ามาราว <b class="num" data-count="21">21</b> เรื่อง <span class="muted">(332 เรื่องใน 16 วันของน้ำท่วม)</span></p>
+    <p class="lead">จำคำร้องจากบทที่ 2 ได้ไหม? นี่คือสถานะของพวกเขา ณ 27 ต.ค.</p>
+    <div class="tickets">
+      <div class="ticket red"><div class="meta"><b>26 ก.ย. 04:43</b><span class="status"><i></i>กำลังดำเนินการ</span></div><q>โดนปลิงกัดเลือดไหลไม่หยุด</q></div>
+      <div class="ticket red"><div class="meta"><b>29 ก.ย. 18:45</b><span class="status"><i></i>กำลังดำเนินการ</span></div><q>คุณลุงข้างบ้านโดนงูกัดค่ะ</q></div>
+      <div class="ticket red"><div class="meta"><b>30 ก.ย. 10:42</b><span class="status"><i></i>รอรับเรื่อง</span></div><q>มีผู้ป่วยโรคฉี่หนู ต้องการยารักษาด่วน</q></div>
+      <div class="ticket ok"><div class="meta"><b>29 ก.ย. 23:26</b><span class="status ok"><i></i>ปิดเรื่องใน 1 วัน</span></div><q>งูอยู่ในห้องน้ำค่ะ</q></div>
+    </div>
+    <p class="lead">กว่าคำร้องครึ่งหนึ่งจะปิด น้ำก็ลดไปแล้ว แต่<span class="sweep red">ปลิงกับงูไม่ได้รอใคร</span></p>
+    <details class="how"><summary>สถานะในระบบหมายถึงอะไร</summary><p>เป็นสถานะในระบบ Traffy ณ วันที่ได้ข้อมูล (27 ต.ค.) “กำลังดำเนินการ” อาจมีคนไปช่วยแล้วแต่ยังไม่ปิดเรื่อง และ “เสร็จสิ้น” คือปิดเรื่อง ไม่ได้แปลว่าแก้ปัญหาได้เสมอ</p></details>
+  </div>
+</section>
+
+<!-- ===== ถึงผู้มีอำนาจ ===== -->
+<section class="page" id="p-asks" data-ch="4">
+  <div class="eyebrow">ถึง รัฐบาล · กรุงเทพมหานคร · กรมป้องกันและบรรเทาสาธารณภัย</div>
+  <p class="goal">ทุกคำร้องสัตว์อันตรายในพื้นที่น้ำขังเกิน 3 วัน ต้องมีคนไปถึง<span class="sweep">ภายใน 72 ชั่วโมง</span></p>
+  <ol class="asks rise">
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-clock"/></svg><h3>นาฬิกา 72 ชั่วโมง</h3><p>พื้นที่ที่น้ำขังครบ 3 วัน ให้สูบน้ำ ส่งทีมจับสัตว์ และแจกบูทก่อนที่อื่น</p><span class="ev">ปลิงช่วงวันที่ 4–9 สูงกว่าปกติราว 45 เท่า และ 89% อยู่ในพื้นที่น้ำขังเกิน 3 วัน</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-elder"/></svg><h3>รู้ก่อนว่าใครอยู่ลำพัง</h3><p>ทำทะเบียนผู้สูงอายุและผู้ป่วยติดเตียงในเขตเสี่ยง แล้วเข้าถึงบ้านเหล่านี้เป็นลำดับแรก</p><span class="ev">คำร้องสัตว์อันตราย 40 เรื่องพูดถึงผู้สูงอายุในบ้าน</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-team"/></svg><h3>ให้ทุกภาคส่วนร่วมมือกันในการรับมือเรื่องร้องเรียน</h3><p>หน่วยงานรัฐ สำนักงานเขต หน่วยแพทย์ และชุมชน ร่วมกันตอบคำร้องเรื่องสัตว์อันตรายให้เร็วขึ้น โดยเฉพาะช่วงวันที่ 4–9</p><span class="ev">ปิดเรื่องได้ภายใน 3 วันเพียง 1 ใน 10</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-mega"/></svg><h3>อย่าหยุดเตือนเมื่อน้ำลด</h3><p>สื่อสารเรื่องโรคฉี่หนูต่ออีกอย่างน้อย 2 สัปดาห์หลังน้ำลด</p><span class="ev">คำร้องเรื่องฉี่หนูแทบหายไปหลัง 2 ต.ค. ทั้งที่อาการเพิ่งเริ่มแสดง</span></li>
+  </ol>
+</section>
+
+<!-- ===== ถึงทุกคน: เช็กความพร้อม ===== -->
+<section class="page" id="p-ready" data-ch="4">
+  <div class="eyebrow">ถึงคนกรุงเทพฯ ทุกคน</div>
+  <h2>บ้านคุณพร้อมรับน้ำแค่ไหน?</h2>
+  <p class="muted">ระหว่างรอความช่วยเหลือ ดูแลตัวเองและเพื่อนบ้านให้ได้ แตะข้อที่บ้านคุณทำแล้วหรือรู้วิธีแล้ว ทำด้วยกันได้ทั้งเด็กและผู้ใหญ่</p>
+  <div class="meter" aria-live="polite"><div class="meter-top"><b id="rScore">0 / 12</b><span id="rMsg">เริ่มแตะข้อแรกได้เลย</span></div><div class="meter-bar"><i id="rBar"></i></div></div>
+  <div class="ready" id="ready">
+    <section style="--c:var(--silt)"><h3>ก่อนน้ำมา</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-boots"/></svg><span>เตรียมบูท ถุงมือ เกลือ ไฟฉาย</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-toilet"/></svg><span>ปิดฝาชักโครก ใส่ตะแกรงปลายท่อห้องน้ำชั้นล่าง</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-phone"/></svg><span>เซฟเบอร์ 199 (สัตว์เข้าบ้าน) และ 1669 (เจ็บป่วยฉุกเฉิน)</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-neighbor"/></svg><span>รู้ว่าเพื่อนบ้านคนไหนอยู่ลำพัง</span></button>
+    </section>
+    <section style="--c:var(--siren)"><h3>ระหว่างน้ำท่วม</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-night"/></svg><span>ไม่ลุยน้ำตอนกลางคืน</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-bandage"/></svg><span>ปิดแผลก่อนลุย ล้างตัวทันทีหลังลุย</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-salt"/></svg><span>ปลิงเกาะ อย่ากระชาก ใช้เกลือให้หลุดเอง แล้วกดแผล</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span>งูกัด อยู่นิ่ง ดาม ห้ามขันชะเนาะ รีบไปโรงพยาบาล</span></button>
+    </section>
+    <section style="--c:var(--safe)"><h3>หลังน้ำลด</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-calendar"/></svg><span>จดไว้ว่าลุยน้ำวันไหน</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-thermo"/></svg><span>2 สัปดาห์ถัดมา ถ้ามีไข้ ปวดน่อง ตาแดง บอกหมอว่าเคยลุยน้ำ</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-pill"/></svg><span>ไม่ซื้อยาป้องกันฉี่หนูกินเอง</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-trash"/></svg><span>ระวังงูในกองขยะ และซากสัตว์ในท่อ</span></button>
+    </section>
+  </div>
+  <p class="note">ไม่รู้ว่า “ขันชะเนาะ” คืออะไร? <button type="button" class="tip" data-term="ขันชะเนาะ" data-tip="การใช้เชือกหรือผ้ารัดแน่นเหนือแผล ทำให้เลือดไปเลี้ยงไม่ได้ อาจทำให้อวัยวะเสียหาย จึงห้ามทำเมื่อถูกงูกัด">แตะดู</button></p>
+
+  <!-- ช่องเกม: ลิงก์ไป game.html -->
+  <a class="gamecard" href="game.html">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-game"/></svg>
+    <span class="gc-text"><b>เกม: เอาตัวรอด 16 วัน</b><span>ลองตัดสินใจเองว่าจะรอดจากปลิง งู และฉี่หนูได้ไหม</span></span>
+    <span class="gc-go">เล่นเกม →</span>
+  </a>
+</section>
+
+<!-- ===== คำถามสุดท้าย ===== -->
+<section class="page end" id="p-end" data-ch="4">
+  <figure class="end-art"><svg viewBox="0 0 480 320" role="img" aria-label="บ้านหลังเดิมกลางน้ำ มีปลิงเกาะผนัง และเรือกู้ภัยกำลังมุ่งหน้ามา"><use href="#scene-night"/><use href="#boat" x="14" y="198" width="112" height="56"/></svg></figure>
+  <p class="lead">ย้อนกลับไปคืนวันที่ 26 ก.ย. ผู้สูงอายุวัย 80 ปีคนนั้นขอแค่อาหาร และได้ไปอยู่กับลูกสาว</p>
+  <h2>ถึงผู้มีอำนาจ: ครั้งหน้า จะไปถึงก่อนวันที่ 4 ได้ไหม?</h2>
+  <h2 class="q2">ถึงทุกคน: ครั้งหน้า เราจะพร้อมกว่านี้ไหม?</h2>
+  <p class="lead">ครั้งหน้า ใครจะไปถึงบ้านหลังนั้นก่อน <span class="sweep red">ระหว่างปลิง หรือความช่วยเหลือ</span></p>
+  <p class="muted">94,587 คำร้อง คือ 94,587 ครั้งที่ใครสักคนขอให้มีคนได้ยิน</p>
+  <div class="cta-row">
+    <a class="cta-btn primary" href="https://www.traffy.in.th/" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>แจ้งปัญหาใน Traffy Fondue</a>
+    <a class="cta-btn" href="tel:199"><b>199</b> งูหรือสัตว์อันตรายเข้าบ้าน</a>
+    <a class="cta-btn" href="tel:1669"><b>1669</b> เจ็บป่วยฉุกเฉิน</a>
+  </div>
+</section>
+</main>
+
+<!-- ===== เบื้องหลังข้อมูล ===== -->
+<footer class="behind" id="behind" data-ch="5">
+  <h2>เบื้องหลังข้อมูล</h2>
+  <ol class="pipe">
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-q"/></svg><b>1 · คำถาม</b><p>ตอนน้ำท่วม สัตว์อะไรอันตรายจริง อยู่ที่ไหน และความช่วยเหลือไปถึงทันไหม</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-db"/></svg><b>2 · เก็บข้อมูล</b><p>คำร้อง Traffy Fondue ที่มีพิกัดในกรุงเทพฯ 94,587 เรื่อง ช่วง 1 ก.ย.–27 ต.ค. 2569</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-funnel"/></svg><b>3 · เตรียมข้อมูล</b><p>ค้นชื่อสัตว์ 17 กลุ่ม ตัดคำที่ไม่ใช่สัตว์ เหลือคำร้องสัตว์อันตราย 738 เรื่อง ตัดบ้านเลขที่และชื่อหมู่บ้านออก</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-chart"/></svg><b>4 · วิเคราะห์</b><p>เทียบ 16 วันก่อนน้ำท่วมกับ 16 วันช่วงน้ำท่วม ดูรายวันและราย 50 เขต ซ้อนกับคำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป และนับเวลาปิดเรื่อง</p></li>
+  </ol>
+  <p class="arc"><b>โครงเรื่อง</b> ตาม Narrative Model ของ Brent Dykes: Setting (บทที่ 1 คืนที่น้ำมา) → Hook (จระเข้ 566 ตัว?) → Rising Insights (บทที่ 2 ผู้ต้องสงสัยตัวจริง) → Aha (บทที่ 3 น้ำที่ไม่ยอมไป) → Solution &amp; Next Steps (บทที่ 4 ใครจะไปถึงก่อน)</p>
+  <div class="cols">
+    <div><b>ข้อควรรู้</b><ul><li>ตัวเลขคือจำนวนคำร้องที่พูดถึงสัตว์ ไม่ใช่จำนวนสัตว์จริง</li><li>เขตที่คนใช้ Traffy Fondue มาก จะมีคำร้องมากตามไปด้วย</li><li>สถานะ “เสร็จสิ้น” คือปิดเรื่องในระบบ ไม่ได้แปลว่าแก้ปัญหาได้เสมอ</li></ul></div>
+    <div><b>แหล่งอ้างอิง</b><ul>
+      <li><a href="https://www.thansettakij.com/health-wellness/664849">ฐานเศรษฐกิจ: โรคไข้ฉี่หนู ระยะฟักตัว</a></li>
+      <li><a href="https://www.bangkokbiznews.com/health/1254276">กรุงเทพธุรกิจ: สธ.เตือนโรคฉี่หนูช่วงน้ำท่วม</a></li>
+      <li><a href="https://www.thaipbs.or.th/news/content/280457">Thai PBS: 4 ข้อห้ามถูกงูกัด</a></li>
+      <li><a href="https://scotlandisland.org.au/?p=284">Scotland Island: Leeches</a></li>
+    </ul></div>
+  </div>
+</footer>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheetT" hidden>
+  <b id="sheetT"></b><p id="sheetP"></p><button type="button" id="sheetX" aria-label="ปิด">ปิด</button>
+</div>
+
+<script>
+/* ภาพวาดทั้งหมดของเว็บ วาดเองด้วย SVG (ไม่ใช้รูปจากที่อื่น)
+   วิธีใช้ในหน้าเว็บ: <svg viewBox="0 0 120 80"><use href="#snake"/></svg>
+   ขนาด viewBox ของแต่ละภาพ:
+     สัตว์ 120×80 : snake งู · rat หนู · centipede ตะขาบ · leech ปลิง
+     จระเข้ 140×80 : croc (มีชีวิต) · croc-x (ตายแล้ว)
+     ฉาก 480×320  : scene-night บ้านกลางน้ำตอนกลางคืน
+     ฉาก 160×110  : scene-climb สัตว์หนีน้ำขึ้นบ้าน · scene-stagnant น้ำขัง · scene-germ เชื้อฉี่หนู
+     ไอคอน 64×64  : i-boots i-gloves i-salt i-torch i-toilet i-phone i-neighbor i-night
+                    i-bandage i-shower i-calendar i-thermo i-pill i-trash
+                    i-clock i-elder i-team i-mega i-q i-db i-funnel i-chart i-game
+     ไอคอน 32×32  : i-house (สีตาม color ของ CSS) */
+(() => {
+  const W = '#0D181C';
+  /* ตะขาบ: ปล้องเรียงตามเส้นโค้ง */
+  const seg = [[22,47],[31,44],[40,42],[49,41],[58,42],[67,44],[76,46],[85,47],[94,46]];
+  const legs = seg.map(([x, y]) => `M${x} ${y}l-4 -13M${x} ${y}l-4 13`).join('');
+  const body = seg.map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="6.4" ry="5.6" fill="#C4532E"/><ellipse cx="${x - 1}" cy="${y - 2.2}" rx="3.2" ry="1.6" fill="#E9875F" opacity=".85"/>`).join('');
+  /* ปลิง: วงปล้อง */
+  const rings = [[30,44,59],[40,41,59],[50,39,59],[60,38,59],[70,39,59],[80,40,59],[90,42,58]]
+    .map(([x, a, b]) => `<path d="M${x} ${a}q2.6 ${(b - a) / 2} 0 ${b - a}" fill="none" stroke="#5E1E1C" stroke-width="1.6" opacity=".7"/>`).join('');
+  /* จระเข้: เกล็ดหลังและฟัน */
+  const scutes = [24,33,42,51,60,69,78].map(x => `<path d="M${x - 3.5} ${45 - (x - 24) * 0.03}l3.5 -5.5l3.5 5.5Z" fill="#3C5E38"/>`).join('');
+  const teeth = [100,105,110,115,120,125].map(x => `<path d="M${x} 51.5l2 4l2 -4Z" fill="#E9E3D3"/>`).join('');
+  const wave = (y, a = 7) => { let d = `M0 ${y}`; for (let x = 0; x < 480; x += 40) d += `Q${x + 20} ${y - a} ${x + 40} ${y}`; return d; };
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
+<defs>
+  <linearGradient id="g-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B353C"/><stop offset="1" stop-color="#0F1F24"/></linearGradient>
+  <radialGradient id="g-glow"><stop offset="0" stop-color="#F2C46B" stop-opacity=".5"/><stop offset="1" stop-color="#F2C46B" stop-opacity="0"/></radialGradient>
+  <linearGradient id="g-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C626B"/><stop offset="1" stop-color="#14343B"/></linearGradient>
+  <linearGradient id="g-murk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5E5638"/><stop offset="1" stop-color="#2E2A1C"/></linearGradient>
+  <pattern id="p-rain" width="18" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(14)"><line x1="4" y1="2" x2="4" y2="13" stroke="#93A6A5" stroke-opacity=".32" stroke-width="1.2" stroke-linecap="round"/></pattern>
+</defs>
+
+<symbol id="snake" viewBox="0 0 120 80">
+  <ellipse cx="58" cy="73" rx="44" ry="4" fill="#000" opacity=".22"/>
+  <path d="M12 62C28 76 44 50 60 57S86 72 97 47" fill="none" stroke="#6E9A4E" stroke-width="13" stroke-linecap="round"/>
+  <path d="M12 62C28 76 44 50 60 57S86 72 97 47" fill="none" stroke="#4C7037" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10"/>
+  <path d="M15 58C29 70 44 46 60 52S85 66 94 44" fill="none" stroke="#A9C978" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>
+  <ellipse cx="101" cy="40" rx="13" ry="9.5" transform="rotate(-38 101 40)" fill="#6E9A4E"/>
+  <ellipse cx="99" cy="37" rx="7" ry="3" transform="rotate(-38 99 37)" fill="#A9C978" opacity=".55"/>
+  <circle cx="104.5" cy="36.5" r="2.7" fill="${W}"/><circle cx="105.3" cy="35.7" r=".9" fill="#fff"/>
+  <path d="M110.5 32l5.5 -4.5m0 0l3.5 .2m-3.5 -.2l.8 -3.4" fill="none" stroke="#D9534F" stroke-width="1.7" stroke-linecap="round"/>
+</symbol>
+
+<symbol id="rat" viewBox="0 0 120 80">
+  <ellipse cx="62" cy="73" rx="40" ry="4" fill="#000" opacity=".22"/>
+  <path d="M33 60C16 64 6 52 14 42C18 37 24 38 22 44" fill="none" stroke="#C98C8C" stroke-width="3.2" stroke-linecap="round"/>
+  <ellipse cx="58" cy="54" rx="29" ry="17" fill="#8E9298"/>
+  <ellipse cx="60" cy="61" rx="21" ry="8" fill="#AEB2B8"/>
+  <path d="M74 44C84 34 100 38 107 48C104 54 92 58 80 58Z" fill="#8E9298"/>
+  <circle cx="79" cy="36" r="8.5" fill="#8E9298"/><circle cx="79" cy="36" r="4.8" fill="#D99A9A"/>
+  <circle cx="91" cy="44" r="2.6" fill="${W}"/><circle cx="91.8" cy="43.2" r=".9" fill="#fff"/>
+  <circle cx="106.5" cy="48.5" r="2.4" fill="#D99A9A"/>
+  <path d="M101 51l11 -2M101 52.5l11 2.5" stroke="#D4D7DB" stroke-width=".9" stroke-linecap="round"/>
+  <ellipse cx="47" cy="70" rx="6" ry="2.6" fill="#C98C8C"/><ellipse cx="72" cy="70" rx="6" ry="2.6" fill="#C98C8C"/>
+  <path d="M40 44C50 38 64 37 74 41" fill="none" stroke="#B6BAC0" stroke-width="2.4" stroke-linecap="round" opacity=".7"/>
+</symbol>
+
+<symbol id="centipede" viewBox="0 0 120 80">
+  <ellipse cx="60" cy="72" rx="44" ry="3.5" fill="#000" opacity=".2"/>
+  <path d="${legs}" stroke="#E8893B" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <path d="M17 46l-9 -5M17 49l-9 5" stroke="#E8893B" stroke-width="1.8" stroke-linecap="round"/>
+  ${body}
+  <circle cx="101" cy="45" r="7" fill="#8A3520"/>
+  <path d="M105 41Q111 33 118 32M105 49Q112 55 118 56" fill="none" stroke="#E8893B" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="103" cy="42.5" r="1.4" fill="#F2C46B"/><circle cx="103" cy="47.5" r="1.4" fill="#F2C46B"/>
+</symbol>
+
+<symbol id="leech" viewBox="0 0 120 80">
+  <ellipse cx="62" cy="71" rx="44" ry="4" fill="#000" opacity=".22"/>
+  <path d="M16 54C16 40 40 33 63 35C86 37 104 40 106 50C108 60 88 63 63 62C40 61 16 66 16 54Z" fill="#8E3330"/>
+  <path d="M26 46C44 38 72 38 98 44" fill="none" stroke="#C0574F" stroke-width="3.5" stroke-linecap="round" opacity=".75"/>
+  ${rings}
+  <ellipse cx="18" cy="55" rx="6.5" ry="8" fill="#6E2624"/>
+  <circle cx="104" cy="50" r="4.5" fill="#6E2624"/>
+  <circle cx="98" cy="45" r="1.7" fill="#E9E3D3"/><circle cx="93.5" cy="44" r="1.4" fill="#E9E3D3" opacity=".8"/>
+  <path d="M113 52C116 57 117 60 113 63C109 60 110 57 113 52Z" fill="#D9534F"/>
+</symbol>
+
+<symbol id="croc-body" viewBox="0 0 140 80">
+  <ellipse cx="70" cy="72" rx="58" ry="4" fill="#000" opacity=".22"/>
+  <path d="M44 59l-5 10h9ZM84 59l-4 10h9Z" fill="#3C5E38"/>
+  <path d="M6 50C26 47 44 42 66 43L96 44C112 44 128 46 134 50C136 53 132 56 124 57L96 58C80 60 70 63 60 62C40 61 22 56 6 50Z" fill="#4F7A4A"/>
+  <path d="M30 55C46 61 62 63 80 60L124 57" fill="none" stroke="#8DB07A" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+  ${scutes}
+  <path d="M98 51.5L130 51" stroke="#2F4A2C" stroke-width="1.2"/>
+  ${teeth}
+  <circle cx="96" cy="41" r="6.5" fill="#4F7A4A"/>
+  <circle cx="131" cy="47" r="1.2" fill="#2F4A2C"/>
+</symbol>
+<symbol id="croc" viewBox="0 0 140 80"><use href="#croc-body"/><circle cx="97" cy="40" r="2.8" fill="#F2C46B"/><circle cx="97.6" cy="40" r="1.3" fill="${W}"/></symbol>
+<symbol id="croc-x" viewBox="0 0 140 80"><use href="#croc-body"/><path d="M94 37l6 6m0 -6l-6 6" stroke="${W}" stroke-width="1.8" stroke-linecap="round"/></symbol>
+
+<symbol id="scene-night" viewBox="0 0 480 320">
+  <rect width="480" height="320" rx="20" fill="url(#g-sky)"/>
+  <circle cx="392" cy="66" r="54" fill="#E9E3D3" opacity=".05"/>
+  <circle cx="392" cy="66" r="26" fill="#E9E3D3" opacity=".92"/>
+  <circle cx="384" cy="58" r="5" fill="#C9C2B0" opacity=".6"/><circle cx="399" cy="74" r="3.5" fill="#C9C2B0" opacity=".6"/>
+  <g fill="#E9E3D3" opacity=".7"><circle cx="60" cy="40" r="1.4"/><circle cx="122" cy="26" r="1"/><circle cx="300" cy="34" r="1.2"/><circle cx="446" cy="132" r="1"/><circle cx="250" cy="58" r=".9"/></g>
+  <rect width="480" height="250" rx="20" fill="url(#p-rain)"/>
+  <path d="M0 232V196l22 -16l22 16V232ZM332 232V188l26 -18l26 18V232ZM398 232V204l18 -12l18 12V232ZM440 232V194l20 -14l20 14V232Z" fill="#162A30"/>
+  <path d="M112 150L214 84L316 150Z" fill="#1C2C31"/>
+  <path d="M112 150L214 84L316 150" fill="none" stroke="#33494F" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="128" y="148" width="172" height="104" fill="#2A3D43"/>
+  <rect x="128" y="148" width="172" height="7" fill="#21343A"/>
+  <ellipse cx="184" cy="190" rx="72" ry="56" fill="url(#g-glow)"/>
+  <rect x="158" y="168" width="52" height="44" rx="2" fill="#F2C46B"/>
+  <circle cx="181" cy="185" r="7.5" fill="#5A4426"/><path d="M168 212C168 198 194 198 194 212Z" fill="#5A4426"/>
+  <path d="M194 199q6 3 6 13" fill="none" stroke="#5A4426" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="158" y="168" width="52" height="44" rx="2" fill="none" stroke="#1C2C31" stroke-width="3"/>
+  <rect x="236" y="168" width="44" height="44" rx="2" fill="#16262B" stroke="#1C2C31" stroke-width="3"/>
+  <ellipse cx="262" cy="230" rx="8" ry="3.4" transform="rotate(-62 262 230)" fill="#A33B37"/>
+  <ellipse cx="143" cy="234" rx="7" ry="3" transform="rotate(-78 143 234)" fill="#A33B37"/>
+  <path d="${wave(238)}V300a20 20 0 0 1 -20 20H20a20 20 0 0 1 -20 -20Z" fill="url(#g-water)" opacity=".97"/>
+  <path d="${wave(238)}" fill="none" stroke="#4E929C" stroke-width="2" opacity=".7"/>
+  <g fill="#F2C46B" opacity=".35"><rect x="160" y="248" width="46" height="3" rx="1.5"/><rect x="166" y="258" width="34" height="3" rx="1.5"/><rect x="172" y="268" width="22" height="3" rx="1.5"/></g>
+  <rect x="290" y="250" width="34" height="6" rx="2" transform="rotate(-8 307 253)" fill="#4A3B2A"/>
+  <path d="M334 266C344 256 352 270 362 260S378 252 384 258" fill="none" stroke="#6E9A4E" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="388" cy="255" rx="6.5" ry="4.6" transform="rotate(-25 388 255)" fill="#6E9A4E"/><circle cx="390" cy="253" r="1.3" fill="${W}"/>
+  <g fill="#E8893B"><circle cx="70" cy="282" r="7" opacity=".18"/><circle cx="80" cy="282" r="7" opacity=".18"/><circle cx="70" cy="282" r="2.4"/><circle cx="80" cy="282" r="2.4"/><circle cx="432" cy="296" r="2"/><circle cx="440" cy="296" r="2"/></g>
+</symbol>
+
+<symbol id="scene-climb" viewBox="0 0 160 110">
+  <rect x="104" y="6" width="56" height="64" fill="#22353A"/>
+  <rect x="116" y="16" width="30" height="52" rx="2" fill="#2E4449"/><circle cx="140" cy="44" r="2" fill="#E8893B"/>
+  <path d="M28 98V88H64V78H96V68H160V98Z" fill="#3A4F55"/>
+  <path d="M28 88H64M64 78H96M96 68H160" stroke="#5A7177" stroke-width="2"/>
+  <path d="M0 92Q12 87 24 92T48 92T72 92T96 92T120 92T144 92T168 92V110H0Z" fill="url(#g-water)"/>
+  <path d="M14 88C26 54 70 36 110 48" fill="none" stroke="#E8893B" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"/>
+  <path d="M103 42l8 6l-9 4" fill="none" stroke="#E8893B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40 90C48 82 56 90 64 84S76 74 84 76" stroke="#6E9A4E" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="88" cy="74.5" rx="5.5" ry="4" transform="rotate(-20 88 74.5)" fill="#6E9A4E"/><circle cx="90" cy="73" r="1.1" fill="${W}"/>
+  <use href="#centipede" x="100" y="44" width="40" height="27"/>
+</symbol>
+
+<symbol id="scene-stagnant" viewBox="0 0 160 110">
+  <path d="M0 70C30 62 130 62 160 70V110H0Z" fill="#26352F"/>
+  <ellipse cx="78" cy="84" rx="70" ry="20" fill="url(#g-murk)"/>
+  <g fill="#7A7646" opacity=".6"><ellipse cx="40" cy="80" rx="9" ry="2"/><ellipse cx="112" cy="88" rx="11" ry="2.4"/><ellipse cx="70" cy="95" rx="7" ry="1.6"/></g>
+  <g fill="none" stroke="#A9A57E" stroke-width="1.2"><circle cx="54" cy="74" r="2.6"/><circle cx="60" cy="70" r="1.8"/><circle cx="118" cy="77" r="2.2"/></g>
+  <use href="#leech" x="44" y="62" width="62" height="41"/>
+  <circle cx="132" cy="30" r="17" fill="#E9E3D3"/><circle cx="132" cy="30" r="13" fill="#16313A"/>
+  <rect x="129" y="8" width="6" height="6" rx="1.5" fill="#E9E3D3"/>
+  <path d="M132 17A13 13 0 1 1 119 30" fill="none" stroke="#D9534F" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M132 30V22M132 30l6 4" stroke="#E9E3D3" stroke-width="2.2" stroke-linecap="round"/>
+</symbol>
+
+<symbol id="scene-germ" viewBox="0 0 160 110">
+  <path d="M0 78C40 72 120 72 160 78V110H0Z" fill="#26352F"/>
+  <ellipse cx="54" cy="92" rx="44" ry="10" fill="#1F4A52"/>
+  <use href="#rat" x="74" y="52" width="72" height="48"/>
+  <circle cx="44" cy="54" r="19" fill="#16313A" stroke="#E9E3D3" stroke-width="4"/>
+  <path d="M58 68l11 11" stroke="#E9E3D3" stroke-width="6" stroke-linecap="round"/>
+  <g fill="none" stroke="#62B48D" stroke-width="2.2" stroke-linecap="round"><path d="M33 48q3 -4 6 0t6 0"/><path d="M38 60q3 -4 6 0t6 0"/></g>
+  <g fill="#62B48D"><circle cx="50" cy="47" r="1.8"/><circle cx="34" cy="60" r="1.6"/></g>
+  <rect x="132" y="6" width="10" height="38" rx="5" fill="#E9E3D3"/>
+  <circle cx="137" cy="46" r="8" fill="#D9534F"/><rect x="135" y="13" width="4" height="32" rx="2" fill="#D9534F"/>
+</symbol>
+
+<symbol id="boat" viewBox="0 0 120 60">
+  <path d="M93 21L120 5V41Z" fill="#F2C46B" opacity=".35"/>
+  <path d="M92 34V23" stroke="#93A6A5" stroke-width="2.5" stroke-linecap="round"/><circle cx="92" cy="21" r="3.6" fill="#F2C46B"/>
+  <circle cx="42" cy="16" r="5" fill="#E9E3D3"/><path d="M36 15a6 6 0 0 1 12 0Z" fill="#E8893B"/>
+  <path d="M35 34V25c0 -3 3 -5 7 -5s7 2 7 5v9Z" fill="#F2C46B"/>
+  <path d="M52 22l14 30" stroke="#8E6A3A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M6 33H112L101 51H17Z" fill="#E8893B"/><rect x="12" y="37" width="96" height="3" fill="#F2A562"/>
+  <path d="M0 52q8 -4 16 0t16 0t16 0t16 0t16 0t16 0t16 0" fill="none" stroke="#4E929C" stroke-width="2" opacity=".8"/>
+</symbol>
+
+<symbol id="i-boots" viewBox="0 0 64 64">
+  <g transform="translate(14 -3)"><path d="M14 10h14v30c0 2 2 3 4 4l8 4c3 1.5 4 4 4 7v1H14Z" fill="#B9662A"/></g>
+  <path d="M10 10h14v30c0 2 2 3 4 4l8 4c3 1.5 4 4 4 7v1H10Z" fill="#E8893B"/>
+  <rect x="10" y="52" width="30" height="5" rx="2" fill="#8E4A1C"/><rect x="10" y="10" width="14" height="5" fill="#F2A562"/>
+</symbol>
+<symbol id="i-gloves" viewBox="0 0 64 64">
+  <path d="M20 58V36c-4 -3 -8 -8 -9 -12c-1 -3 2 -5 4 -3l6 7V12c0 -3 4 -3 4 0v14V8c0 -3 4 -3 4 0v18V10c0 -3 4 -3 4 0v16V14c0 -3 4 -3 4 0v24c0 8 -3 12 -6 14v6Z" fill="#F2C46B"/>
+  <path d="M25 26V13M29 26V11M33 26V15" stroke="#D9A447" stroke-width="1.4"/>
+  <rect x="19" y="50" width="20" height="9" rx="2" fill="#D9A447"/>
+</symbol>
+<symbol id="i-salt" viewBox="0 0 64 64">
+  <path d="M20 22h24l3 34c0 2 -1 3 -3 3H20c-2 0 -3 -1 -3 -3Z" fill="#E9E3D3"/>
+  <rect x="19" y="12" width="26" height="11" rx="3" fill="#93A6A5"/>
+  <g fill="#4E5E5D"><circle cx="26" cy="17.5" r="1.4"/><circle cx="32" cy="17.5" r="1.4"/><circle cx="38" cy="17.5" r="1.4"/></g>
+  <rect x="22" y="34" width="20" height="12" rx="2" fill="#62B48D"/>
+  <g fill="#E9E3D3"><rect x="30" y="4" width="2" height="2"/><rect x="36" y="6" width="2" height="2"/><rect x="25" y="6" width="2" height="2"/></g>
+</symbol>
+<symbol id="i-torch" viewBox="0 0 64 64">
+  <path d="M42 23L62 11V45L42 33Z" fill="#F2C46B" opacity=".45"/>
+  <rect x="6" y="22" width="25" height="12" rx="3" fill="#93A6A5"/>
+  <path d="M30 20h8l4 2v12l-4 2h-8Z" fill="#E9E3D3"/>
+  <rect x="14" y="25" width="6" height="6" rx="1.5" fill="#E8893B"/>
+</symbol>
+<symbol id="i-toilet" viewBox="0 0 64 64">
+  <rect x="16" y="6" width="22" height="18" rx="3" fill="#C9C2B0"/>
+  <path d="M10 28h36c0 10 -6 16 -14 17l2 11H20l2 -11c-7 -2 -12 -7 -12 -17Z" fill="#E9E3D3"/>
+  <rect x="8" y="24" width="40" height="7" rx="3.5" fill="#93A6A5"/>
+  <path d="M50 40h8M50 46h8M50 52h8M54 38v16" stroke="#62B48D" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-phone" viewBox="0 0 64 64">
+  <rect x="18" y="4" width="28" height="56" rx="6" fill="#93A6A5"/>
+  <rect x="21" y="10" width="22" height="40" rx="2" fill="#16313A"/>
+  <circle cx="32" cy="55" r="2.2" fill="#16313A"/>
+  <text x="32" y="27" text-anchor="middle" font-size="10" font-weight="700" fill="#E8893B" font-family="IBM Plex Mono,monospace">199</text>
+  <text x="32" y="41" text-anchor="middle" font-size="9" font-weight="700" fill="#F07A74" font-family="IBM Plex Mono,monospace">1669</text>
+</symbol>
+<symbol id="i-neighbor" viewBox="0 0 64 64">
+  <path d="M4 34L16 24L28 34V54H4Z" fill="#93A6A5"/><rect x="12" y="42" width="8" height="12" fill="#16313A"/>
+  <path d="M36 34L48 24L60 34V54H36Z" fill="#E9E3D3"/><rect x="44" y="40" width="8" height="8" fill="#F2C46B"/>
+  <path d="M32 22c-3 -5 -10 -3 -9 2c1 4 9 8 9 8s8 -4 9 -8c1 -5 -6 -7 -9 -2Z" fill="#D9534F"/>
+</symbol>
+<symbol id="i-night" viewBox="0 0 64 64">
+  <path d="M14 4a10 10 0 1 0 10 14a8 8 0 1 1 -10 -14Z" fill="#E9E3D3"/>
+  <path d="M2 54q7 -5 14 0t14 0t14 0t14 0" fill="none" stroke="#5FA0AC" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="44" cy="25" r="15" fill="#16313A" stroke="#D9534F" stroke-width="3.5"/>
+  <circle cx="45" cy="16" r="2.6" fill="#E9E3D3"/>
+  <path d="M45 19l-2 8l4 6M43 27l-4 5M44 22l-5 2M44 22l5 3" stroke="#E9E3D3" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M33.5 35.5L54.5 14.5" stroke="#D9534F" stroke-width="3.5"/>
+</symbol>
+<symbol id="i-bandage" viewBox="0 0 64 64">
+  <g transform="rotate(-35 32 32)"><rect x="6" y="22" width="52" height="20" rx="10" fill="#E8C9A0"/><rect x="22" y="22" width="20" height="20" fill="#F5E2C6"/>
+  <g fill="#C9A57A"><circle cx="12" cy="29" r="1.2"/><circle cx="12" cy="35" r="1.2"/><circle cx="17" cy="32" r="1.2"/><circle cx="47" cy="32" r="1.2"/><circle cx="52" cy="29" r="1.2"/><circle cx="52" cy="35" r="1.2"/></g></g>
+</symbol>
+<symbol id="i-shower" viewBox="0 0 64 64">
+  <path d="M14 58V16c0 -6 4 -10 10 -10h8c5 0 8 3 8 8" fill="none" stroke="#93A6A5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M30 14h20l-3 8H33Z" fill="#E9E3D3"/>
+  <g fill="#6FB3C8"><ellipse cx="35" cy="30" rx="1.8" ry="3"/><ellipse cx="42" cy="32" rx="1.8" ry="3"/><ellipse cx="49" cy="30" rx="1.8" ry="3"/><ellipse cx="38" cy="40" rx="1.8" ry="3"/><ellipse cx="46" cy="42" rx="1.8" ry="3"/><ellipse cx="42" cy="51" rx="1.8" ry="3"/></g>
+</symbol>
+<symbol id="i-calendar" viewBox="0 0 64 64">
+  <rect x="8" y="12" width="48" height="44" rx="5" fill="#E9E3D3"/>
+  <path d="M8 24V17a5 5 0 0 1 5 -5h38a5 5 0 0 1 5 5v7Z" fill="#D9534F"/>
+  <rect x="18" y="6" width="5" height="12" rx="2" fill="#93A6A5"/><rect x="41" y="6" width="5" height="12" rx="2" fill="#93A6A5"/>
+  <g fill="#C9C2B0"><rect x="15" y="30" width="7" height="6" rx="1"/><rect x="28" y="30" width="7" height="6" rx="1"/><rect x="41" y="30" width="7" height="6" rx="1"/><rect x="15" y="42" width="7" height="6" rx="1"/><rect x="41" y="42" width="7" height="6" rx="1"/></g>
+  <circle cx="31.5" cy="45" r="6" fill="none" stroke="#E8893B" stroke-width="2.6"/>
+</symbol>
+<symbol id="i-thermo" viewBox="0 0 64 64">
+  <rect x="26" y="4" width="12" height="42" rx="6" fill="#E9E3D3"/>
+  <circle cx="32" cy="50" r="10" fill="#D9534F"/><rect x="29.5" y="14" width="5" height="34" rx="2.5" fill="#D9534F"/>
+  <path d="M40 12h6M40 20h4M40 28h6M40 36h4" stroke="#93A6A5" stroke-width="2" stroke-linecap="round"/>
+  <path d="M12 22q4 -4 0 -8M19 26q4 -4 0 -8" stroke="#E8893B" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-pill" viewBox="0 0 64 64">
+  <g transform="rotate(-40 30 36)"><rect x="8" y="26" width="44" height="20" rx="10" fill="#E9E3D3"/><path d="M30 26h12a10 10 0 0 1 0 20H30Z" fill="#62B48D"/></g>
+  <circle cx="48" cy="15" r="11" fill="#D9534F"/><path d="M43 10l10 10M53 10l-10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-trash" viewBox="0 0 64 64">
+  <path d="M8 58C6 44 14 36 24 38C26 28 40 28 42 38C52 36 60 46 56 58Z" fill="#46595E"/>
+  <path d="M24 38l-2 -6l5 3M42 38l3 -6l-6 3" fill="none" stroke="#2C3B3F" stroke-width="2" stroke-linecap="round"/>
+  <path d="M30 54C30 46 38 46 40 38" stroke="#6E9A4E" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="42" cy="33" rx="6" ry="4.5" transform="rotate(-40 42 33)" fill="#6E9A4E"/><circle cx="44" cy="31.5" r="1.2" fill="${W}"/>
+  <path d="M46.5 28l3 -3m0 0l2 0m-2 0l0 -2" stroke="#D9534F" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-clock" viewBox="0 0 64 64">
+  <circle cx="32" cy="36" r="22" fill="#E9E3D3"/><circle cx="32" cy="36" r="17" fill="#16313A"/>
+  <rect x="27" y="6" width="10" height="7" rx="2" fill="#E9E3D3"/>
+  <path d="M32 19A17 17 0 0 1 49 36H32Z" fill="#E8893B" opacity=".9"/>
+  <path d="M32 36V24M32 36l8 5" stroke="#E9E3D3" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-elder" viewBox="0 0 64 64">
+  <path d="M6 30L32 8L58 30" fill="none" stroke="#93A6A5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 28V58H52V28" fill="none" stroke="#93A6A5" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="30" cy="29" r="5" fill="#E9E3D3"/>
+  <path d="M30 35c-6 0 -8 6 -8 12v9h5v-8h6v8h5v-11c0 -6 -2 -10 -8 -10Z" fill="#E8893B"/>
+  <path d="M41 41v15M41 41q0 -4 4 -4" stroke="#E9E3D3" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-team" viewBox="0 0 64 64">
+  <circle cx="15" cy="23" r="6" fill="#93A6A5"/><path d="M5 47c0 -9 4 -14 10 -14s10 5 10 14Z" fill="#93A6A5"/>
+  <circle cx="49" cy="23" r="6" fill="#62B48D"/><path d="M39 47c0 -9 4 -14 10 -14s10 5 10 14Z" fill="#62B48D"/>
+  <circle cx="32" cy="18" r="7" fill="#E9E3D3"/><path d="M20 49c0 -11 5 -17 12 -17s12 6 12 17Z" fill="#E8893B"/>
+  <path d="M8 55h48" stroke="#E9E3D3" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-mega" viewBox="0 0 64 64">
+  <path d="M10 26h10l24 -14v40l-24 -14h-10Z" fill="#E8893B"/>
+  <rect x="8" y="24" width="14" height="16" rx="3" fill="#E9E3D3"/>
+  <path d="M20 40l4 14h7l-4 -14Z" fill="#93A6A5"/>
+  <path d="M50 24q6 8 0 16M54 18q10 14 0 28" stroke="#E9E3D3" stroke-width="3" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-q" viewBox="0 0 64 64">
+  <path d="M8 10h48a4 4 0 0 1 4 4v28a4 4 0 0 1 -4 4H26l-12 10v-10H8a4 4 0 0 1 -4 -4V14a4 4 0 0 1 4 -4Z" fill="#E8893B"/>
+  <path d="M25 22c0 -5 3 -7 7 -7s7 3 7 6c0 5 -7 5 -7 10" fill="none" stroke="${W}" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="38" r="2.6" fill="${W}"/>
+</symbol>
+<symbol id="i-db" viewBox="0 0 64 64">
+  <ellipse cx="32" cy="14" rx="20" ry="7" fill="#E9E3D3"/>
+  <path d="M12 14v12c0 4 9 7 20 7s20 -3 20 -7V14c0 4 -9 7 -20 7S12 18 12 14Z" fill="#93A6A5"/>
+  <path d="M12 29v11c0 4 9 7 20 7s20 -3 20 -7V29c0 4 -9 7 -20 7S12 33 12 29Z" fill="#7E9291"/>
+  <path d="M12 43v8c0 4 9 7 20 7s20 -3 20 -7v-8c0 4 -9 7 -20 7S12 47 12 43Z" fill="#6A7D7C"/>
+</symbol>
+<symbol id="i-funnel" viewBox="0 0 64 64">
+  <g fill="#93A6A5"><circle cx="16" cy="7" r="3"/><circle cx="28" cy="4" r="3"/><circle cx="40" cy="8" r="3"/></g>
+  <circle cx="50" cy="5" r="3" fill="#E8893B"/>
+  <path d="M6 15H58L38 37V53L26 59V37Z" fill="#E9E3D3"/>
+  <path d="M51 25l7 7m0 -7l-7 7" stroke="#D9534F" stroke-width="2.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-chart" viewBox="0 0 64 64">
+  <path d="M6 56H58" stroke="#93A6A5" stroke-width="3" stroke-linecap="round"/>
+  <rect x="10" y="38" width="9" height="16" rx="2" fill="#93A6A5"/><rect x="24" y="28" width="9" height="26" rx="2" fill="#93A6A5"/><rect x="38" y="16" width="9" height="38" rx="2" fill="#E8893B"/>
+  <circle cx="46" cy="22" r="11" fill="none" stroke="#E9E3D3" stroke-width="3.5"/><path d="M54 30l7 7" stroke="#E9E3D3" stroke-width="4.5" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-game" viewBox="0 0 64 64">
+  <path d="M16 20h32c8 0 12 8 12 18c0 8 -4 12 -8 12c-4 0 -6 -4 -10 -8H22c-4 4 -6 8 -10 8c-4 0 -8 -4 -8 -12c0 -10 4 -18 12 -18Z" fill="#E9E3D3"/>
+  <path d="M18 28v10M13 33h10" stroke="#16313A" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="44" cy="30" r="3" fill="#E8893B"/><circle cx="50" cy="36" r="3" fill="#D9534F"/>
+</symbol>
+<symbol id="i-house" viewBox="0 0 32 32">
+  <path d="M4 15L16 5L28 15V28H4Z" fill="currentColor"/><rect x="13" y="19" width="6" height="9" fill="${W}" opacity=".35"/>
+</symbol>
+</svg>`;
+  document.body.insertAdjacentHTML('afterbegin', svg);
+})();
+
+</script>
+<script>
+/* ตัวเลขทั้งหมดที่ใช้วาดกราฟ แก้ที่นี่แล้วกราฟจะเปลี่ยนตาม
+   แหล่งข้อมูล: คำร้อง Traffy Fondue ที่มีพิกัดในกรุงเทพฯ 1 ก.ย.–27 ต.ค. 2569 (94,587 เรื่อง)
+   ช่วงก่อนน้ำท่วม = 9–24 ก.ย. (16 วัน) · ช่วงน้ำท่วม = 25 ก.ย.–10 ต.ค. (16 วัน) */
+window.STORY = {
+  /* หน้า "คืนที่น้ำมา": คำร้องเรื่องน้ำท่วมรายวัน 18 ก.ย.–14 ต.ค. */
+  floodDaily: [57,62,90,61,90,108,84,1883,5089,3167,2784,1522,1337,1210,1080,857,631,593,737,552,349,282,190,239,370,433,855],
+
+  /* หน้า "น้ำที่ไม่ยอมไป": คำร้องสัตว์อันตราย และคำร้องเรื่องปลิง รายวัน 18 ก.ย.–14 ต.ค. */
+  lag: {
+    danger: [6,11,11,11,13,15,10,15,25,23,29,31,29,34,22,17,24,12,19,8,15,14,15,9,14,10,7],
+    leech:  [1,0,0,0,0,0,0,2,5,3,10,11,7,8,10,6,2,2,6,1,0,1,1,1,0,1,0]
+  },
+
+  /* รายเขต: [ชื่อเขต, สัตว์อันตราย 16 วันก่อนน้ำท่วม, 16 วันช่วงน้ำท่วม,
+              ปลิง, งู, ตะขาบ, หนู/ฉี่หนู (ช่วงน้ำท่วม), คำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป] */
+  districts: [
+    ["คลองสาน", 1, 0, 0, 0, 0, 0, 0],
+    ["คลองสามวา", 3, 19, 4, 3, 1, 5, 161],
+    ["คลองเตย", 2, 3, 0, 0, 0, 2, 1],
+    ["คันนายาว", 0, 9, 3, 4, 1, 1, 90],
+    ["จตุจักร", 11, 11, 0, 2, 0, 5, 43],
+    ["จอมทอง", 3, 5, 0, 3, 0, 1, 3],
+    ["ดอนเมือง", 3, 4, 1, 1, 0, 2, 72],
+    ["ดินแดง", 6, 8, 0, 1, 0, 6, 3],
+    ["ดุสิต", 2, 0, 0, 0, 0, 0, 1],
+    ["ตลิ่งชัน", 1, 1, 0, 0, 0, 0, 2],
+    ["ทวีวัฒนา", 3, 4, 0, 2, 0, 0, 9],
+    ["ทุ่งครุ", 0, 0, 0, 0, 0, 0, 6],
+    ["ธนบุรี", 1, 2, 0, 0, 0, 0, 0],
+    ["บางกอกน้อย", 4, 3, 0, 0, 0, 1, 2],
+    ["บางกอกใหญ่", 2, 0, 0, 0, 0, 0, 0],
+    ["บางกะปิ", 3, 22, 1, 8, 2, 5, 202],
+    ["บางขุนเทียน", 4, 5, 0, 2, 0, 1, 15],
+    ["บางคอแหลม", 0, 1, 0, 1, 0, 0, 2],
+    ["บางซื่อ", 3, 2, 0, 1, 0, 1, 4],
+    ["บางนา", 0, 2, 0, 1, 0, 0, 1],
+    ["บางบอน", 2, 3, 0, 2, 0, 0, 8],
+    ["บางพลัด", 2, 4, 0, 3, 0, 0, 2],
+    ["บางรัก", 4, 4, 0, 0, 0, 4, 1],
+    ["บางเขน", 4, 14, 1, 9, 1, 1, 108],
+    ["บางแค", 11, 4, 1, 3, 1, 0, 8],
+    ["บึงกุ่ม", 5, 15, 2, 7, 1, 2, 149],
+    ["ปทุมวัน", 0, 2, 0, 0, 0, 2, 0],
+    ["ประเวศ", 11, 17, 6, 2, 0, 2, 415],
+    ["ป้อมปราบศัตรูพ่าย", 0, 2, 0, 1, 0, 1, 1],
+    ["พญาไท", 0, 2, 0, 0, 0, 1, 2],
+    ["พระนคร", 1, 0, 0, 0, 0, 0, 1],
+    ["พระโขนง", 3, 4, 0, 1, 0, 1, 25],
+    ["ภาษีเจริญ", 8, 5, 0, 1, 0, 0, 1],
+    ["มีนบุรี", 19, 20, 13, 4, 2, 0, 386],
+    ["ยานนาวา", 1, 1, 0, 1, 0, 0, 0],
+    ["ราชเทวี", 2, 6, 0, 1, 0, 5, 2],
+    ["ราษฎร์บูรณะ", 1, 3, 0, 3, 0, 0, 1],
+    ["ลาดกระบัง", 0, 13, 9, 0, 0, 3, 460],
+    ["ลาดพร้าว", 5, 4, 0, 2, 1, 0, 18],
+    ["วังทองหลาง", 3, 10, 0, 4, 2, 1, 31],
+    ["วัฒนา", 4, 4, 0, 1, 1, 2, 6],
+    ["สวนหลวง", 3, 10, 0, 1, 3, 3, 116],
+    ["สะพานสูง", 9, 19, 8, 4, 3, 2, 409],
+    ["สัมพันธวงศ์", 0, 1, 0, 0, 0, 0, 0],
+    ["สาทร", 1, 1, 0, 0, 0, 1, 1],
+    ["สายไหม", 3, 17, 8, 8, 2, 1, 135],
+    ["หนองจอก", 5, 31, 17, 5, 3, 2, 394],
+    ["หนองแขม", 1, 5, 0, 3, 0, 0, 8],
+    ["หลักสี่", 2, 8, 1, 1, 0, 2, 27],
+    ["ห้วยขวาง", 2, 2, 0, 0, 0, 1, 4]
+  ],
+
+  /* หน้า "ใครจะไปถึงก่อน": คำร้องสัตว์อันตรายช่วงน้ำท่วม 332 เรื่อง ปิดเรื่องได้ภายในกี่วัน
+     [จากวันที่, ถึงวันที่, จำนวนเรื่อง] · open = ยังไม่ปิด ณ 27 ต.ค. */
+  closing: { bins: [[0,1,13],[1,3,21],[3,7,43],[7,14,42],[14,30,69],[30,33,3]], open: 141 },
+
+  /* แผนที่รายเขต · เส้นแบ่งเขตเป็นค่าประมาณ คำนวณจากพิกัดของคำร้อง 94,587 เรื่องที่ระบุเขตไว้
+     d = [ชื่อเขต, เส้นขอบ SVG, ตำแหน่งชื่อ x, y, ขนาดที่ว่างรอบชื่อ,
+          คำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป สะสมรายวัน 25 ก.ย.–10 ต.ค. (16 วัน),
+          คำร้องเรื่องปลิง สะสมรายวัน 16 วัน] */
+  map: { W: 810.0, H: 633.0, d: [
+    ["คลองสาน","M234.4 342.0L231.9 341.4L228.6 338.1L227.7 334.4L225.3 331.6L225.0 317.6L225.6 315.9L227.7 313.6L228.1 308.0L230.7 304.6L231.6 300.9L233.0 300.1L235.6 299.7L238.7 297.4L246.9 305.4L250.6 306.3L251.7 307.4L252.0 327.4L251.4 329.1L249.3 331.4L248.9 334.0L248.1 335.4L244.4 336.3L241.6 338.7L238.4 339.3L236.1 341.4Z",238.5,322.5,15.0,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["คลองสามวา","M492.4 195.0L489.9 194.4L480.3 184.6L479.9 176.0L477.1 172.0L477.0 164.6L476.4 162.9L459.4 145.7L459.6 144.9L467.4 137.1L468.3 133.4L470.7 130.6L471.3 115.4L474.9 111.6L478.6 110.7L482.4 107.1L483.3 103.4L485.9 100.0L485.7 94.4L483.3 91.6L482.7 88.4L480.3 85.6L479.7 82.4L477.6 80.1L477.0 78.4L477.1 68.0L479.7 64.6L480.6 60.9L489.9 51.6L491.0 51.1L570.4 51.0L572.1 50.4L578.0 45.1L595.0 44.9L598.4 42.3L601.6 41.7L603.9 39.6L605.1 39.6L606.0 41.6L606.1 55.0L608.7 58.4L609.6 62.1L611.7 64.4L612.1 76.0L614.4 78.9L615.0 80.6L614.9 88.0L612.3 91.4L611.7 94.6L609.3 97.4L609.0 99.4L609.6 101.1L611.7 103.4L612.3 106.6L614.7 109.4L615.3 112.6L617.9 116.0L617.9 124.0L615.6 126.9L615.0 128.6L615.0 138.4L615.6 140.1L617.7 142.4L618.3 145.6L620.9 149.0L621.0 153.4L620.4 155.1L619.0 155.9L616.4 156.3L613.0 158.9L602.0 159.1L598.6 161.7L595.4 162.3L584.1 173.4L580.4 174.3L577.6 176.7L574.4 177.3L571.6 179.7L568.4 180.3L566.1 182.4L562.4 183.3L559.7 185.6L558.9 185.4L545.1 171.6L543.4 171.0L536.6 171.0L534.9 171.6L529.6 176.7L521.0 177.1L517.6 179.7L514.4 180.3L506.1 188.4L502.4 189.3L499.6 191.7L496.4 192.3L494.1 194.4Z",550.5,112.5,60.3,[0,3,11,27,41,56,68,80,99,111,117,134,154,157,159,161],[0,0,0,0,1,1,1,1,3,3,3,4,4,4,4,4]],
+    ["คลองเตย","M339.9 356.4L334.0 351.1L314.6 351.0L312.6 350.1L311.7 346.4L309.3 343.6L308.7 340.4L306.3 337.6L305.7 334.4L300.1 328.0L300.0 314.6L300.6 312.9L302.9 310.0L303.0 302.6L303.9 300.6L305.6 300.0L310.0 300.1L313.4 302.7L316.6 303.3L319.4 305.7L323.1 306.6L327.9 311.4L332.1 312.6L339.9 320.4L344.1 321.6L351.9 329.4L356.1 330.6L365.4 339.9L365.4 341.1L359.1 347.4L355.4 348.3L352.6 350.7L349.4 351.3L346.6 353.7L343.4 354.3L341.1 356.4Z",325.5,331.5,19.2,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["คันนายาว","M471.4 237.0L467.0 236.9L465.6 236.1L464.7 232.4L462.1 229.0L461.9 218.0L459.3 214.6L458.7 211.4L444.3 196.6L443.9 182.0L441.3 178.6L440.7 175.4L437.1 171.6L432.9 170.4L429.6 167.1L428.7 163.4L426.4 160.7L429.9 156.6L434.1 155.4L441.9 147.6L445.6 146.7L449.0 144.1L456.4 144.0L458.1 144.6L476.4 162.9L477.0 164.6L477.1 172.0L479.9 176.0L480.3 184.6L488.7 193.4L489.1 202.0L491.7 205.4L492.3 208.6L494.9 212.0L495.0 222.4L494.4 224.1L489.9 225.6L484.6 230.7L481.4 231.3L478.6 233.7L475.4 234.3L473.1 236.4Z",457.5,169.5,19.0,[1,2,9,29,41,47,50,52,57,64,68,80,85,88,88,90],[1,1,1,1,1,1,1,2,2,2,2,2,3,3,3,3]],
+    ["จตุจักร","M312.4 228.0L310.4 227.7L307.0 225.1L301.4 224.7L298.6 222.3L295.4 221.7L292.6 219.3L289.4 218.7L288.1 217.0L288.3 214.4L290.4 212.1L291.0 210.4L291.0 191.6L290.4 189.9L288.3 187.6L287.7 184.4L285.1 181.0L285.0 173.6L285.6 171.9L287.9 169.0L288.3 163.4L290.9 160.0L291.3 154.4L293.0 153.1L298.6 152.7L301.4 150.3L304.6 149.7L306.9 147.6L310.6 146.7L314.0 144.1L331.0 143.9L334.4 141.3L337.6 140.7L341.0 138.1L349.6 138.3L356.4 144.9L357.0 147.4L356.4 149.1L354.3 151.4L353.7 154.6L351.1 158.0L351.0 198.4L350.4 200.1L348.1 203.0L347.7 211.6L346.6 212.7L343.4 213.3L340.6 215.7L336.9 216.6L331.6 221.7L323.0 222.1L319.6 224.7L316.4 225.3L314.1 227.4Z",319.5,178.5,32.3,[0,1,16,34,39,41,41,41,41,42,42,42,42,42,43,43],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["จอมทอง","M192.4 408.0L182.0 407.9L178.6 405.3L176.0 404.9L174.6 404.1L174.0 402.4L173.9 392.0L171.3 388.6L170.7 385.4L162.6 377.1L161.4 369.9L150.6 359.1L150.0 357.4L150.6 354.9L159.9 345.6L161.6 345.0L169.0 344.9L172.4 342.3L175.6 341.7L176.7 340.6L177.6 336.9L183.9 330.6L187.6 329.7L190.3 327.4L194.4 330.9L195.6 335.1L203.4 342.9L204.6 347.1L215.4 357.9L216.3 361.6L218.4 363.9L219.0 365.6L218.7 373.6L216.3 376.4L215.4 380.1L210.3 385.4L209.7 388.6L207.1 392.0L207.0 396.4L206.4 398.1L201.9 399.6L194.1 407.4Z",190.5,370.5,25.8,[0,0,0,0,0,0,0,0,0,0,1,1,2,3,3,3],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ดอนเมือง","M351.9 98.4L345.6 92.1L344.4 87.9L338.1 81.6L334.4 80.7L331.6 78.3L328.4 77.7L325.6 75.3L322.4 74.7L317.1 69.6L313.4 68.7L310.6 66.3L302.0 65.9L300.4 64.7L302.9 61.0L303.0 47.6L303.6 45.9L305.9 43.0L306.1 35.0L308.7 31.6L309.3 28.4L311.9 25.0L312.3 16.4L318.9 9.6L320.6 9.0L397.6 9.3L404.7 16.4L405.0 24.4L404.4 26.1L402.3 28.4L401.7 31.6L399.1 35.0L399.0 57.4L398.4 59.1L396.3 61.4L395.7 64.6L377.1 83.4L374.0 83.9L371.1 81.6L369.9 81.6L353.1 98.4Z",352.5,46.5,39.0,[0,1,5,29,51,59,65,69,69,69,70,70,70,72,72,72],[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1]],
+    ["ดินแดง","M315.4 279.0L308.0 278.9L304.6 276.3L300.9 275.4L294.3 268.6L294.1 263.0L296.7 259.6L297.3 256.4L299.7 253.6L300.6 249.9L308.7 241.6L309.3 238.4L311.9 235.0L312.0 230.6L312.6 228.9L315.9 225.6L319.6 224.7L322.4 222.3L328.0 222.1L329.4 222.9L330.0 224.6L329.9 256.0L327.3 259.4L326.7 262.6L324.3 265.4L323.4 269.1L318.6 273.9L317.4 278.1Z",313.5,256.5,15.0,[0,0,0,0,1,1,1,1,2,2,3,3,3,3,3,3],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ดุสิต","M255.9 275.4L251.1 270.6L246.6 269.1L245.4 264.9L239.1 258.6L234.6 257.1L234.0 255.4L234.3 250.4L236.7 247.6L237.3 244.4L239.7 241.6L240.6 237.9L245.7 232.6L246.6 228.9L255.9 219.6L257.6 219.0L277.6 219.3L278.9 221.0L279.0 228.4L278.4 230.1L276.3 232.4L275.7 235.6L273.1 239.0L272.7 253.6L267.3 259.4L266.7 262.6L264.3 265.4L263.4 269.1L257.1 275.4Z",256.5,244.5,17.0,[0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ตลิ่งชัน","M171.4 297.0L164.0 296.9L161.1 294.6L159.4 294.0L143.0 293.9L140.1 291.6L138.4 291.0L128.0 290.9L126.9 290.4L117.3 280.6L117.0 209.6L117.3 208.4L118.4 207.3L156.4 207.0L158.1 207.6L160.4 209.7L161.6 210.0L184.0 210.1L187.4 212.7L193.0 213.1L194.7 214.4L195.0 222.4L194.4 224.1L192.1 227.0L191.7 238.6L183.6 246.9L182.4 251.1L177.1 257.0L177.1 265.0L179.9 269.0L180.0 279.4L180.6 281.1L182.9 284.0L182.9 292.0L181.6 293.7L176.0 294.1L173.1 296.4Z",148.5,241.5,33.0,[1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ทวีวัฒนา","M30.4 306.0L14.6 306.0L12.9 305.4L12.1 304.0L12.0 284.6L11.4 282.9L9.3 280.6L9.0 279.4L9.0 209.6L9.6 207.9L16.3 201.4L18.9 203.4L20.6 204.0L66.4 204.0L68.1 204.6L71.0 206.9L79.6 207.3L81.9 209.4L83.6 210.0L99.4 210.0L100.6 209.7L102.9 207.6L104.6 207.0L114.4 207.0L116.1 207.6L117.0 209.6L117.0 279.4L116.4 281.1L114.4 282.0L56.0 282.1L54.3 283.4L53.7 286.6L51.3 289.4L50.7 292.6L48.3 295.4L47.9 298.0L47.1 299.4L40.4 300.3L37.6 302.7L34.4 303.3L32.1 305.4Z",49.5,244.5,39.5,[0,3,4,6,7,7,9,9,9,9,9,9,9,9,9,9],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ทุ่งครุ","M228.4 504.0L215.6 504.0L213.9 503.4L207.3 496.6L206.9 491.0L204.1 487.0L204.1 482.0L206.9 478.0L206.9 473.0L204.1 469.0L203.7 463.4L201.3 460.6L200.7 457.4L198.1 454.0L198.0 416.6L197.4 414.9L192.4 409.7L192.6 408.9L201.9 399.6L203.0 399.1L208.6 399.3L211.4 401.7L214.6 402.3L217.4 404.7L220.6 405.3L222.9 407.4L224.6 408.0L235.0 407.9L238.4 405.3L244.0 404.9L246.9 402.6L248.6 402.0L256.0 402.1L259.4 404.7L265.0 405.1L266.1 405.6L266.9 407.0L267.0 423.4L266.7 424.6L264.6 426.9L264.0 428.6L264.0 456.4L264.6 458.1L266.9 461.0L267.1 472.0L269.7 475.4L269.7 478.6L254.1 494.4L252.4 495.0L238.4 495.3L230.1 503.4Z",229.5,439.5,33.0,[0,1,2,3,3,3,3,3,3,4,5,5,6,6,6,6],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ธนบุรี","M216.9 359.4L204.6 347.1L203.4 342.9L195.6 335.1L194.7 331.4L192.3 328.6L192.0 326.6L192.6 324.9L196.4 321.3L203.1 320.4L215.4 308.1L216.3 304.4L218.7 301.6L219.1 299.0L219.9 297.6L221.6 297.0L225.4 297.0L227.1 297.6L230.4 300.9L231.0 302.6L230.7 304.6L228.1 308.0L227.7 313.6L225.6 315.9L225.0 317.6L225.1 331.0L227.7 334.4L228.3 337.6L230.7 340.4L231.0 342.4L230.4 344.1L222.6 351.9L221.4 356.1L218.1 359.4Z",211.5,331.5,15.0,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางกอกน้อย","M201.4 291.0L185.6 291.0L183.6 290.1L182.7 283.4L180.1 280.0L179.9 269.0L177.6 266.1L177.0 264.4L177.0 257.6L177.6 255.9L182.4 251.1L183.6 246.9L192.9 237.6L194.6 237.0L197.1 237.6L209.4 249.9L210.6 254.1L221.4 264.9L222.0 266.6L221.7 268.6L219.3 271.4L218.9 277.0L216.3 280.4L215.4 284.1L211.6 287.7L206.0 288.1L203.1 290.4Z",199.5,268.5,19.2,[1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางกอกใหญ่","M201.4 321.0L196.4 320.7L192.6 317.1L191.7 313.4L189.3 310.6L188.7 307.4L186.3 304.6L185.7 301.4L183.3 298.6L183.3 292.4L183.9 291.6L185.6 291.0L202.0 290.9L205.4 288.3L211.0 287.9L214.7 285.4L218.4 288.9L219.3 292.6L221.6 295.7L219.3 298.4L218.7 301.6L216.3 304.4L215.4 308.1L203.1 320.4Z",202.5,304.5,12.7,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางกะปิ","M441.4 300.0L436.4 299.7L428.1 291.6L424.4 290.7L422.1 288.6L418.4 287.7L415.0 285.1L404.0 285.1L400.6 287.7L395.0 288.1L392.1 290.4L390.4 291.0L371.0 290.9L366.3 286.6L366.0 284.6L366.6 282.9L372.9 276.6L377.1 275.4L382.4 270.3L385.6 269.7L388.4 267.3L391.6 266.7L394.4 264.3L398.1 263.4L398.9 262.0L399.3 259.4L401.9 256.0L401.7 238.4L399.3 235.6L398.7 232.4L396.3 229.6L395.4 225.9L393.3 223.6L392.7 220.4L387.6 215.1L387.0 213.4L387.3 211.4L389.9 208.0L390.3 202.4L392.7 199.6L393.6 195.9L397.3 192.4L398.1 192.6L407.7 202.4L408.3 205.6L410.9 209.0L411.3 214.6L413.9 218.0L414.3 223.6L416.7 226.4L417.6 230.1L431.4 243.9L432.3 247.6L435.9 251.4L437.6 252.0L442.0 252.1L445.4 254.7L449.1 255.6L452.4 258.9L453.3 262.6L455.7 265.4L455.9 277.0L453.3 280.4L452.7 283.6L450.3 286.4L449.7 292.6L443.1 299.4Z",421.5,265.5,21.2,[0,0,43,105,134,151,164,166,172,182,191,197,199,200,200,202],[0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1]],
+    ["บางขุนเทียน","M132.9 593.4L130.6 591.3L126.9 590.4L120.6 584.1L120.0 582.4L119.9 575.0L117.1 571.0L117.1 566.0L119.4 563.1L120.0 561.4L119.7 532.4L119.1 531.6L117.4 531.0L89.0 530.9L81.6 524.1L81.0 522.4L80.9 503.0L75.6 497.1L74.4 492.9L69.3 487.6L69.0 473.6L68.4 471.9L66.1 469.0L66.1 464.0L67.4 462.3L70.6 461.7L73.4 459.3L77.1 458.4L86.4 449.1L87.6 444.9L95.4 437.1L96.6 432.9L105.9 423.6L110.1 422.4L123.9 408.6L128.1 407.4L150.9 384.6L154.6 383.7L157.4 381.3L160.6 380.7L163.7 378.4L170.4 384.9L171.3 388.6L173.7 391.4L174.0 402.4L174.6 404.1L176.0 404.9L178.6 405.3L182.0 407.9L190.6 408.3L197.7 415.4L198.1 454.0L200.7 457.4L201.3 460.6L203.7 463.4L204.1 469.0L206.9 473.0L206.9 478.0L204.3 481.4L203.4 485.1L202.0 485.9L199.4 485.7L197.1 483.6L195.4 483.0L170.6 483.0L168.9 483.6L166.6 485.7L162.9 486.6L159.6 489.9L159.0 491.6L159.1 508.0L167.7 517.4L168.0 525.4L167.4 527.1L161.1 533.4L157.4 534.3L156.3 535.4L156.0 552.4L156.6 554.1L164.7 562.4L164.9 568.0L164.4 569.1L157.6 575.7L146.6 576.0L144.9 576.6L144.1 578.0L144.0 582.4L143.4 584.1L134.1 593.4Z",154.5,442.5,44.3,[2,2,3,7,8,9,10,10,11,11,11,12,13,15,15,15],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางคอแหลม","M255.4 375.0L250.4 374.7L248.1 372.6L244.4 371.7L241.0 369.1L235.4 368.7L232.6 366.3L229.4 365.7L226.6 363.3L222.9 362.4L219.4 358.7L221.7 355.6L222.6 351.9L231.9 342.6L235.6 341.7L237.9 339.6L241.6 338.7L245.0 336.1L250.6 336.3L258.9 344.4L262.6 345.3L265.4 347.7L268.6 348.3L269.9 350.0L269.7 355.6L264.6 360.9L263.4 365.1L258.6 369.9L257.4 374.1Z",247.5,355.5,16.2,[0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางซื่อ","M279.9 221.4L277.0 219.1L260.6 219.0L258.9 218.4L255.3 214.6L254.4 207.9L245.1 198.6L243.4 198.0L236.0 197.9L234.6 197.1L234.0 195.4L234.0 188.6L234.6 186.9L246.9 174.6L251.4 173.1L252.6 168.9L261.9 159.6L266.1 158.4L279.9 144.6L280.7 144.4L290.4 153.9L290.9 155.0L290.9 160.0L288.3 163.4L287.9 169.0L285.1 173.0L285.0 180.4L285.6 182.1L287.7 184.4L288.3 187.6L290.9 191.0L291.0 210.4L290.4 212.1L288.3 214.4L287.4 218.1L286.0 218.9L283.4 219.3L281.1 221.4Z",265.5,187.5,21.2,[0,0,1,2,2,2,2,2,2,3,4,4,4,4,4,4],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางนา","M408.4 429.0L403.4 428.7L400.6 426.3L397.4 425.7L394.6 423.3L391.4 422.7L388.0 420.1L371.6 420.0L369.9 419.4L367.0 417.1L361.4 416.7L355.6 411.3L352.4 410.7L349.6 408.3L345.9 407.4L336.6 398.1L336.1 397.0L336.0 380.6L336.6 378.9L338.9 376.0L339.0 368.6L339.6 366.9L341.6 366.0L352.0 366.1L355.4 368.7L358.6 369.3L361.4 371.7L364.6 372.3L366.9 374.4L368.6 375.0L370.6 374.7L372.9 372.6L374.6 372.0L391.0 372.1L394.4 374.7L400.0 375.1L404.0 377.9L412.6 378.3L423.9 389.4L427.6 390.3L430.4 392.7L434.1 393.6L440.9 401.0L440.7 403.6L438.1 407.0L438.0 411.4L437.4 413.1L427.6 422.7L416.0 423.1L410.1 428.4Z",391.5,397.5,24.2,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางบอน","M69.4 462.0L65.6 462.0L63.9 461.4L57.6 455.1L56.4 450.9L44.1 438.6L36.9 437.4L27.3 427.6L27.0 422.6L27.6 420.9L30.9 417.6L35.1 416.4L40.4 411.3L43.6 410.7L46.4 408.3L49.6 407.7L52.4 405.3L55.6 404.7L58.4 402.3L62.1 401.4L72.9 390.6L77.1 389.4L82.4 384.3L88.0 384.1L91.4 386.7L93.4 387.0L95.1 386.4L98.0 384.1L103.6 383.7L107.0 381.1L112.6 380.7L115.4 378.3L119.1 377.4L124.4 372.3L127.6 371.7L130.4 369.3L134.1 368.4L142.4 360.3L150.4 360.0L152.1 360.6L161.7 370.4L162.0 378.4L161.4 380.1L160.0 380.9L157.4 381.3L154.6 383.7L150.9 384.6L128.1 407.4L123.9 408.6L110.1 422.4L105.9 423.6L96.6 432.9L95.4 437.1L87.6 444.9L86.4 449.1L77.1 458.4L73.4 459.3L71.1 461.4Z",70.5,424.5,25.6,[0,1,4,5,5,5,5,6,6,6,7,7,8,8,8,8],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางพลัด","M222.4 264.0L219.9 263.4L210.6 254.1L209.4 249.9L197.1 237.6L193.4 236.7L192.3 235.6L192.0 227.6L192.6 225.9L194.9 223.0L195.1 215.0L195.9 213.6L197.6 213.0L220.6 212.7L223.4 210.3L226.6 209.7L229.4 207.3L233.1 206.4L233.9 205.0L234.1 200.0L234.9 198.6L236.6 198.0L244.0 198.1L245.1 198.6L254.4 207.9L255.0 209.6L255.1 214.0L257.6 217.7L246.6 228.9L245.4 233.1L240.6 237.9L239.7 241.6L237.3 244.4L236.7 247.6L234.3 250.4L233.4 254.1L224.1 263.4Z",220.5,232.5,21.0,[0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางรัก","M267.4 324.0L254.6 324.0L253.4 323.7L252.3 322.6L252.1 308.0L256.4 303.3L268.0 303.1L271.4 305.7L274.6 306.3L277.4 308.7L280.6 309.3L281.7 310.4L281.7 316.6L278.1 320.4L276.4 321.0L272.0 321.1L269.1 323.4Z",262.5,313.5,12.0,[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["บางเขน","M408.4 162.0L401.0 161.9L397.6 159.3L393.9 158.4L391.6 156.3L383.0 155.9L379.6 153.3L374.0 152.9L370.0 150.1L364.4 149.7L361.6 147.3L357.9 146.4L350.1 138.6L346.4 137.7L345.3 136.6L345.1 125.0L347.7 121.6L348.3 118.4L350.7 115.6L351.1 110.0L353.9 106.0L354.3 97.4L370.3 81.4L373.4 83.7L376.0 84.1L377.4 84.9L378.0 86.6L378.3 97.6L387.9 107.4L389.0 107.9L397.0 107.9L399.9 105.6L401.6 105.0L414.4 105.0L416.1 105.6L419.0 107.9L435.4 108.0L436.6 108.3L438.9 110.4L440.6 111.0L450.4 111.0L452.1 110.4L455.0 108.1L462.4 108.0L464.1 108.6L466.4 110.7L469.6 111.3L470.7 112.4L470.9 130.0L468.3 133.4L467.4 137.1L461.1 143.4L459.4 144.0L448.4 144.3L445.6 146.7L441.9 147.6L434.1 155.4L430.4 156.3L427.6 158.7L422.0 158.9L418.3 156.4L415.6 158.7L412.4 159.3L410.1 161.4Z",403.5,133.5,26.8,[0,1,18,48,59,70,78,85,90,96,100,105,107,108,108,108],[0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1]],
+    ["บางแค","M93.4 387.0L91.4 386.7L88.6 384.3L85.4 383.7L84.3 382.6L83.7 376.4L81.1 373.0L80.7 361.4L78.3 358.6L77.7 355.4L75.6 353.1L74.7 349.4L72.3 346.6L71.7 343.4L66.6 338.1L65.7 334.4L63.3 331.6L62.7 322.4L60.3 319.6L59.7 316.4L57.6 314.1L56.7 310.4L54.3 307.6L53.7 304.4L48.3 298.6L48.3 295.4L50.7 292.6L51.3 289.4L53.7 286.6L54.3 283.4L55.4 282.3L117.4 282.0L119.1 282.6L125.7 289.4L125.9 295.0L123.3 298.4L123.1 301.0L125.7 304.4L126.6 308.1L131.4 312.9L132.3 316.6L134.7 319.4L135.0 333.4L135.6 335.1L137.9 338.0L138.1 349.0L140.7 352.4L141.3 355.6L143.6 358.7L134.1 368.4L130.4 369.3L127.6 371.7L123.9 372.6L118.6 377.7L115.4 378.3L112.0 380.9L106.4 381.3L103.0 383.9L97.4 384.3L95.1 386.4Z",94.5,316.5,33.5,[0,1,4,5,5,6,7,7,7,7,7,7,8,8,8,8],[0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1]],
+    ["บึงกุ่ม","M444.9 254.4L442.6 252.3L435.9 251.4L432.3 247.6L431.4 243.9L417.6 230.1L416.7 226.4L414.1 223.0L413.7 217.4L411.1 214.0L410.7 208.4L408.3 205.6L407.4 201.9L399.6 194.1L399.1 193.0L399.1 182.0L401.7 178.6L402.3 175.4L404.7 172.6L405.3 163.4L406.4 162.3L409.6 161.7L412.4 159.3L415.6 158.7L418.3 156.4L421.4 158.7L425.1 159.6L428.4 162.9L429.9 167.4L433.4 170.7L437.1 171.6L440.4 174.9L441.3 178.6L443.9 182.0L444.3 196.6L458.4 210.9L459.3 214.6L461.9 218.0L462.0 228.4L462.6 230.1L464.9 233.0L464.7 238.6L458.1 245.4L453.9 246.6L446.1 254.4Z",421.5,187.5,21.2,[0,2,24,57,68,80,90,104,115,125,134,141,146,148,149,149],[0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,2]],
+    ["ปทุมวัน","M297.4 318.0L295.4 317.7L292.0 315.1L283.4 314.7L282.3 313.6L281.9 311.0L281.1 309.6L277.4 308.7L274.6 306.3L271.4 305.7L268.6 303.3L257.6 303.0L255.9 302.4L255.1 301.0L254.7 298.4L252.3 295.6L252.0 293.6L252.6 291.9L254.7 289.6L255.3 286.4L257.7 283.6L258.6 279.9L259.7 279.4L262.4 281.7L265.6 282.3L269.0 284.9L294.4 285.0L296.1 285.6L298.4 287.7L302.1 288.6L302.9 290.0L303.3 295.6L305.6 298.7L303.1 302.0L302.7 310.6L300.3 313.4L299.4 317.1Z",289.5,298.5,15.0,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ประเวศ","M486.4 417.0L476.0 416.9L472.0 414.1L466.4 413.7L457.0 405.1L442.4 404.7L441.3 403.6L440.4 399.9L434.1 393.6L430.4 392.7L427.6 390.3L423.9 389.4L414.3 379.6L413.9 368.0L411.6 365.1L411.0 363.4L411.1 353.0L414.9 348.6L418.6 347.7L421.4 345.3L425.1 344.4L425.9 343.0L426.3 340.4L428.7 337.6L428.9 332.0L426.6 329.1L426.0 327.4L426.1 314.0L426.6 312.9L434.4 305.1L435.3 301.4L436.4 300.3L442.0 299.9L445.4 297.3L450.4 297.0L452.1 297.6L454.4 299.7L457.6 300.3L461.0 302.9L475.0 303.1L477.9 305.4L479.6 306.0L496.6 306.3L499.4 308.7L502.0 309.1L503.4 309.9L504.0 311.6L504.1 322.0L506.7 325.4L507.3 328.6L518.7 340.4L518.9 352.0L516.3 355.4L515.7 361.6L513.1 365.0L512.7 379.6L501.3 391.4L501.0 405.4L500.4 407.1L494.1 413.4L490.4 414.3L488.1 416.4Z",469.5,355.5,45.7,[8,13,46,135,180,222,277,315,343,359,371,387,403,408,414,415],[0,0,0,2,4,4,4,5,6,6,6,6,6,6,6,6]],
+    ["ป้อมปราบศัตรูพ่าย","M249.4 294.0L244.4 293.7L240.6 290.1L240.0 288.4L240.3 283.4L242.9 280.0L243.3 274.4L246.9 270.6L248.6 270.0L251.1 270.6L257.4 276.9L258.0 278.6L257.9 283.0L255.3 286.4L254.7 289.6L251.1 293.4Z",250.5,280.5,8.5,[0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["พญาไท","M291.4 264.0L287.0 263.9L283.6 261.3L280.4 260.7L273.6 254.1L273.1 253.0L273.1 239.0L275.7 235.6L276.3 232.4L278.7 229.6L279.3 223.4L284.0 219.1L292.6 219.3L294.9 221.4L298.6 222.3L301.4 224.7L307.6 225.3L311.9 230.0L311.9 235.0L309.3 238.4L308.4 242.1L300.6 249.9L299.7 253.6L297.3 256.4L296.4 260.1L293.1 263.4Z",292.5,235.5,15.0,[0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["พระนคร","M234.4 300.0L230.0 299.9L226.6 297.3L222.9 296.4L219.6 293.1L218.7 289.4L216.6 287.1L216.0 285.4L216.1 281.0L218.7 277.6L219.1 272.0L221.7 268.6L222.3 265.4L232.3 255.4L235.4 257.7L239.1 258.6L245.4 264.9L246.0 266.6L245.7 271.6L243.1 275.0L242.7 280.6L240.1 284.0L239.7 295.6L236.1 299.4Z",232.5,271.5,12.4,[0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["พระโขนง","M411.4 378.0L404.0 377.9L400.6 375.3L395.0 374.9L392.1 372.6L390.4 372.0L374.6 372.0L372.9 372.6L370.6 374.7L368.0 374.9L364.6 372.3L361.4 371.7L358.6 369.3L355.4 368.7L352.0 366.1L340.4 365.7L339.1 364.0L339.1 359.0L343.4 354.3L346.6 353.7L349.4 351.3L352.6 350.7L355.4 348.3L359.1 347.4L366.9 339.6L368.0 339.1L370.6 339.3L374.0 341.9L385.0 342.1L389.0 344.9L400.0 345.1L403.4 347.7L407.1 348.6L410.7 352.4L411.1 364.0L413.4 366.9L414.0 368.6L413.9 376.0L413.1 377.4Z",370.5,358.5,15.3,[0,1,9,15,21,23,23,23,24,25,25,25,25,25,25,25],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ภาษีเจริญ","M147.4 360.0L144.9 359.4L141.6 356.1L140.7 352.4L138.3 349.6L137.9 338.0L135.6 335.1L135.0 333.4L134.9 320.0L132.3 316.6L131.4 312.9L126.6 308.1L125.7 304.4L123.1 301.0L123.3 298.4L125.7 295.6L126.3 292.4L126.9 291.6L128.6 291.0L138.4 291.0L140.1 291.6L143.0 293.9L159.4 294.0L161.1 294.6L163.4 296.7L164.6 297.0L172.0 296.9L176.0 294.1L181.6 294.3L182.7 295.4L183.3 298.6L185.7 301.4L186.3 304.6L188.7 307.4L189.3 310.6L191.7 313.4L192.3 316.6L194.7 319.4L194.7 322.6L188.1 329.4L183.9 330.6L177.6 336.9L176.1 341.4L172.4 342.3L169.0 344.9L161.6 345.0L159.9 345.6L150.6 354.9L149.4 359.1Z",160.5,319.5,24.2,[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["มีนบุรี","M552.4 252.0L545.0 251.9L541.0 249.1L533.0 248.9L529.0 246.1L518.6 246.0L516.9 245.4L513.6 242.1L512.4 237.9L495.3 220.6L494.9 212.0L492.3 208.6L491.7 205.4L489.1 202.0L489.0 197.6L489.6 195.9L491.0 195.1L493.6 194.7L496.4 192.3L499.6 191.7L502.4 189.3L506.1 188.4L514.4 180.3L517.6 179.7L521.0 177.1L529.6 176.7L536.0 171.1L543.4 171.0L545.1 171.6L558.9 185.4L559.7 185.6L562.4 183.3L565.6 182.7L568.4 180.3L571.6 179.7L574.4 177.3L577.6 176.7L580.4 174.3L584.1 173.4L594.9 162.6L598.6 161.7L601.4 159.3L613.0 158.9L615.9 156.6L617.6 156.0L624.4 156.0L626.1 156.6L632.4 162.9L633.3 166.6L635.4 168.9L636.0 170.6L635.9 178.0L633.3 181.4L632.7 184.6L630.1 188.0L629.9 202.0L627.3 205.4L626.4 209.1L611.1 224.4L606.6 225.9L605.7 229.6L600.6 234.9L599.7 238.6L598.6 239.7L593.0 240.1L589.0 242.9L578.0 243.1L574.0 245.9L563.0 246.1L559.6 248.7L556.4 249.3L554.1 251.4Z",535.5,211.5,36.1,[1,4,15,42,67,101,126,161,225,259,291,324,362,371,381,386],[0,0,1,1,4,6,7,9,9,10,11,13,13,13,13,13]],
+    ["ยานนาวา","M285.4 402.0L272.6 402.0L270.6 401.1L269.7 394.4L267.6 392.1L266.7 388.4L264.3 385.6L263.7 382.4L258.3 376.6L258.1 371.0L263.4 365.1L264.6 360.9L269.7 355.6L270.6 348.9L276.9 342.6L281.1 341.4L297.9 324.6L298.7 324.4L299.7 325.4L300.6 329.1L305.7 334.4L306.3 337.6L308.4 339.9L309.3 343.6L311.9 347.0L311.7 349.6L309.6 351.9L309.0 353.6L308.9 376.0L306.3 379.4L305.4 386.1L293.1 398.4L289.4 399.3L287.1 401.4Z",286.5,370.5,22.8,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ราชเทวี","M303.9 290.4L301.6 288.3L298.4 287.7L295.0 285.1L268.4 284.7L265.6 282.3L261.9 281.4L258.6 278.1L258.0 276.4L258.3 274.4L263.4 269.1L264.3 265.4L266.7 262.6L267.6 258.9L271.4 255.3L274.6 255.3L280.4 260.7L283.6 261.3L287.0 263.9L291.4 264.0L293.1 264.6L294.6 269.1L300.9 275.4L304.6 276.3L308.0 278.9L313.6 279.3L317.4 282.9L317.4 284.1L313.6 287.7L308.0 288.1L305.1 290.4Z",274.5,271.5,12.4,[0,0,0,0,0,0,0,0,1,1,1,1,1,2,2,2],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ราษฎร์บูรณะ","M234.4 408.0L223.4 407.7L220.6 405.3L217.4 404.7L214.6 402.3L210.9 401.4L207.3 397.6L207.3 391.4L209.7 388.6L210.6 384.9L215.4 380.1L216.3 376.4L218.9 373.0L218.9 365.0L216.4 361.7L217.4 360.3L220.6 360.3L223.4 362.7L226.6 363.3L229.4 365.7L232.6 366.3L235.4 368.7L241.6 369.3L243.9 371.4L247.6 372.3L250.4 374.7L257.1 375.6L263.4 381.9L264.3 385.6L266.7 388.4L267.3 391.6L269.7 394.4L269.7 400.6L265.6 404.7L260.0 404.9L256.0 402.1L248.6 402.0L246.9 402.6L244.0 404.9L238.4 405.3L236.1 407.4Z",232.5,388.5,19.0,[0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["ลาดกระบัง","M690.4 372.0L687.9 371.4L676.6 360.3L662.0 359.9L658.6 357.3L655.4 356.7L652.6 354.3L649.4 353.7L646.6 351.3L635.0 350.9L629.1 345.6L625.4 344.7L622.6 342.3L614.0 341.9L610.0 339.1L548.6 339.0L546.9 338.4L544.6 336.3L543.4 336.0L521.6 336.0L519.9 336.6L518.1 338.4L516.9 338.4L507.3 328.6L506.7 325.4L504.1 322.0L503.9 311.0L501.4 307.7L501.6 306.9L506.4 302.1L507.3 298.4L509.9 295.0L509.9 287.0L507.6 284.1L507.0 282.4L507.0 266.6L507.6 264.9L509.7 262.6L510.3 259.4L512.7 256.6L513.3 253.4L515.7 250.6L516.6 246.9L518.6 246.0L528.4 246.0L530.1 246.6L533.0 248.9L541.6 249.3L545.0 251.9L553.0 251.9L556.4 249.3L559.6 248.7L563.0 246.1L574.0 245.9L578.0 243.1L589.0 242.9L592.4 240.3L598.6 239.7L599.7 238.6L600.6 234.9L605.7 229.6L606.6 225.9L608.0 225.1L612.4 225.0L613.6 225.3L614.7 226.4L615.3 232.6L617.7 235.4L618.3 238.6L619.4 239.7L622.6 240.3L624.9 242.4L626.6 243.0L646.6 243.3L649.4 245.7L652.6 246.3L655.4 248.7L659.1 249.6L669.9 260.4L673.6 261.3L676.4 263.7L680.1 264.6L687.9 272.4L692.1 273.6L704.4 285.9L705.6 290.1L714.9 299.4L719.1 300.6L720.0 302.6L719.9 331.0L711.1 341.0L710.7 361.6L703.6 368.7L695.0 369.1L692.1 371.4Z",607.5,289.5,51.0,[1,1,9,36,63,87,127,189,249,282,314,361,424,445,452,460],[0,1,2,2,2,5,7,7,7,8,8,9,9,9,9,9]],
+    ["ลาดพร้าว","M372.4 225.0L364.4 224.7L361.6 222.3L358.4 221.7L355.6 219.3L351.9 218.4L348.1 214.0L348.1 203.0L350.4 200.1L351.0 198.4L351.1 158.0L353.7 154.6L354.6 150.9L359.0 147.1L361.6 147.3L365.0 149.9L370.6 150.3L374.0 152.9L379.6 153.3L383.0 155.9L391.6 156.3L394.4 158.7L397.6 159.3L400.4 161.7L403.6 162.3L404.9 164.0L404.9 172.0L402.3 175.4L401.7 178.6L399.3 181.4L398.7 190.6L393.6 195.9L392.7 199.6L390.3 202.4L389.9 208.0L387.3 211.4L386.7 217.6L385.6 218.7L382.4 219.3L379.6 221.7L376.4 222.3L374.1 224.4Z",376.5,178.5,24.2,[0,1,5,10,11,13,13,13,15,15,16,17,17,17,18,18],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["วังทองหลาง","M369.4 279.0L366.9 278.4L363.6 275.1L362.7 271.4L360.3 268.6L359.7 265.4L357.1 262.0L356.9 254.0L354.1 250.0L353.7 241.4L351.1 238.0L351.1 224.0L351.6 222.9L355.7 219.4L358.4 221.7L361.6 222.3L365.0 224.9L373.0 224.9L376.4 222.3L379.6 221.7L382.4 219.3L385.6 218.7L388.7 216.4L392.7 220.4L393.3 223.6L395.7 226.4L396.3 229.6L398.4 231.9L399.3 235.6L401.7 238.4L401.9 256.0L399.3 259.4L398.9 262.0L398.1 263.4L394.4 264.3L391.6 266.7L388.4 267.3L385.6 269.7L382.4 270.3L377.1 275.4L373.4 276.3L371.1 278.4Z",379.5,247.5,22.8,[1,1,12,20,25,26,27,28,28,30,30,30,30,31,31,31],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["วัฒนา","M366.4 339.0L363.9 338.4L356.1 330.6L351.9 329.4L344.1 321.6L339.9 320.4L332.1 312.6L327.9 311.4L323.1 306.6L319.4 305.7L316.6 303.3L313.4 302.7L310.6 300.3L306.9 299.4L303.3 295.6L303.0 293.6L303.6 291.9L307.4 288.3L313.0 287.9L316.4 285.3L318.4 285.0L320.1 285.6L326.0 290.9L340.0 291.1L343.4 293.7L349.0 294.1L353.0 296.9L360.4 297.0L362.1 297.6L368.4 303.9L369.3 307.6L371.4 309.9L372.0 311.6L371.9 331.0L369.3 334.4L368.4 338.1Z",352.5,310.5,15.0,[2,2,4,6,6,6,6,6,6,6,6,6,6,6,6,6],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["สวนหลวง","M411.4 351.0L409.4 350.7L406.6 348.3L403.4 347.7L400.0 345.1L389.6 345.0L387.9 344.4L385.0 342.1L374.0 341.9L369.6 338.1L369.1 335.0L371.4 332.1L372.0 330.4L371.9 311.0L369.3 307.6L368.4 303.9L360.4 295.7L360.6 294.9L366.9 288.6L368.1 288.6L369.9 290.4L371.6 291.0L390.4 291.0L392.1 290.4L395.0 288.1L400.6 287.7L404.0 285.1L414.4 285.0L416.1 285.6L418.4 287.7L421.6 288.3L424.4 290.7L428.1 291.6L434.4 297.9L435.0 299.6L434.7 304.6L426.1 314.0L426.0 327.4L426.6 329.1L428.9 332.0L428.7 337.6L426.3 340.4L425.9 343.0L425.1 344.4L421.4 345.3L418.6 347.7L415.4 348.3L413.1 350.4Z",397.5,316.5,27.0,[1,1,25,65,84,95,106,108,108,110,110,112,115,116,116,116],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["สะพานสูง","M498.9 308.4L496.0 306.1L479.6 306.0L477.9 305.4L475.0 303.1L461.0 302.9L457.6 300.3L454.4 299.7L451.6 297.3L448.4 296.7L447.4 295.7L449.9 292.0L450.3 286.4L452.7 283.6L453.3 280.4L455.4 278.1L456.0 276.4L455.7 265.4L453.3 262.6L452.4 258.9L447.6 254.1L447.6 252.9L453.9 246.6L458.1 245.4L465.9 237.6L472.6 236.7L475.4 234.3L478.6 233.7L481.4 231.3L485.1 230.4L489.9 225.6L493.6 224.7L496.3 222.4L497.1 222.6L512.4 237.9L513.3 241.6L515.4 243.9L516.0 245.6L515.7 250.6L513.3 253.4L512.7 256.6L510.3 259.4L509.7 262.6L507.6 264.9L507.0 266.6L507.0 282.4L507.6 284.1L509.9 287.0L509.9 295.0L507.3 298.4L506.4 302.1L500.1 308.4Z",481.5,262.5,27.2,[0,1,26,102,127,150,197,248,290,315,350,366,394,402,406,409],[1,3,3,5,5,5,7,7,7,7,7,7,7,7,8,8]],
+    ["สัมพันธวงศ์","M252.4 306.0L247.4 305.7L240.6 299.1L240.0 297.4L240.0 293.6L240.9 291.6L242.1 291.6L245.0 293.9L250.6 294.3L254.4 297.9L255.0 299.6L254.9 304.0L254.1 305.4Z",247.5,298.5,6.0,[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["สาทร","M270.4 348.0L266.0 347.9L262.6 345.3L258.9 344.4L249.6 335.1L249.1 332.0L251.7 328.6L252.6 324.9L254.6 324.0L268.0 323.9L271.4 321.3L277.6 320.7L282.9 315.6L284.6 315.0L292.0 315.1L295.4 317.7L299.1 318.6L300.0 320.6L299.4 323.1L281.1 341.4L276.9 342.6L272.1 347.4Z",265.5,334.5,12.0,[0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["สายไหม","M471.9 113.4L469.6 111.3L466.4 110.7L464.1 108.6L462.4 108.0L455.0 108.1L452.1 110.4L450.4 111.0L440.6 111.0L439.4 110.7L437.1 108.6L435.4 108.0L419.0 107.9L416.1 105.6L414.4 105.0L401.6 105.0L399.9 105.6L397.0 107.9L389.0 107.9L387.9 107.4L378.6 98.1L378.0 96.4L378.3 82.4L395.4 65.1L396.3 61.4L398.7 58.6L399.1 35.0L401.7 31.6L402.6 27.9L405.9 24.6L407.6 24.0L418.6 24.3L426.9 32.4L428.6 33.0L481.0 33.1L482.1 33.6L491.4 42.9L492.0 44.6L491.7 49.6L480.6 60.9L479.7 64.6L477.6 66.9L477.0 68.6L477.1 79.0L479.7 82.4L480.3 85.6L482.7 88.4L483.3 91.6L485.7 94.4L485.9 100.0L483.3 103.4L482.4 107.1L479.1 110.4L475.4 111.3L473.1 113.4Z",436.5,70.5,39.0,[0,3,7,42,63,72,83,99,108,112,115,126,132,132,134,135],[0,1,1,5,6,6,7,8,8,8,8,8,8,8,8,8]],
+    ["หนองจอก","M732.4 300.0L715.4 299.7L705.6 290.1L704.4 285.9L692.1 273.6L687.9 272.4L679.6 264.3L676.4 263.7L673.6 261.3L669.9 260.4L659.1 249.6L655.4 248.7L653.1 246.6L649.4 245.7L646.0 243.1L625.4 242.7L622.6 240.3L618.9 239.4L618.1 238.0L617.7 235.4L615.3 232.6L614.9 227.0L612.4 223.3L626.4 209.1L627.3 205.4L629.7 202.6L630.1 188.0L632.7 184.6L633.3 181.4L635.7 178.6L636.0 170.6L635.4 168.9L633.3 166.6L632.4 162.9L626.1 156.6L621.6 155.1L620.7 148.4L618.6 146.1L617.7 142.4L615.1 139.0L615.0 128.6L615.6 126.9L617.9 124.0L618.0 116.6L617.4 114.9L615.3 112.6L614.7 109.4L612.3 106.6L611.7 103.4L609.6 101.1L609.0 99.4L609.3 97.4L611.7 94.6L612.3 91.4L614.9 88.0L615.0 80.6L614.4 78.9L612.1 76.0L611.7 64.4L609.6 62.1L608.7 58.4L606.1 55.0L606.0 41.6L606.3 40.4L607.4 39.3L625.0 38.9L631.4 33.3L637.0 32.9L641.0 30.1L666.4 30.0L668.1 29.4L670.4 27.3L671.6 27.0L682.0 27.1L684.9 29.4L686.6 30.0L712.0 30.1L717.9 35.4L719.6 36.0L748.0 35.9L749.7 34.6L750.6 30.9L765.9 15.6L767.6 15.0L770.1 15.6L779.7 25.4L780.0 45.4L779.4 47.1L777.1 50.0L776.9 64.0L774.6 66.9L774.0 68.6L774.0 93.4L773.7 94.6L771.6 96.9L771.0 98.6L771.0 144.4L771.6 146.1L779.7 154.4L780.0 171.4L780.6 173.1L788.4 180.9L789.6 185.1L794.1 186.6L800.7 193.4L800.9 211.0L800.4 212.1L792.6 219.9L791.4 224.1L785.1 230.4L777.9 231.6L764.1 245.4L760.4 246.3L756.6 249.9L756.0 251.6L755.7 271.6L750.3 277.4L749.7 280.6L747.3 283.4L746.4 287.1L734.1 299.4Z",694.5,109.5,78.0,[5,10,13,39,73,91,163,218,258,288,318,339,355,375,384,394],[0,1,1,1,4,6,6,10,13,13,14,16,16,16,16,17]],
+    ["หนองแขม","M27.9 419.4L18.3 409.6L17.9 392.0L12.6 386.1L11.7 382.4L9.1 379.0L9.1 323.0L11.9 319.0L12.0 308.6L12.3 307.4L13.4 306.3L31.0 305.9L34.4 303.3L37.6 302.7L41.0 300.1L49.0 300.1L53.7 304.4L54.3 307.6L56.7 310.4L57.3 313.6L59.7 316.4L60.6 320.1L62.7 322.4L63.3 331.6L65.7 334.4L66.6 338.1L71.7 343.4L72.3 346.6L74.7 349.4L75.3 352.6L77.4 354.9L78.3 358.6L80.7 361.4L81.1 373.0L83.9 377.0L83.9 382.0L77.1 389.4L72.9 390.6L62.1 401.4L58.4 402.3L55.6 404.7L52.4 405.3L49.6 407.7L46.4 408.3L43.6 410.7L40.4 411.3L35.1 416.4L31.4 417.3L29.1 419.4Z",43.5,367.5,36.0,[0,0,2,4,4,5,5,6,8,8,8,8,8,8,8,8],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]],
+    ["หลักสี่","M297.4 153.0L290.6 153.0L288.9 152.4L282.3 145.6L282.0 137.6L282.6 135.9L284.9 133.0L285.3 124.4L287.9 121.0L288.1 113.0L290.7 109.6L291.3 103.4L293.9 100.0L294.0 86.6L294.6 84.9L296.9 82.0L297.3 73.4L299.7 70.6L300.1 68.0L300.9 66.6L302.6 66.0L309.4 66.0L311.1 66.6L313.4 68.7L317.1 69.6L322.4 74.7L325.6 75.3L328.4 77.7L331.6 78.3L334.4 80.7L338.1 81.6L344.4 87.9L345.6 92.1L353.4 99.9L354.0 101.6L354.0 105.4L353.4 107.1L351.1 110.0L350.7 115.6L348.6 117.9L347.7 121.6L345.1 125.0L345.0 135.4L344.1 137.4L340.4 138.3L338.1 140.4L334.4 141.3L331.0 143.9L313.4 144.3L310.6 146.7L307.4 147.3L304.6 149.7L301.4 150.3L299.1 152.4Z",319.5,112.5,29.5,[0,0,5,13,14,14,16,17,18,22,24,26,27,27,27,27],[0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1]],
+    ["ห้วยขวาง","M357.4 297.0L352.4 296.7L349.0 294.1L343.4 293.7L340.0 291.1L325.4 290.7L315.4 280.7L317.7 277.6L318.6 273.9L323.7 268.6L324.3 265.4L326.4 263.1L327.3 259.4L329.9 256.0L330.3 223.4L336.9 216.6L340.6 215.7L344.0 213.1L347.1 213.6L353.6 220.3L351.1 224.0L351.1 238.0L353.9 242.0L354.1 250.0L356.9 254.0L357.3 262.6L359.7 265.4L360.3 268.6L362.7 271.4L363.6 275.1L368.6 280.3L366.1 284.0L366.0 288.4L365.4 290.1L359.1 296.4Z",343.5,274.5,18.2,[1,1,2,3,3,3,4,4,4,4,4,4,4,4,4,4],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+  ] }
+};
+
+</script>
+<script>
+/* การเคลื่อนไหวและปุ่มกดทั้งหมดของเว็บ
+   ตัวเลขกราฟอยู่ใน story-data.js · ข้อความอยู่ใน index.html
+   ทุกส่วนเล่นใหม่ทุกครั้งที่เลื่อนกลับมาเจอ (รีเซ็ตตอนที่ส่วนนั้นพ้นจอไปทั้งหมด) */
+(() => {
+document.documentElement.classList.add('js');
+const S = window.STORY;
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); if (parent) parent.appendChild(n); return n; };
+const txt = (s, attrs, parent) => { const t = el('text', attrs, parent); t.textContent = s; return t; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+const mix = (a, b, p) => `color-mix(in oklab, ${a}, ${b} ${Math.round(p * 100)}%)`;
+const nf = n => n.toLocaleString('en-US');
+/* วันที่ของกราฟรายวัน 18 ก.ย.–14 ต.ค. และ 16 วันของน้ำท่วม 25 ก.ย.–10 ต.ค. */
+const DAYS = Array.from({ length: 27 }, (_, i) => i < 13 ? `${18 + i} ก.ย.` : `${i - 12} ต.ค.`);
+const FLOOD = Array.from({ length: 16 }, (_, i) => i < 6 ? `${25 + i} ก.ย.` : `${i - 5} ต.ค.`);
+
+/* job = ตัวควบคุมการเล่นหนึ่งรอบ ถ้าถูกยกเลิก (job.on = false) แอนิเมชันที่ค้างอยู่จะหยุดเงียบๆ */
+const tween = (dur, fn, delay = 0, ease = easeOut, job) => new Promise(res => {
+  const go = () => {
+    if (job && !job.on) return;
+    const t0 = performance.now();
+    const step = now => {
+      if (job && !job.on) return;
+      const t = Math.max(0, Math.min(1, (now - t0) / dur)); fn(ease(t));
+      if (t < 1) requestAnimationFrame(step); else res();
+    };
+    requestAnimationFrame(step);
+  };
+  if (delay) setTimeout(go, delay); else go();
+});
+const wait = (ms, job) => new Promise(r => setTimeout(() => { if (!job || job.on) r(); }, ms));
+
+/* ทะเบียน: element -> { arm: ตั้งสถานะเริ่ม, play(job): เล่น } */
+const A = new Map();
+const reg = (node, arm, play) => { if (node) A.set(node, { arm, play, job: null, state: 'idle' }); };
+const start = n => { const v = A.get(n); if (!v) return; if (v.job) v.job.on = false; v.job = { on: true }; v.state = 'played'; v.play(v.job); };
+const reset = n => { const v = A.get(n); if (!v) return; if (v.job) v.job.on = false; v.job = null; v.state = 'armed'; v.arm(); };
+const replay = n => { if (reduce) return; reset(n); start(n); };
+const stop = n => { const v = A.get(n); if (v && v.job) v.job.on = false; };
+
+/* ตัวเลขนับขึ้น และค่อยๆ เปลี่ยนสีถ้ามี data-heat */
+const fmt = (v, n) => { const d = +(n.dataset.dec || 0); return (n.dataset.pre || '') + v.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d }) + (n.dataset.suf || ''); };
+const countUp = (n, job) => {
+  const to = +n.dataset.count, from = +(n.dataset.from || 0), heat = n.dataset.heat;
+  const dur = +(n.dataset.dur || (to > 1000 ? 1800 : 1200));
+  return tween(dur, t => {
+    const v = from + (to - from) * t, d = +(n.dataset.dec || 0);
+    n.textContent = fmt(d ? Math.round(v * 10 ** d) / 10 ** d : Math.round(v), n);
+    if (heat) n.style.color = mix(css('--bone'), css('--' + heat), t);
+  }, +(n.dataset.delay || 0), easeOut, job).then(() => { n.textContent = fmt(to, n); if (heat) n.style.color = ''; });
+};
+document.querySelectorAll('[data-count]').forEach(n => reg(n,
+  () => { n.textContent = fmt(+(n.dataset.from || 0), n); if (n.dataset.heat) n.style.color = css('--bone'); },
+  job => countUp(n, job)));
+const classAnim = n => reg(n, () => { n.classList.remove('in'); n.classList.add('armed'); }, () => { n.classList.remove('armed'); n.classList.add('in'); });
+document.querySelectorAll('.rise').forEach(n => { [...n.children].forEach((c, i) => c.style.setProperty('--i', i)); classAnim(n); });
+document.querySelectorAll('.sweep, .wanted, #cal').forEach(classAnim);
+document.querySelectorAll('.wanted .poster, #cal span').forEach(c => c.style.setProperty('--i', [...c.parentNode.children].indexOf(c)));
+
+/* ===== เปิดเรื่อง: ข้อความคำร้องค่อยๆ ขึ้นทีละบรรทัด ===== */
+(() => {
+  const b = document.querySelector('.bubble');
+  reg(b, () => { b.classList.remove('go'); b.classList.add('armed'); }, () => { b.classList.remove('armed'); void b.offsetWidth; b.classList.add('go'); });
+})();
+
+/* ===== จระเข้: พิมพ์คำค้น แล้วตัวเลขวิ่งจาก 0 จนหยุดที่ 566 (แตะตัวเลขเพื่อดูอีกครั้ง) ===== */
+(() => {
+  const box = $('p-croc'), q = $('q'), n = $('n566'), st = $('qStatus'), bar = box.querySelector('.search');
+  const word = q.textContent, parts = 'Segmenter' in Intl ? [...new Intl.Segmenter('th', { granularity: 'grapheme' }).segment(word)].map(s => s.segment) : [...word];
+  const arm = () => { q.textContent = ''; n.textContent = '0'; st.textContent = ' '; bar.classList.remove('searching'); n.classList.remove('landed', 'ticking'); };
+  const run = job => {
+    arm(); n.classList.add('ticking'); bar.classList.add('searching');
+    let i = 0;
+    const type = () => {
+      if (!job.on) return;
+      if (i < parts.length) { q.textContent += parts[i++]; setTimeout(type, 110); return; }
+      st.textContent = 'กำลังค้นหา…';
+      setTimeout(() => {
+        if (!job.on) return;
+        bar.classList.remove('searching');
+        tween(3000, t => { const v = Math.round(566 * t); n.textContent = v; st.textContent = `พบ ${v} คำร้อง`; }, 0, t => 1 - Math.pow(1 - t, 4), job)
+          .then(() => { n.textContent = '566'; st.textContent = 'พบ 566 คำร้อง'; n.classList.remove('ticking'); n.classList.add('landed'); });
+      }, 500);
+    };
+    type();
+  };
+  reg(box, arm, run);
+  n.title = 'แตะเพื่อดูอีกครั้ง'; n.addEventListener('click', () => replay(box));
+})();
+
+/* ===== คำร้องน้ำท่วมรายวัน: แท่งค่อยๆ พุ่งขึ้น แตะแท่งเพื่อดูตัวเลข ===== */
+(() => {
+  const v = S.floodDaily;
+  const S0 = 7, E = 22, keep = [0, S0, 8, 9, E];          // S0 = 25 ก.ย. · E = 10 ต.ค.
+  const W = 900, H = 360, L = 50, B = 300, T = 60, max = 5500, bw = (W - L - 20) / v.length, top = Math.max(...v), PK = v.indexOf(top);
+  const box = $('floodBars'), head = $('h5089'), read = $('barRead'), s = el('svg', { viewBox: `0 0 ${W} ${H}` }, box);
+  const silt = css('--silt'), siren = css('--siren'), bone = css('--bone'), hint = read.textContent;
+  const xl = i => L + i * bw;
+  [0, 2500, 5000].forEach(t => { const y = B - t / max * (B - T); el('line', { x1: L, x2: W - 10, y1: y, y2: y, stroke: css('--line') }, s); txt(nf(t), { x: L - 8, y: y + 4, 'text-anchor': 'end' }, s); });
+  const band = el('rect', { x: xl(S0), y: 30, width: xl(E + 1) - xl(S0), height: B - 30, fill: siren, 'fill-opacity': 0.13 }, s);
+  const mk = (x, anchor, l1, l2) => {
+    const g = el('g', {}, s);
+    el('line', { x1: x, x2: x, y1: 14, y2: B, stroke: siren, 'stroke-width': 1.5, 'stroke-dasharray': '4 4' }, g);
+    const dx = anchor === 'start' ? 6 : -6;
+    txt(l1, { x: x + dx, y: 18, 'text-anchor': anchor, class: 'hl', style: `fill:${siren}` }, g);
+    txt(l2, { x: x + dx, y: 36, 'text-anchor': anchor }, g);
+    g.style.transition = 'opacity 0.6s'; return g;
+  };
+  const mStart = mk(xl(S0), 'start', 'วันแรกที่น้ำท่วม · 25 ก.ย.', 'คำร้องกระโดดจาก 84 เป็น 1,883');
+  const mEnd = mk(xl(E + 1), 'end', 'ปิดช่วงน้ำท่วม · 10 ต.ค.', 'คำร้องลดเหลือ 190 ต่ำสุดหลังพีค');
+  const mid = txt('ช่วงน้ำท่วม 16 วัน', { x: (xl(S0) + xl(E + 1)) / 2 + 90, y: 80, 'text-anchor': 'middle', class: 'hl' }, s);
+  mid.style.transition = 'opacity 0.6s';
+  const opac = i => i === PK ? 1 : i > E ? 0.25 : 0.55;
+  const bars = v.map((n, i) => {
+    const h = n / max * (B - T), x = xl(i) + 4, w = bw - 8, cx = x + w / 2;
+    const r = el('rect', { x, y: B - h, width: w, height: h, rx: 2, style: `fill:${i === PK ? siren : silt};fill-opacity:${opac(i)}` }, s);
+    const lab = txt(nf(n), { x: cx, y: B - h - 8, 'text-anchor': 'middle', class: i === PK ? 'hl' : '' }, s);
+    if (!keep.includes(i)) lab.style.opacity = 0;
+    const day = txt(DAYS[i].split(' ')[0], { x: cx, y: B + 20, 'text-anchor': 'middle' }, s);
+    return { n, h, r, lab, day, i };
+  });
+  txt('ก.ย. 2569', { x: xl(0) + 4, y: B + 44 }, s);
+  txt('ต.ค.', { x: xl(13) + 4, y: B + 44 }, s);
+  el('line', { x1: xl(13), x2: xl(13), y1: B + 4, y2: B + 50, stroke: css('--line') }, s);
+
+  let running = false, sel = -1;
+  const unpick = () => { if (sel < 0) return; const o = bars[sel]; o.r.style.fillOpacity = opac(sel); o.day.classList.remove('hl'); if (!keep.includes(sel)) o.lab.style.opacity = 0; sel = -1; };
+  const pick = i => {
+    if (running) return;
+    unpick(); sel = i; const b = bars[i];
+    b.r.style.fillOpacity = 1; b.day.classList.add('hl'); b.lab.style.opacity = 1;
+    const inFlood = i >= S0 && i <= E ? ` · วันที่ ${i - S0 + 1} ของน้ำท่วม` : i < S0 ? ' · ก่อนน้ำท่วม' : ' · หลังช่วงน้ำท่วม';
+    read.innerHTML = `<b>${DAYS[i]}</b> คำร้องเรื่องน้ำท่วม <b>${nf(b.n)}</b> เรื่อง${inFlood}`;
+  };
+  bars.forEach((b, i) => {
+    const hit = el('rect', { x: xl(i), y: 20, width: bw, height: B - 20 + 26, class: 'hit' }, s);
+    hit.addEventListener('pointerenter', () => pick(i));
+    hit.addEventListener('click', () => pick(i));
+  });
+
+  const setBand = i => band.setAttribute('width', Math.max(0, xl(Math.min(i, E) + 1) - xl(S0)));
+  const grow = (b, dur, ease, job) => {
+    b.day.classList.add('hl'); b.lab.style.transition = 'none'; b.lab.style.opacity = 1;
+    if (b.i >= S0 && b.i <= E) setBand(b.i);
+    return tween(dur, t => {
+      const hh = b.h * t; b.r.setAttribute('y', B - hh); b.r.setAttribute('height', hh);
+      b.lab.setAttribute('y', B - hh - 8); b.lab.textContent = nf(Math.round(b.n * t));
+      if (b.i === PK) { b.r.style.fill = mix(silt, siren, t); head.textContent = nf(Math.round(b.n * t)); head.style.color = mix(bone, siren, t); }
+    }, 0, ease, job).then(() => {
+      b.day.classList.remove('hl'); b.lab.style.transition = '';
+      if (!keep.includes(b.i)) b.lab.style.opacity = 0;
+      if (b.i === PK) { head.style.color = ''; b.lab.textContent = nf(top); }
+    });
+  };
+  const arm = () => {
+    running = false; unpick(); read.textContent = hint;
+    bars.forEach(b => { b.r.setAttribute('y', B); b.r.setAttribute('height', 0); b.lab.style.opacity = 0; b.r.style.fillOpacity = opac(b.i); b.day.classList.remove('hl'); if (b.i === PK) b.r.style.fill = silt; });
+    head.textContent = '0'; head.style.color = bone; band.setAttribute('width', 0);
+    [mStart, mEnd, mid].forEach(g => g.style.opacity = 0);
+  };
+  const play = async job => {
+    running = true;
+    for (const b of bars.slice(0, S0)) { grow(b, 500, easeOut, job); await wait(240, job); }
+    await wait(600, job);
+    mStart.style.opacity = 1; await wait(500, job);
+    await grow(bars[S0], 1800, easeInOut, job);
+    await wait(300, job);
+    await grow(bars[PK], 4200, t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2, job);
+    mid.style.opacity = 1; await wait(400, job);
+    for (const b of bars.slice(PK + 1, E + 1)) { grow(b, 800, easeOut, job); await wait(300, job); }
+    await wait(700, job);
+    mEnd.style.opacity = 1; await wait(600, job);
+    for (const b of bars.slice(E + 1)) { grow(b, 500, easeOut, job); await wait(200, job); }
+    await wait(500, job);
+    running = false;
+  };
+  reg(box, arm, play);
+  $('barReplay').addEventListener('click', () => replay(box));
+})();
+
+/* ===== จับผิดคำร้อง (รีเซ็ตทุกครั้งที่เลื่อนผ่าน) ===== */
+(() => {
+  const wrap = $('fakes'), cards = [...wrap.querySelectorAll('.fake')], score = $('fakeScore');
+  let done = 0, right = 0;
+  const base = cards.map(f => f.querySelector('.fake-why').textContent);
+  cards.forEach((f, k) => {
+    const why = f.querySelector('.fake-why');
+    f.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+      if (f.classList.contains('done')) return;
+      const ok = b.dataset.a === f.dataset.real;
+      f.classList.add('done', ok ? 'right' : 'wrong'); b.classList.add('picked');
+      f.querySelectorAll('button').forEach(x => x.setAttribute('aria-disabled', 'true'));
+      why.innerHTML = `<b>${ok ? 'ถูกต้อง' : 'ไม่ใช่นะ'}</b> · ${esc(base[k])}`;
+      done++; if (ok) right++;
+      if (done === cards.length) score.textContent = `จับผิดถูก ${right} จาก ${cards.length} ข้อ · ` + (right === cards.length ? 'เก่งกว่าคอมพิวเตอร์แล้ว' : 'ไม่เป็นไร คอมพิวเตอร์ก็พลาดแบบนี้เหมือนกัน');
+    }));
+  });
+  reg(wrap, () => {
+    done = 0; right = 0; score.textContent = '';
+    cards.forEach((f, k) => {
+      f.classList.remove('done', 'right', 'wrong');
+      f.querySelectorAll('button').forEach(x => { x.classList.remove('picked'); x.removeAttribute('aria-disabled'); });
+      f.querySelector('.fake-why').textContent = base[k];
+    });
+  }, () => {});
+})();
+
+/* ===== ทายสิ (รีเซ็ตทุกครั้งที่เลื่อนผ่าน) ===== */
+(() => {
+  const q = $('quiz'), msg = $('quizMsg'), hint = msg.textContent;
+  q.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    q.classList.add('done'); q.querySelector('.ans').classList.add('win');
+    msg.innerHTML = b.classList.contains('ans')
+      ? '<b class="t-leech">ถูกต้อง!</b> ปลิงเพิ่มขึ้น 25 เท่า มากกว่างูเกือบ 15 เท่า'
+      : `คำตอบคือ <b class="t-leech">ปลิง</b> เพิ่มขึ้น 25 เท่า ส่วน${esc(b.dataset.name)}เพิ่ม ${esc(b.dataset.x)} เท่า`;
+  }));
+  reg($('p-quiz'), () => { q.classList.remove('done'); q.querySelector('.ans').classList.remove('win'); msg.textContent = hint; }, () => {});
+})();
+
+/* ===== รายเขต: ค้นหาเขตของคุณ (เขตที่เลือกไว้ไม่รีเซ็ต) ===== */
+const showDistrict = (() => {
+  const D = S.districts, sel = $('dSel'), card = $('dCard');
+  const max = Math.max(...D.map(r => Math.max(r[1], r[2])));
+  [...D].sort((a, b) => a[0].localeCompare(b[0], 'th')).forEach(r => { const o = document.createElement('option'); o.value = r[0]; o.textContent = 'เขต' + r[0]; sel.appendChild(o); });
+  const animals = [['leech', 'ปลิง', 3], ['snake', 'งู', 4], ['centipede', 'ตะขาบ', 5], ['rat', 'หนู/ฉี่หนู', 6]];
+  const render = name => {
+    const r = D.find(x => x[0] === name); if (!r) return;
+    const [n, b, f, , , , , st] = r;
+    const rank = 1 + D.filter(x => x[2] > f).length, srank = 1 + D.filter(x => x[7] > st).length;
+    let chip;
+    if (f > b) chip = b ? `<span class="chip up">เพิ่มขึ้น ${f / b >= 1.95 ? 'ราว ' + Math.round(f / b) : (f / b).toFixed(1)} เท่า</span>` : `<span class="chip up">จาก 0 เป็น ${f} เรื่อง</span>`;
+    else chip = f === b ? '<span class="chip flat">เท่าเดิม</span>' : '<span class="chip down">ลดลง</span>';
+    const an = animals.filter(a => r[a[2]] > 0);
+    card.innerHTML = `
+      <div class="fc-head"><h3>เขต${esc(n)}</h3>${chip}</div>
+      <div class="fc-bars">
+        <div class="fc-row"><span>ก่อนน้ำท่วม</span><div class="fc-track"><i style="background:var(--silt)" data-w="${b / max * 100}"></i></div><b>${b}</b></div>
+        <div class="fc-row"><span>ช่วงน้ำท่วม</span><div class="fc-track"><i style="background:var(--leech)" data-w="${f / max * 100}"></i></div><b>${f}</b></div>
+      </div>
+      <p class="muted">คำร้องสัตว์อันตราย นับ 16 วันเท่ากัน · ช่วงน้ำท่วมมากเป็นอันดับ ${rank} จาก 50 เขต</p>
+      ${an.length ? `<div class="fc-animals">${an.map(a => `<span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#${a[0]}"/></svg>${a[1]} <b>${r[a[2]]}</b></span>`).join('')}</div>` : '<p class="muted">ช่วงน้ำท่วมไม่มีคำร้องที่ระบุว่าเป็นงู ปลิง ตะขาบ หรือหนู</p>'}
+      <p class="fc-stand">${st > 0 ? `มีคำร้องที่บอกว่า<b>น้ำขัง 3 วันขึ้นไป ${nf(st)} เรื่อง</b> มากเป็นอันดับ ${srank} จาก 50 เขต` : 'ไม่มีคำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป'}</p>`;
+    requestAnimationFrame(() => requestAnimationFrame(() => card.querySelectorAll('.fc-track i').forEach(i => i.style.width = i.dataset.w + '%')));
+  };
+  let mark = () => {};
+  sel.addEventListener('change', () => { render(sel.value); mark(sel.value); });
+  const show = name => { sel.value = name; render(name); mark(name); };
+  show('หนองจอก');
+  return { show, onMark: fn => { mark = fn; fn(sel.value); } };
+})();
+
+/* ===== dumbbell 14 เขต: จุดช่วงน้ำท่วมวิ่งออกจากจุดก่อนน้ำท่วม แตะแถวเพื่อดูเขตนั้น ===== */
+(() => {
+  const rows = [...S.districts].sort((a, b) => b[2] - a[2] || b[1] - a[1] || a[0].localeCompare(b[0], 'th')).slice(0, 14).map(r => [r[0], r[1], r[2], r[3]]);
+  const W = 900, rh = 32, T = 50, H = T + rows.length * rh + 30, x0 = 150, x1 = 760, vmax = 35, x = v => x0 + v / vmax * (x1 - x0);
+  const box = $('dumbbell'), s = el('svg', { viewBox: `0 0 ${W} ${H}` }, box);
+  const bone = css('--bone'), red = css('--leech'), heat = d => Math.min(1, Math.max(0, d) / 26);
+  el('circle', { cx: 160, cy: 18, r: 6, fill: css('--silt'), 'fill-opacity': 0.45 }, s); txt('ก่อนน้ำท่วม', { x: 172, y: 23 }, s);
+  el('circle', { cx: 280, cy: 18, r: 7, fill: bone }, s); txt('ช่วงน้ำท่วม', { x: 292, y: 23 }, s);
+  el('circle', { cx: 400, cy: 18, r: 7, fill: red }, s); txt('ยิ่งแดง ยิ่งเพิ่มมาก', { x: 412, y: 23 }, s);
+  txt('ปลิง', { x: 850, y: 23, 'text-anchor': 'middle' }, s);
+  const parts = rows.map(([n, b, f, l], i) => {
+    const y = T + i * rh, c = mix(bone, red, heat(f - b));
+    const bg = el('rect', { x: 4, y: y - rh / 2, width: W - 8, height: rh, rx: 6, fill: css('--siren'), 'fill-opacity': 0 }, s);
+    el('line', { x1: x0, x2: x1, y1: y, y2: y, stroke: css('--line') }, s);
+    const name = txt(n, { x: x0 - 12, y: y + 5, 'text-anchor': 'end' }, s);
+    const seg = el('line', { x1: x(b), x2: x(f), y1: y, y2: y, 'stroke-width': 3, style: `stroke:${c};stroke-opacity:0.6` }, s);
+    el('circle', { cx: x(b), cy: y, r: 6, fill: css('--silt'), 'fill-opacity': 0.45 }, s);
+    const dot = el('circle', { cx: x(f), cy: y, r: 7, style: `fill:${c}` }, s);
+    const lab = txt(`${b} → ${f}`, { x: x(Math.max(b, f)) + 14, y: y + 5 }, s);
+    const lt = txt(String(l), { x: 850, y: y + 5, 'text-anchor': 'middle' }, s); if (l >= 8) lt.setAttribute('style', `fill:${red};font-weight:600`);
+    const hit = el('rect', { x: 0, y: y - rh / 2, width: W, height: rh, class: 'hit' }, s);
+    hit.addEventListener('click', () => { showDistrict.show(n); $('finder').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' }); });
+    return { n, b, f, seg, dot, lab, lt, bg, name };
+  });
+  showDistrict.onMark(sel => parts.forEach(p => { const on = p.n === sel; p.bg.setAttribute('fill-opacity', on ? 0.12 : 0); p.name.classList.toggle('hl', on); p.lab.classList.toggle('hl', on); }));
+  [0, 10, 20, 30].forEach(v => txt(String(v), { x: x(v), y: H - 6, 'text-anchor': 'middle' }, s));
+  reg(box, () => parts.forEach(p => { p.seg.setAttribute('x2', x(p.b)); p.dot.setAttribute('cx', x(p.b)); p.dot.style.fill = bone; p.seg.style.stroke = bone; p.lab.style.opacity = 0; p.lt.style.opacity = 0; }),
+    job => parts.forEach((p, i) => tween(1000, t => {
+      const xv = x(p.b) + (x(p.f) - x(p.b)) * t, c = mix(bone, red, heat(p.f - p.b) * t);
+      p.seg.setAttribute('x2', xv); p.dot.setAttribute('cx', xv); p.dot.style.fill = c; p.seg.style.stroke = c;
+    }, i * 110, easeOut, job).then(() => { p.lab.style.opacity = 1; p.lt.style.opacity = 1; })));
+})();
+
+/* ===== Aha: เส้นวาดตัวเอง จุดพีคเด้ง แตะหรือลากเพื่อดูตัวเลขแต่ละวัน ===== */
+(() => {
+  const danger = S.lag.danger, leech = S.lag.leech;
+  const W = 900, H = 380, L = 50, R = 870, T = 60, B = 330, ymax = 40, n = danger.length;
+  const x = i => L + i * (R - L) / (n - 1), y = v => B - v / ymax * (B - T);
+  const box = $('lag'), read = $('lagRead'), hint = read.textContent, s = el('svg', { viewBox: `0 0 ${W} ${H}` }, box);
+  const fi = 8, di = danger.indexOf(Math.max(...danger));
+  const band = el('rect', { x: x(10), y: T - 24, width: x(15) - x(10), height: B - T + 24, fill: css('--leech'), 'fill-opacity': 0.1 }, s);
+  const bandT = txt('วันที่ 4–9 น้ำขัง', { x: (x(10) + x(15)) / 2, y: T - 30, 'text-anchor': 'middle' }, s);
+  [0, 10, 20, 30, 40].forEach(v => { el('line', { x1: L, x2: R, y1: y(v), y2: y(v), stroke: css('--line') }, s); txt(String(v), { x: L - 8, y: y(v) + 4, 'text-anchor': 'end' }, s); });
+  el('line', { x1: x(fi), x2: x(fi), y1: 20, y2: B, stroke: css('--silt'), 'stroke-dasharray': '5 5' }, s);
+  txt('น้ำท่วมสูงสุด 26 ก.ย. · 5,089 คำร้อง', { x: x(fi) - 8, y: 24, 'text-anchor': 'end' }, s);
+  const path = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ');
+  const pl = el('path', { d: path(leech), fill: 'none', stroke: css('--leech'), 'stroke-width': 2.5 }, s);
+  const ll = txt('ปลิง', { x: x(11) + 10, y: y(11) + 4, style: `fill:${css('--leech')}` }, s);
+  const pd = el('path', { d: path(danger), fill: 'none', stroke: css('--bone'), 'stroke-width': 3.5 }, s);
+  const ring = el('circle', { cx: x(di), cy: y(danger[di]), r: 7, stroke: css('--siren'), class: 'pulse' }, s);
+  const dot = el('circle', { cx: x(di), cy: y(danger[di]), r: 7, fill: css('--siren') }, s);
+  const pk = txt(`พีค 1 ต.ค. · ${danger[di]} คำร้อง`, { x: x(di) + 12, y: y(danger[di]) - 10, class: 'hl' }, s);
+  txt('สัตว์อันตรายทั้งหมด', { x: x(0), y: y(19), class: 'hl' }, s);
+  DAYS.forEach((t, i) => { if (i % 3 === 0) txt(t, { x: x(i), y: B + 22, 'text-anchor': 'middle' }, s); });
+  const cross = el('g', { style: 'opacity:0;pointer-events:none' }, s);
+  const cl = el('line', { y1: T - 10, y2: B, stroke: css('--siren'), 'stroke-width': 1.5 }, cross);
+  const cd = el('circle', { r: 6, fill: css('--bone'), stroke: css('--night'), 'stroke-width': 2 }, cross);
+  const cle = el('circle', { r: 5, fill: css('--leech'), stroke: css('--night'), 'stroke-width': 2 }, cross);
+  const hit = el('rect', { x: L - 10, y: T - 30, width: R - L + 20, height: B - T + 40, class: 'hit', style: 'touch-action:pan-y' }, s);
+  const at = e => { const r = s.getBoundingClientRect(); const sx = (e.clientX - r.left) / r.width * W; return Math.max(0, Math.min(n - 1, Math.round((sx - L) / (R - L) * (n - 1)))); };
+  const show = i => {
+    cross.style.opacity = 1; cl.setAttribute('x1', x(i)); cl.setAttribute('x2', x(i));
+    cd.setAttribute('cx', x(i)); cd.setAttribute('cy', y(danger[i])); cle.setAttribute('cx', x(i)); cle.setAttribute('cy', y(leech[i]));
+    const ph = i < 7 ? 'ก่อนน้ำท่วม' : i <= 22 ? `วันที่ ${i - 6} ของน้ำท่วม` : 'หลังช่วงน้ำท่วม';
+    read.innerHTML = `<b>${DAYS[i]}</b> (${ph}) · สัตว์อันตราย <b>${danger[i]}</b> เรื่อง · ปลิง <b>${leech[i]}</b> เรื่อง`;
+  };
+  hit.addEventListener('pointermove', e => show(at(e)));
+  hit.addEventListener('pointerdown', e => show(at(e)));
+  const lens = [pd, pl].map(p => Math.ceil(p.getTotalLength()) + 2);
+  reg(box, () => {
+    [pd, pl].forEach((p, i) => { p.style.strokeDasharray = lens[i]; p.style.strokeDashoffset = lens[i]; });
+    [dot, pk, ll, bandT].forEach(e => e.style.opacity = 0); ring.style.display = 'none'; band.setAttribute('fill-opacity', 0);
+    cross.style.opacity = 0; read.textContent = hint; dot.setAttribute('r', 7);
+  }, job => {
+    tween(600, t => band.setAttribute('fill-opacity', 0.1 * t), 0, easeOut, job); bandT.style.opacity = 1;
+    tween(2600, t => { pd.style.strokeDashoffset = lens[0] * (1 - t); pl.style.strokeDashoffset = lens[1] * (1 - t); }, 200, easeInOut, job)
+      .then(() => { ll.style.opacity = 1; dot.style.opacity = 1; return tween(500, t => dot.setAttribute('r', 7 + 6 * Math.sin(Math.PI * t)), 0, easeOut, job); })
+      .then(() => { pk.style.opacity = 1; ring.style.display = ''; });
+  });
+})();
+
+/* ===== แผนที่รายเขต: สีค่อยๆ ขึ้นทีละวันเหมือน heat map แตะเขตเพื่อดูตัวเลข ===== */
+(() => {
+  const M = S.map, box = $('map'), dayEl = $('mapDay'), inp = $('mapDayIn'), read = $('mapRead'), hint = read.textContent;
+  const s = el('svg', { viewBox: `0 0 ${M.W} ${M.H}` }, box);
+  const BIN = [0, 1, 50, 100, 200, 350], COL = ['#1D2F34', '#3D3A2C', '#6E4F26', '#A86A2B', '#DB8A3A', '#F6C76E'];
+  const colOf = v => { let k = 0; BIN.forEach((b, i) => { if (v >= b) k = i; }); return COL[k]; };
+  const rad = n => n ? 4.5 + 3.2 * Math.sqrt(n) : 0;
+  const gF = el('g', {}, s), gE = el('g', {}, s), gL = el('g', {}, s), gB = el('g', {}, s), hl = el('path', { class: 'hl', style: 'display:none' }, s);
+  let day = 15, sel = -1;
+  const tell = i => { const o = D[i]; read.innerHTML = `<b>เขต${esc(o.name)}</b> · ถึง ${FLOOD[day]} · น้ำขัง 3 วันขึ้นไป <b>${nf(o.stand[day])}</b> คำร้อง · ปลิง <b>${o.leech[day]}</b> เรื่อง`; };
+  const pick = i => { sel = i; hl.setAttribute('d', D[i].d); hl.style.display = ''; tell(i); };
+  const D = M.d.map(([name, d, x, y, r, stand, leech], i) => {
+    const p = el('path', { d, class: 'dist' }, gF);
+    el('path', { d, class: 'edge' }, gE);
+    const R = rad(leech[15]);
+    if (r >= 15) {
+      const big = r >= 24;
+      txt(name, { x, y: R ? y + R + (big ? 12 : 10) : y, class: 'lab', 'font-size': big ? 13.5 : 10.5, 'text-anchor': 'middle', 'dominant-baseline': 'middle' }, gL);
+    }
+    const g = el('g', { class: 'bub' }, gB);
+    const c = R ? el('circle', { cx: x, cy: y, r: R }, g) : null;
+    const t = R ? txt('', { x, y: y + 0.5, 'font-size': 11.5, 'text-anchor': 'middle', 'dominant-baseline': 'middle' }, g) : null;
+    p.addEventListener('pointerenter', () => pick(i));
+    p.addEventListener('click', () => pick(i));
+    return { name, d, stand, leech, p, c, t, R };
+  });
+  const show = k => {
+    day = k;
+    D.forEach(o => {
+      o.p.style.fill = colOf(o.stand[k]);
+      if (o.c) { const n = o.leech[k]; o.c.style.transform = `scale(${n ? rad(n) / o.R : 0})`; o.t.textContent = n >= 2 ? n : ''; }
+    });
+    dayEl.textContent = `วันที่ ${k + 1} · ${FLOOD[k]}`; inp.value = k + 1;
+    if (sel >= 0) tell(sel);
+  };
+  /* มือถือ: แผนที่กว้างกว่าจอ ให้เปิดมาที่ฝั่งตะวันออกซึ่งเป็นจุดสำคัญของเรื่อง */
+  const east = () => { if (box.scrollWidth > box.clientWidth) box.scrollLeft = box.scrollWidth - box.clientWidth; };
+  requestAnimationFrame(east);
+  const arm = () => {
+    east();
+    D.forEach(o => { o.p.style.fill = COL[0]; if (o.c) { o.c.style.transform = 'scale(0)'; o.t.textContent = ''; } });
+    dayEl.textContent = 'ก่อนน้ำท่วม'; inp.value = 1; sel = -1; hl.style.display = 'none'; read.textContent = hint;
+  };
+  const play = async job => { for (let k = 0; k < 16; k++) { show(k); await wait(k === 15 ? 0 : 380, job); } };
+  reg(box, arm, play);
+  show(15);
+  inp.addEventListener('input', () => { stop(box); show(+inp.value - 1); });
+  $('mapPlay').addEventListener('click', () => replay(box));
+})();
+
+/* ===== ช่องว่าง: นาฬิกา 30 วัน ช่องค่อยๆ ติดเมื่อคำร้องถูกปิด ที่เหลือกะพริบแดง ===== */
+(() => {
+  const days = [];
+  S.closing.bins.forEach(([lo, hi, n]) => { for (let k = 0; k < n; k++) days.push(lo + (hi - lo) * (k + 1) / n); });
+  const OPEN = S.closing.open, total = days.length + OPEN;
+  const cols = 37, gap = 24, box = $('dots');
+  const s = el('svg', { viewBox: `0 0 ${cols * gap} ${Math.ceil(total / cols) * gap}` }, box);
+  const water = css('--water'), silt = css('--silt'), safe = css('--safe');
+  const rects = [];
+  for (let k = 0; k < total; k++) rects.push(el('rect', { x: (k % cols) * gap + 3, y: Math.floor(k / cols) * gap + 3, width: gap - 6, height: gap - 6, rx: 3 }, s));
+  const setOpen = r => { r.setAttribute('class', 'open'); r.style.fill = water; r.style.fillOpacity = 1; r.setAttribute('stroke', silt); r.setAttribute('stroke-opacity', 0.5); };
+  const setClosed = (r, d) => { r.setAttribute('class', ''); r.style.fill = d <= 3 ? safe : silt; r.style.fillOpacity = d <= 3 ? 1 : 0.75; r.removeAttribute('stroke'); };
+  rects.forEach((r, k) => k < days.length ? setClosed(r, days[k]) : setOpen(r));
+  rects.slice(days.length).forEach(r => r.classList.add('alarm'));
+  const steps = [...document.querySelectorAll('#steps div')], thr = [1, 3, 7, 14, 30, 99];
+  const dayEl = $('clkDay'), cEl = $('clkClosed'), oEl = $('clkOpen');
+  reg(box, () => { rects.forEach(setOpen); $('steps').classList.add('armed'); steps.forEach(st => st.classList.remove('lit')); dayEl.textContent = 'วันที่ 0 หลังแจ้ง'; cEl.textContent = 0; oEl.textContent = total; },
+    job => {
+      let k = 0; $('steps').classList.remove('armed');
+      tween(6500, t => {
+        const d = t * 33;
+        while (k < days.length && days[k] <= d) { setClosed(rects[k], days[k]); k++; }
+        steps.forEach((st, i) => st.classList.toggle('lit', d >= thr[i]));
+        dayEl.textContent = d > 30 ? 'เกิน 30 วัน' : `วันที่ ${Math.floor(d)} หลังแจ้ง`; cEl.textContent = k; oEl.textContent = total - k;
+      }, 200, t => t, job).then(() => {
+        dayEl.textContent = 'ณ 27 ต.ค.'; steps.forEach(st => st.classList.add('lit'));
+        rects.slice(days.length).forEach(r => r.classList.add('alarm'));
+      });
+    });
+})();
+
+/* ===== ทายก่อนเฉลย: ปิดได้ภายใน 3 วันกี่เรื่องจาก 10 (รีเซ็ตทุกครั้งที่เลื่อนผ่าน) ===== */
+const unlockGap = (() => {
+  const inp = $('gIn'), out = $('gOut'), btn = $('gBtn'), msg = $('gMsg'), wrap = $('gHouses'), res = $('gapResult'), hint = msg.textContent;
+  const houses = Array.from({ length: 10 }, () => { const sv = el('svg', { viewBox: '0 0 32 32' }, wrap); el('use', { href: '#i-house' }, sv); return sv; });
+  const paint = v => houses.forEach((h, i) => { h.classList.toggle('on', i < v); h.classList.remove('wait'); });
+  paint(+inp.value);
+  inp.addEventListener('input', () => { out.textContent = `${inp.value} จาก 10`; paint(+inp.value); });
+  let open = null;
+  btn.addEventListener('click', () => {
+    const v = +inp.value; btn.disabled = true; inp.disabled = true;
+    houses.forEach((h, i) => { h.classList.toggle('on', i < 1); h.classList.toggle('wait', i >= 1); });
+    out.textContent = 'ความจริง: 1 จาก 10';
+    msg.innerHTML = v === 1 ? '<b>ทายถูก!</b> ปิดได้ภายใน 3 วันแค่ 1 ใน 10 เรื่อง'
+      : v === 0 ? 'เกือบถูก! ความจริงคือ <b>1 ใน 10</b> อีก 9 เรื่องต้องรอนานกว่า 3 วัน หรือยังไม่ได้ปิด'
+      : `คุณทายไว้ ${v} แต่ความจริงมีแค่ <b>1 ใน 10</b> อีก 9 เรื่องต้องรอนานกว่า 3 วัน หรือยังไม่ได้ปิด`;
+    res.classList.remove('locked');
+    if (open) open(res);
+  });
+  reg($('p-gap'), () => {
+    res.classList.add('locked'); inp.disabled = false; btn.disabled = false; inp.value = 5;
+    out.textContent = '5 จาก 10'; paint(5); msg.textContent = hint;
+  }, () => {});
+  return fn => { open = fn; };
+})();
+
+/* ===== เช็กความพร้อม (จำไว้ในเครื่องของผู้อ่าน ไม่รีเซ็ต) ===== */
+(() => {
+  const btns = [...document.querySelectorAll('#ready button')], KEY = 'whoswims-ready';
+  const score = $('rScore'), bar = $('rBar'), msg = $('rMsg');
+  let saved = [];
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { saved = []; }
+  const upd = () => {
+    const on = btns.map((b, i) => b.getAttribute('aria-pressed') === 'true' ? i : -1).filter(i => i >= 0), n = on.length;
+    score.textContent = `${n} / ${btns.length}`; bar.style.width = n / btns.length * 100 + '%';
+    msg.textContent = n === 0 ? 'เริ่มแตะข้อแรกได้เลย' : n <= 4 ? 'เริ่มต้นดีแล้ว ยังเหลืออีกหลายข้อ' : n <= 8 ? 'มาได้ครึ่งทางแล้ว' : n < btns.length ? 'อีกนิดเดียวจะพร้อมเต็มที่' : 'พร้อมรับน้ำเต็มที่ ชวนเพื่อนบ้านทำด้วยกัน';
+    try { localStorage.setItem(KEY, JSON.stringify(on)); } catch (e) { /* ไม่มีที่เก็บก็ใช้ได้ */ }
+  };
+  btns.forEach((b, i) => {
+    if (Array.isArray(saved) && saved.includes(i)) b.setAttribute('aria-pressed', 'true');
+    b.addEventListener('click', () => { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); upd(); });
+  });
+  upd();
+})();
+
+/* ===== คำศัพท์: แตะคำที่ขีดเส้นประเพื่อดูความหมาย ===== */
+(() => {
+  const sheet = $('sheet'), t = $('sheetT'), p = $('sheetP'), x = $('sheetX');
+  let y0 = 0, from = null;
+  const close = () => { if (sheet.hidden) return; sheet.hidden = true; if (from) from.focus({ preventScroll: true }); };
+  document.querySelectorAll('.tip').forEach(b => b.addEventListener('click', () => {
+    t.textContent = b.dataset.term || b.textContent; p.textContent = b.dataset.tip; sheet.hidden = false; y0 = scrollY; from = b; x.focus({ preventScroll: true });
+  }));
+  x.addEventListener('click', close);
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  addEventListener('scroll', () => { if (!sheet.hidden && Math.abs(scrollY - y0) > 260) { sheet.hidden = true; } }, { passive: true });
+})();
+
+/* ===== เมนูบท + ระดับน้ำ + ความแดงของทั้งหน้า + แถบความคืบหน้า ===== */
+(() => {
+  const flood = $('flood'), rust = $('rust'), heatEl = $('heat'), fill = $('gaugeFill'), day = $('gaugeDay'), root = document.documentElement, pf = document.querySelector('#prog .fill');
+  /* [id, ระดับน้ำ 0–1, วันที่ของน้ำท่วม, ความแดง 0–1] */
+  const marks = [['p-open',0,0,0],['p-surge',0.5,1,0.1],['p-croc',0.5,1,0.12],['p-fake',0.55,2,0.18],['ch2',0.6,2,0.25],['p-quiz',0.62,3,0.3],['p-wanted',0.68,4,0.45],['p-voices',0.75,5,0.6],['p-home',0.85,7,0.72],['ch3',0.9,8,0.8],['p-lag',1,9,1],['p-map',0.9,10,0.9],['p-district',0.75,12,0.8],['ch4',0.6,13,0.7],['p-gap',0.5,14,0.65],['p-asks',0.3,16,0.5],['p-ready',0.15,20,0.25],['p-end',0.06,30,0.05],['behind',0.06,30,0]]
+    .filter(m => $(m[0]));
+  const nodes = marks.map(m => $(m[0]));
+  const nav = $('chap'), now = $('chapNow'), list = $('chapList'), num = $('chapNum'), name = $('chapName');
+  const NAMES = { 1: 'คืนที่น้ำมา', 2: 'ผู้ต้องสงสัยตัวจริง', 3: 'น้ำที่ไม่ยอมไป', 4: 'ใครจะไปถึงก่อน', 5: 'เบื้องหลังข้อมูล' };
+  const chs = [...document.querySelectorAll('[data-ch]')], links = [...list.querySelectorAll('a')];
+  const topOf = n => n.getBoundingClientRect().top + scrollY;
+  let cur = 0, ticking = false;
+  const update = () => {
+    ticking = false;
+    const mid = scrollY + innerHeight * 0.5; let lvl = 0.06, dd = 0, h = 0;
+    const tops = nodes.map(topOf);
+    for (let i = 0; i < marks.length; i++) {
+      const ta = tops[i], tb = i + 1 < marks.length ? tops[i + 1] : document.documentElement.scrollHeight;
+      if (mid >= ta) {
+        const p = i + 1 < marks.length ? Math.min(1, (mid - ta) / Math.max(1, tb - ta)) : 0, a = marks[i], b = marks[i + 1] || a;
+        lvl = a[1] + (b[1] - a[1]) * p; dd = Math.round(a[2] + (b[2] - a[2]) * p); h = a[3] + (b[3] - a[3]) * p;
+      }
+    }
+    lvl = Math.max(lvl, 0.06);
+    flood.style.height = (reduce ? 6 : lvl * 38) + 'vh';
+    rust.style.opacity = (h * 0.7).toFixed(3); heatEl.style.opacity = (h * 0.55).toFixed(3);
+    root.style.setProperty('--heat', h.toFixed(3));
+    fill.style.height = (lvl * 100) + '%'; fill.style.background = mix(css('--siren'), css('--leech'), h);
+    day.textContent = dd > 16 ? 'หลังน้ำลด' : 'วันที่ ' + dd;
+    pf.style.width = (Math.min(1, scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight)) * 100).toFixed(1) + '%';
+    let ch = 1; const line = scrollY + innerHeight * 0.35;
+    chs.forEach(c => { if (topOf(c) <= line) ch = +c.dataset.ch; });
+    if (ch !== cur) {
+      cur = ch; num.textContent = ch <= 4 ? `บทที่ ${ch}/4` : 'ท้ายเรื่อง'; name.textContent = NAMES[ch];
+      links.forEach((a, i) => a.setAttribute('aria-current', i + 1 === ch ? 'true' : 'false'));
+    }
+    nav.classList.toggle('show', scrollY > innerHeight * 0.6);
+  };
+  const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  const setOpen = o => { list.hidden = !o; now.setAttribute('aria-expanded', String(o)); };
+  now.addEventListener('click', () => setOpen(list.hidden));
+  links.forEach(a => a.addEventListener('click', () => setOpen(false)));
+  document.addEventListener('click', e => { if (!nav.contains(e.target)) setOpen(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+  addEventListener('scroll', req, { passive: true }); addEventListener('resize', req); update();
+  document.querySelectorAll('details').forEach(d => d.addEventListener('toggle', req));
+})();
+
+/* ===== เริ่ม: เล่นเมื่อเลื่อนถึง และรีเซ็ตเมื่อพ้นจอไปทั้งหมด จึงเล่นใหม่ได้ทุกรอบ ===== */
+if (!reduce && 'IntersectionObserver' in window) {
+  const TH = Array.from({ length: 21 }, (_, i) => i / 20);
+  const ioPlay = new IntersectionObserver(es => es.forEach(e => {
+    const v = A.get(e.target);
+    if (!v || v.state !== 'armed' || !e.isIntersecting || e.target.closest('.locked')) return;
+    const rh = e.rootBounds ? e.rootBounds.height : innerHeight;
+    if (e.intersectionRatio >= 0.25 || e.intersectionRect.height >= rh * 0.45) start(e.target);
+  }), { threshold: TH, rootMargin: '0px 0px -15% 0px' });
+  const ioReset = new IntersectionObserver(es => es.forEach(e => {
+    const v = A.get(e.target);
+    if (v && !e.isIntersecting && v.state === 'played') reset(e.target);
+  }), { threshold: 0 });
+  A.forEach((v, n) => { reset(n); ioPlay.observe(n); ioReset.observe(n); });
+  /* ส่วนที่ซ่อนไว้จนกว่าจะกดเฉลย: เล่นทันทีถ้าอยู่บนจอแล้ว */
+  unlockGap(box => A.forEach((v, n) => {
+    if (!box.contains(n) || v.state !== 'armed') return;
+    const r = n.getBoundingClientRect();
+    if (r.top < innerHeight * 0.85 && r.bottom > 0) start(n);
+  }));
+}
+})();
+
+</script>
+</body>
+</html>
