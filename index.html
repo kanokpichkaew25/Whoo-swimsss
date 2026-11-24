@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ใครว่ายมากับน้ำ?</title>
+<!--
+  ===== วิธีแก้เนื้อหาเว็บนี้ =====
+  • ข้อความทั้งหมดอยู่ในไฟล์นี้ แก้ได้ตรงๆ แต่ละหน้าคั่นด้วยบรรทัด  ===== ชื่อหน้า =====
+  • ตัวเลขที่วิ่งนับ (มี data-count="...") : แก้ทั้งตัวเลขที่เห็น และค่า data-count ให้ตรงกัน
+  • ตัวเลขในกราฟ รายเขต และแผนที่ : data/story-data.js
+  • ภาพวาด : assets/art.js  เรียกใช้ด้วย <svg viewBox="0 0 64 64"><use href="#ชื่อภาพ"/></svg>
+  • สีและหน้าตา : assets/style.css   • การเคลื่อนไหวและปุ่มกด : assets/story.js
+  • เพิ่มหน้าใหม่ : คัดลอก <section class="page"> ... </section> ทั้งก้อนไปวาง แล้วตั้ง data-ch ตามบท (1–4)
+  • เกม : ทำในไฟล์ game.html (ปุ่ม "เล่นเกม" ท้ายเรื่องลิงก์ไปไฟล์นี้แล้ว)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div id="heat" aria-hidden="true"></div>
+<div id="flood" aria-hidden="true"><div class="body"></div><div class="rust" id="rust"></div><svg viewBox="0 0 400 20" preserveAspectRatio="none"><path d="M0 10 Q 25 0 50 10 T 100 10 T 150 10 T 200 10 T 250 10 T 300 10 T 350 10 T 400 10 V 20 H 0 Z" fill="rgba(38,84,92,0.55)"/></svg></div>
+<div id="gauge" aria-hidden="true"><span>ระดับน้ำ</span><div class="bar"><div class="fill" id="gaugeFill"></div></div><span id="gaugeDay">วันที่ 0</span></div>
+<div id="prog" aria-hidden="true"><div class="fill"></div></div>
+
+<nav class="chap" id="chap" aria-label="บทของเรื่อง">
+  <button type="button" class="chap-now" id="chapNow" aria-expanded="false" aria-controls="chapList"><span id="chapNum">บทที่ 1/4</span><b id="chapName">คืนที่น้ำมา</b><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+  <ol id="chapList" hidden>
+    <li><a href="#p-open">1 · คืนที่น้ำมา</a></li>
+    <li><a href="#ch2">2 · ผู้ต้องสงสัยตัวจริง</a></li>
+    <li><a href="#ch3">3 · น้ำที่ไม่ยอมไป</a></li>
+    <li><a href="#ch4">4 · ใครจะไปถึงก่อน</a></li>
+    <li><a href="#behind">เบื้องหลังข้อมูล</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ======================= บทที่ 1 · คืนที่น้ำมา ======================= -->
+
+<!-- ===== เปิดเรื่อง: ตัวละคร ===== -->
+<section class="page hero" id="p-open" data-ch="1">
+  <div class="hero-grid">
+    <figure class="hero-art"><svg viewBox="0 0 480 320" role="img" aria-label="ภาพวาดบ้านกลางน้ำท่วมตอนกลางคืน มีคนอยู่ในหน้าต่างที่เปิดไฟ ในน้ำมีงูและปลิง"><use href="#scene-night"/></svg></figure>
+    <div class="bubble">
+      <div class="bubble-meta">คำร้องจริงใน Traffy Fondue · 26 ก.ย. 2569 · 20:07 · เขตสะพานสูง</div>
+      <div class="lines">
+        <span>ผู้สูงอายุประมาณ 80 ปี อยู่บ้านเพียงลำพัง</span>
+        <span>น้ำท่วมสูง <b class="t-leech">ปลิง</b>เข้ามาในบ้าน และเกาะตามร่างกาย</span>
+        <span>ต้องตัดไฟเพื่อความปลอดภัย จึงทำอาหารไม่ได้</span>
+        <span>สิ่งที่ขอ คือ อาหาร และ<b class="t-siren">ได้ไปอยู่กับลูกสาว</b></span>
+      </div>
+    </div>
+  </div>
+  <h1>ใครว่าย<em>มากับน้ำ?</em></h1>
+  <p class="lead">คำร้องนี้เป็น 1 ใน <b class="num" data-count="94587" data-now>94,587</b> เรื่องที่คนกรุงเทพฯ ส่งเข้า <button type="button" class="tip" data-tip="แอปที่ให้ทุกคนถ่ายรูปและแจ้งปัญหาในเมืองถึงหน่วยงานได้ทันที เช่น น้ำท่วม ถนนพัง สัตว์เข้าบ้าน แต่ละเรื่องที่แจ้งเรียกว่า “คำร้อง”">Traffy Fondue</button> ช่วง 1 ก.ย.–27 ต.ค. 2569</p>
+  <p class="lead">เราค้นในคำร้องทั้งหมดเพื่อตอบ 2 คำถาม <b>ตอนน้ำท่วม สัตว์อะไรอันตรายจริงๆ</b> และ <b>ความช่วยเหลือไปถึงทันไหม</b></p>
+  <div class="scroll-hint" aria-hidden="true"><span>เลื่อนลงเพื่อเริ่มเรื่อง</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 13l7 7 7-7"/></svg></div>
+</section>
+
+<!-- ===== น้ำมา: คำร้องน้ำท่วมรายวัน ===== -->
+<section class="page" id="p-surge" data-ch="1">
+  <div class="eyebrow">คืน 24 ต่อ 25 ก.ย. ฝนไม่หยุด</div>
+  <h2>ก่อนน้ำมา คนแจ้งเรื่องน้ำท่วมวันละราว 60–110 เรื่อง แต่วันที่ 26 ก.ย. พุ่งเป็น <span class="num heat-siren" id="h5089">5,089</span> เรื่อง</h2>
+  <div class="chart" id="floodBars" role="img" aria-label="คำร้องเรื่องน้ำท่วมรายวัน 18 กันยายน ถึง 14 ตุลาคม 2569 ช่วงน้ำท่วม 25 กันยายน ถึง 10 ตุลาคม สูงสุด 5,089 เรื่องวันที่ 26 กันยายน"></div>
+  <div class="chart-foot"><p class="readout" id="barRead" aria-live="polite">แตะแท่งกราฟเพื่อดูตัวเลขแต่ละวัน</p><button type="button" class="replay" id="barReplay">เล่นอีกครั้ง</button></div>
+  <details class="how"><summary>ช่วงน้ำท่วม 16 วัน นับยังไง</summary><p>เริ่ม 25 ก.ย. วันที่คำร้องน้ำท่วมกระโดดขึ้นจากระดับปกติ และปิดช่วง 10 ต.ค. วันที่คำร้องลดลงต่ำสุดหลังพีค ทั้งเรื่องเราเทียบ 16 วันนี้กับ 16 วันก่อนหน้า (9–24 ก.ย.) หลัง 10 ต.ค. คำร้องกลับเพิ่มขึ้นอีกช่วงสั้นๆ (855 เรื่องวันที่ 14 ต.ค.)</p></details>
+</section>
+
+<!-- ===== Hook: จระเข้ 566 ตัว? ===== -->
+<section class="page" id="p-croc" data-ch="1">
+  <p class="lead">พอน้ำท่วม สัตว์ตัวแรกที่เรานึกถึงคือ “จระเข้” ลองค้นในคำร้องดู</p>
+  <div class="search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg><span id="q">จระเข้, จรเข้</span><span class="caret" aria-hidden="true"></span></div>
+  <div class="note" id="qStatus" aria-hidden="true">พบ 566 คำร้อง</div>
+  <div class="croc-row">
+    <div class="big num" id="n566">566</div>
+    <svg class="croc-art" viewBox="0 0 140 80" aria-hidden="true"><use href="#croc"/></svg>
+  </div>
+  <h2>กรุงเทพฯ มีจระเข้ 566 ตัว?</h2>
+</section>
+
+<!-- ===== หักมุม: จับผิดคำร้อง (การเตรียมข้อมูล) ===== -->
+<section class="page" id="p-fake" data-ch="1">
+  <div class="eyebrow">หักมุม · ลองจับผิด</div>
+  <h2>คำร้องเหล่านี้พูดถึงสัตว์จริงไหม?</h2>
+  <p class="muted">คอมพิวเตอร์ค้นคำได้เร็ว แต่แยกไม่ออกว่าคำไหนคือสัตว์ ลองช่วยแยกดู</p>
+  <div class="fakes" id="fakes">
+    <div class="fake" data-real="0"><q>…รถไม่สามารถสัญ<mark>จรเข้</mark>า-ออกได้…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">“จรเข้” ซ่อนอยู่ในคำว่า สัญจรเข้า-ออก แบบนี้มีถึง 553 เรื่อง</p></div>
+    <div class="fake" data-real="0"><q><mark>หนู</mark>เป็นนักเรียน…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">“หนู” ตรงนี้คือคนที่เขียนคำร้อง เรียกตัวเองว่าหนู</p></div>
+    <div class="fake" data-real="0"><q>…สุนัข<mark>เห่า</mark>เสียงดัง…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">ระบบเห็นคำว่า “เห่า” แล้วคิดว่าเป็น “งูเห่า” แต่จริงๆ คือหมาเห่า</p></div>
+    <div class="fake" data-real="1"><q>…พบ<mark class="red">จระเข้ตาย</mark> จำนวน 1 ตัว…</q><div class="fake-btns"><button type="button" data-a="1">สัตว์จริง</button><button type="button" data-a="0">ไม่ใช่สัตว์</button></div><p class="fake-why">ตัวนี้จริง คำร้อง 5 ต.ค. ย่านศรีนครินทร์</p></div>
+  </div>
+  <p class="fake-score" id="fakeScore" aria-live="polite"></p>
+
+  <div class="funnel rise">
+    <div><span class="n num" data-count="566" data-delay="300" style="font-size:60px;color:var(--silt);text-decoration:line-through">566</span><small class="muted">เจอคำว่า จระเข้/จรเข้</small></div>
+    <div><span class="n num" data-count="13" data-from="566" data-delay="700" style="font-size:60px;color:var(--silt)">13</span><small class="muted">เป็นคำว่าจระเข้จริงๆ ส่วนใหญ่คือชื่อคลอง</small></div>
+    <div class="funnel-end"><svg viewBox="0 0 140 80" aria-hidden="true"><use href="#croc-x"/></svg><span class="n num heat-siren" data-count="1" data-from="13" data-delay="1100" data-heat="siren" style="font-size:112px">1</span><small class="muted">จระเข้ตัวจริง และมันตายแล้ว</small></div>
+  </div>
+
+  <div class="clean">
+    <p class="clean-t">บทเรียนจากจระเข้: <b>ข้อมูลดิบหลอกเราได้</b> เราจึงคัดคำร้องทั้งหมดใหม่ทีละขั้น</p>
+    <ol class="sieve rise">
+      <li><b class="num" data-count="94587">94,587</b><span>คำร้องทั้งหมดในกรุงเทพฯ</span></li>
+      <li><b class="num" data-count="14105">14,105</b><span>มีคำที่ดูเหมือนชื่อสัตว์</span></li>
+      <li><b class="num" data-count="4996">4,996</b><span>พูดถึงสัตว์จริง หลังตัดคำแบบ “สัญจรเข้า-ออก” “หนูเป็นนักเรียน” “หมาเห่า”</span></li>
+      <li class="hl"><b class="num" data-count="738">738</b><span>พูดถึงสัตว์ที่อันตรายต่อคน: งู ปลิง ตะขาบ แมงป่อง หนู/ฉี่หนู</span></li>
+    </ol>
+    <details class="how"><summary>เราคัดอย่างไร</summary><p>ค้นชื่อสัตว์ 17 กลุ่มด้วยคำค้น แล้วตัดคำที่ไม่ได้หมายถึงสัตว์ออก จากนั้นเลือกเฉพาะสัตว์ที่อันตรายต่อคน 5 กลุ่ม รวมถึงคำร้องที่เขียนกว้างๆ ว่า “สัตว์มีพิษ” หรือ “สัตว์เลื้อยคลาน” ตัวเลขทั้งหมดในเรื่องนี้คือจำนวนคำร้อง ไม่ใช่จำนวนสัตว์จริง และคำร้องหนึ่งเรื่องอาจพูดถึงสัตว์หลายชนิด</p></details>
+  </div>
+</section>
+
+<!-- ======================= บทที่ 2 · ผู้ต้องสงสัยตัวจริง ======================= -->
+<header class="chapter" id="ch2" data-ch="2">
+  <span class="chapter-n">บทที่ 2 / 4</span>
+  <h2 class="chapter-t">ผู้ต้องสงสัยตัวจริง</h2>
+  <p class="chapter-q">ขณะที่เราเถียงกันเรื่องจระเข้ มีบางอย่างกำลัง<em>ว่ายมากับน้ำ</em></p>
+</header>
+
+<!-- ===== ทายสิ ===== -->
+<section class="page" id="p-quiz" data-ch="2">
+  <div class="eyebrow">ทายสิ</div>
+  <h2>ช่วงน้ำท่วม คำร้องเรื่องสัตว์ตัวไหน “เพิ่มขึ้น” มากที่สุด?</h2>
+  <div class="quiz" id="quiz">
+    <button type="button" data-name="งู" data-x="1.7"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span class="nm">งู</span><span class="x">×1.7</span></button>
+    <button type="button" data-name="หนู" data-x="2.3"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><span class="nm">หนู</span><span class="x">×2.3</span></button>
+    <button type="button" data-name="ตะขาบ" data-x="4"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#centipede"/></svg><span class="nm">ตะขาบ</span><span class="x">×4</span></button>
+    <button type="button" data-name="ปลิง" data-x="25" class="ans"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><span class="nm">ปลิง</span><span class="x">×25</span></button>
+  </div>
+  <p id="quizMsg" aria-live="polite" class="quiz-msg">แตะเลือกคำตอบ</p>
+</section>
+
+<!-- ===== หมายจับ ===== -->
+<section class="page" id="p-wanted" data-ch="2">
+  <div class="eyebrow">หมายจับ · เทียบ 16 วันก่อนน้ำท่วม กับ 16 วันช่วงน้ำท่วม</div>
+  <div class="wanted">
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span class="who">งู</span><span class="k num" style="font-size:34px" data-count="1.7" data-dec="1" data-pre="×" data-delay="300">×1.7</span><span class="f num">57 → 96 เรื่อง</span></div>
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><span class="who">หนู / ฉี่หนู</span><span class="k num" style="font-size:38px" data-count="2.3" data-dec="1" data-pre="×" data-delay="500">×2.3</span><span class="f num">29 → 67 เรื่อง</span></div>
+    <div class="poster"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#centipede"/></svg><span class="who">ตะขาบ</span><span class="k num" style="font-size:44px" data-count="4" data-pre="×" data-delay="700">×4</span><span class="f num">6 → 24 เรื่อง</span></div>
+    <div class="poster top"><span class="w">WANTED</span><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><span class="who">ปลิงควาย</span><span class="k num" style="font-size:84px" data-count="25" data-pre="×" data-delay="1100" data-dur="900">×25</span><span class="f num">3 → 75 เรื่อง</span></div>
+  </div>
+  <p class="lead">ปกติคนกรุงเทพฯ แทบไม่เคยแจ้งเรื่องปลิง ราว 1 เรื่องต่อสัปดาห์ พอน้ำมา กลายเป็น<span class="sweep red">เกือบ 5 เรื่องทุกวัน</span></p>
+  <div class="fact"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><p><b>รู้ไหม?</b> ปลิงกัดไม่เจ็บ เพราะน้ำลายของมันมีสารชา และสารที่ทำให้เลือดไม่แข็งตัว หลายคนจึงรู้ตัวตอนเห็นเลือดไหลไม่หยุดแล้ว</p></div>
+  <details class="how"><summary>×25 คิดจากอะไร</summary><p>คำร้องที่พูดถึงปลิง 16 วันก่อนน้ำท่วมมี 3 เรื่อง ช่วงน้ำท่วม 16 วันมี 75 เรื่อง ช่วงเดียวกันคำร้องทุกประเภทเพิ่มขึ้นราว 2 เท่า สัตว์ที่เพิ่มเร็วกว่าภาพรวมมากคือปลิงและตะขาบ</p></details>
+</section>
+
+<!-- ===== เสียงจากคำร้อง ===== -->
+<section class="page" id="p-voices" data-ch="2">
+  <div class="eyebrow">เสียงจากคำร้อง</div>
+  <h2>ตัวเลขเหล่านี้คือข้อความจริง ที่คนพิมพ์ขอความช่วยเหลือ</h2>
+  <div class="tickets rise">
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg><div class="meta"><b>26 ก.ย. 04:43</b><span>สะพานสูง</span></div><q>ผู้อาศัย…โดนปลิงกัดเลือดไหลไม่หยุด</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><div class="meta"><b>29 ก.ย. 18:45</b><span>สะพานสูง</span></div><q>คุณลุงข้างบ้านโดนงูกัดค่ะ ตะขาบจะถึงขาแล้วค่ะ ช่วยด้วย</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><div class="meta"><b>29 ก.ย. 23:26</b><span>มีนบุรี</span></div><q class="loud">งูอยู่ในห้องน้ำค่ะ</q></div>
+    <div class="ticket red"><svg class="t-ico" viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg><div class="meta"><b>30 ก.ย. 10:42</b><span>ลาดกระบัง</span></div><q>มีผู้ป่วยโรคฉี่หนู ต้องการยารักษาด่วน</q></div>
+  </div>
+  <p class="note">ตัดบ้านเลขที่และชื่อหมู่บ้านออก เหลือแค่เขตและเวลา</p>
+</section>
+
+<!-- ===== 10 วันในบ้าน ===== -->
+<section class="page" id="p-home" data-ch="2">
+  <div class="eyebrow">10 วันในบ้าน</div>
+  <div class="split">
+    <div class="home-left">
+      <div class="cal" id="cal" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
+      <div><span class="big num heat-leech" style="font-size:72px" data-count="40" data-heat="leech">40</span><p class="muted">คำร้องเรื่องสัตว์อันตรายที่พูดถึงผู้สูงอายุในบ้าน</p></div>
+    </div>
+    <div class="letter">
+      <span class="meta">คำร้อง 15 ต.ค. · เขตสะพานสูง</span>
+      <span>“เราติดอยู่ในบ้าน 10 วัน ออกไปใช้ชีวิตภายนอกไม่ได้เพราะน้ำล้อม</span>
+      <span>เราไม่อยากพาลูกลุยน้ำไปรับ เพราะกลัวสัตว์มีพิษและโรคฉี่หนู</span>
+      <b>ได้แต่อดทนให้มันผ่านไป”</b>
+    </div>
+  </div>
+  <h2>สัตว์ไม่ได้ทำร้ายแค่ตอนกัด แต่ทำให้คน<span class="sweep red">ไม่กล้าก้าวออกจากบ้าน</span></h2>
+</section>
+
+<!-- ======================= บทที่ 3 · น้ำที่ไม่ยอมไป ======================= -->
+<header class="chapter" id="ch3" data-ch="3">
+  <span class="chapter-n">บทที่ 3 / 4</span>
+  <h2 class="chapter-t">น้ำที่ไม่ยอมไป</h2>
+  <p class="chapter-q">น้ำท่วมสูงสุดวันที่ 26 ก.ย. แต่ทำไมคำร้องเรื่องสัตว์<em>ยังไม่หยุด?</em></p>
+</header>
+
+<!-- ===== Aha: ภัยมาช้ากว่าน้ำ ===== -->
+<section class="page" id="p-lag" data-ch="3">
+  <h2>หลังน้ำท่วมสูงสุด คำร้องสัตว์อันตรายยังเพิ่มต่ออีก 5 วัน</h2>
+  <div class="chart" id="lag" role="img" aria-label="คำร้องสัตว์อันตรายรายวัน พีควันที่ 1 ตุลาคม 34 เรื่อง หลังน้ำท่วมสูงสุดวันที่ 26 กันยายน"></div>
+  <p class="readout" id="lagRead" aria-live="polite">แตะหรือลากนิ้วบนกราฟเพื่อดูตัวเลขแต่ละวัน</p>
+  <p class="aha">อันตรายไม่ได้มากับน้ำที่มา<br><em class="sweep red">แต่มากับน้ำที่ไม่ยอมไป</em></p>
+  <p class="lead">แปลว่าช่วงที่ต้องรีบช่วยที่สุด ไม่ใช่วันแรก แต่คือ<b>วันที่ 4–9</b> ตอนที่น้ำเริ่มขังและเน่า</p>
+  <div class="waves rise">
+    <div class="wave"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-climb"/></svg><span class="note">ระลอก 1 · วันที่ 1–3</span><h3>สัตว์หนีน้ำขึ้นบ้าน</h3><span class="k num" data-count="8" data-pre="×" data-delay="200">×8</span><p>คำร้องเรื่องตะขาบต่อวัน เทียบกับก่อนน้ำท่วม</p></div>
+    <div class="wave peak"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-stagnant"/></svg><span class="note">ระลอก 2 · วันที่ 4–9</span><h3>น้ำขัง น้ำเน่า</h3><span class="k num" data-count="45" data-pre="×" data-delay="500" data-dur="1400">×45</span><p>คำร้องเรื่องปลิงต่อวัน หนูเพิ่มราว 3 เท่า ช่วงที่คำร้องสัตว์อันตรายสูงที่สุด</p></div>
+    <div class="wave ghost"><svg viewBox="0 0 160 110" aria-hidden="true"><use href="#scene-germ"/></svg><span class="note">ระลอก 3 · หลังน้ำลด</span><h3>อันตรายที่มองไม่เห็น</h3><span class="k">1–2 สัปดาห์</span><p>ระยะที่เชื้อ<button type="button" class="tip" data-tip="โรคเลปโตสไปโรซิส ติดจากเชื้อในฉี่หนูที่ปนอยู่ในน้ำ เข้าทางแผลหรือผิวที่แช่น้ำนาน อาการเช่น ไข้สูง ปวดน่อง ตาแดง">โรคฉี่หนู</button>ใช้กว่าจะแสดงอาการ คือตอนที่ทุกคนคิดว่าจบแล้ว</p></div>
+  </div>
+</section>
+
+<!-- ===== แผนที่น้ำขังเกิน 3 วัน × สัตว์อันตราย ===== -->
+<section class="page" id="p-map" data-ch="3">
+  <p class="lead">ถ้าน้ำขังคือต้นเหตุ ปลิงก็ควรอยู่ตรงที่น้ำขัง ลองดูบนแผนที่</p>
+  <h2>ปลิง <span class="num heat-leech" data-count="67" data-heat="leech">67</span> จาก 75 เรื่อง อยู่ในพื้นที่ที่น้ำขังเกิน 3 วัน</h2>
+  <div class="map" id="map" role="img" aria-label="แผนที่กรุงเทพฯ พื้นที่ที่มีคำร้องว่าน้ำขัง 3 วันขึ้นไป และจุดคำร้องเรื่องปลิงและสัตว์อันตรายอื่น"></div>
+  <div class="legend"><span><i style="background:rgba(84,150,196,0.75)"></i>มีคำร้องว่าน้ำขัง 3 วันขึ้นไป</span><span><i style="background:rgba(147,166,165,0.3)"></i>น้ำท่วม ไม่มีรายงานว่าขังนาน</span><span><i style="background:var(--leech);border-radius:6px"></i>ปลิง</span><span><i style="background:var(--bone);border-radius:6px;opacity:.7"></i>สัตว์อันตรายอื่น</span></div>
+  <details class="how"><summary>แผนที่นี้ทำยังไง</summary><p>ช่วงน้ำท่วม 25 ก.ย.–10 ต.ค. มีคำร้อง 3,336 เรื่องที่ระบุว่าน้ำขัง 3 วันขึ้นไป มากที่สุดที่ลาดกระบัง ประเวศ สะพานสูง หนองจอก และมีนบุรี เราแบ่งกรุงเทพฯ เป็นช่องละราว 900 × 900 เมตร แล้วระบายสีตามพิกัดของคำร้อง จึงไม่มีเส้นแบ่งเขต</p></details>
+</section>
+
+<!-- ===== รายเขต + ค้นหาเขตของคุณ ===== -->
+<section class="page" id="p-district" data-ch="3">
+  <div class="eyebrow">ก่อน · ช่วงน้ำท่วม รายเขต</div>
+  <h2><span class="num" data-count="33">33</span> จาก 50 เขตเจอสัตว์อันตรายมากขึ้น หนองจอกเพิ่มมากที่สุด จาก 5 เป็น <span class="num heat-leech" data-count="31" data-from="5" data-heat="leech">31</span> เรื่อง</h2>
+  <div class="chart" id="dumbbell" role="img" aria-label="คำร้องสัตว์อันตรายก่อนและช่วงน้ำท่วม 14 เขตที่มีคำร้องมากที่สุด"></div>
+  <p class="hint">แตะชื่อเขตในกราฟ หรือเลือกเขตของคุณด้านล่าง</p>
+  <div class="finder" id="finder">
+    <label for="dSel" class="finder-q">เขตของคุณเป็นยังไง?</label>
+    <select id="dSel"></select>
+    <div class="finder-card" id="dCard" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- ======================= บทที่ 4 · ใครจะไปถึงก่อน ======================= -->
+<header class="chapter" id="ch4" data-ch="4">
+  <span class="chapter-n">บทที่ 4 / 4</span>
+  <h2 class="chapter-t">ใครจะไปถึงก่อน</h2>
+  <p class="chapter-q">เรารู้แล้วว่าภัยมาเมื่อไหร่ และอยู่ที่ไหน คำถามต่อไปคือ<em>ความช่วยเหลือไปถึงทันไหม?</em></p>
+</header>
+
+<!-- ===== ช่องว่าง: ทายก่อน แล้วเฉลย ===== -->
+<section class="page" id="p-gap" data-ch="4">
+  <div class="guess" id="guess">
+    <p class="guess-q">ลองทายก่อน: ถ้ามีคำร้องเรื่องสัตว์อันตราย 10 เรื่อง จะมีกี่เรื่องที่ปิดได้ภายใน 3 วัน?</p>
+    <div class="houses" id="gHouses" aria-hidden="true"></div>
+    <div class="guess-row">
+      <input type="range" id="gIn" min="0" max="10" step="1" value="5" aria-label="ทายจำนวนเรื่องจาก 10 เรื่อง">
+      <output id="gOut" for="gIn">5 จาก 10</output>
+    </div>
+    <button type="button" class="btn" id="gBtn">เฉลย</button>
+    <p id="gMsg" class="guess-msg" aria-live="polite"></p>
+  </div>
+  <div class="gap-result" id="gapResult">
+    <h2>คำร้องสัตว์อันตรายช่วงน้ำท่วม <span class="num" data-count="332">332</span> เรื่อง ปิดเรื่องได้ภายใน 3 วันแค่ 1 ใน 10</h2>
+    <div class="clock" aria-live="off"><span id="clkDay">ณ 27 ต.ค.</span><span>ปิดเรื่องแล้ว <b id="clkClosed">191</b></span><span class="open">ยังไม่ปิด <b id="clkOpen">141</b></span></div>
+    <div class="dots" id="dots" role="img" aria-label="332 ช่อง แต่ละช่องคือหนึ่งคำร้อง 34 ปิดภายใน 3 วัน 157 ปิดหลัง 3 วัน 141 ยังไม่ปิด"></div>
+    <div class="legend"><span><i style="background:var(--safe)"></i>ปิดเรื่องภายใน 3 วัน · 34</span><span><i style="background:var(--silt)"></i>ปิดเรื่องหลัง 3 วัน · 157</span><span><i style="background:var(--water);outline:1px solid var(--silt)"></i>ยังไม่ปิด ณ 27 ต.ค. · 141</span></div>
+    <div class="steps" id="steps">
+      <div><b class="num">13</b><small>ภายใน 1 วัน</small></div>
+      <div><b class="num">34</b><small>ภายใน 3 วัน</small></div>
+      <div><b class="num">77</b><small>ภายใน 7 วัน</small></div>
+      <div><b class="num">119</b><small>ภายใน 14 วัน</small></div>
+      <div><b class="num">188</b><small>ภายใน 30 วัน</small></div>
+      <div><b class="num t-siren">141</b><small>ยังไม่ปิด</small></div>
+    </div>
+    <p class="urgent"><b>ทุกวันที่ช้าไป</b> มีคำร้องเรื่องสัตว์อันตรายใหม่เข้ามาราว <b class="num" data-count="21">21</b> เรื่อง <span class="muted">(332 เรื่องใน 16 วันของน้ำท่วม)</span></p>
+    <p class="lead">จำคำร้องจากบทที่ 2 ได้ไหม? นี่คือสถานะของพวกเขา ณ 27 ต.ค.</p>
+    <div class="tickets">
+      <div class="ticket red"><div class="meta"><b>26 ก.ย.</b><span class="status"><i></i>กำลังดำเนินการ</span></div><q>โดนปลิงกัดเลือดไหลไม่หยุด</q></div>
+      <div class="ticket red"><div class="meta"><b>29 ก.ย.</b><span class="status"><i></i>กำลังดำเนินการ</span></div><q>คุณลุงข้างบ้านโดนงูกัดค่ะ</q></div>
+      <div class="ticket red"><div class="meta"><b>30 ก.ย.</b><span class="status"><i></i>รอรับเรื่อง</span></div><q>มีผู้ป่วยโรคฉี่หนู ต้องการยารักษาด่วน</q></div>
+      <div class="ticket ok"><div class="meta"><b>29 ก.ย. 23:26</b><span class="status ok"><i></i>ปิดเรื่องใน 1 วัน</span></div><q>งูอยู่ในห้องน้ำค่ะ</q></div>
+    </div>
+    <p class="lead">กว่าคำร้องครึ่งหนึ่งจะปิด น้ำก็ลดไปแล้ว แต่<span class="sweep red">ปลิงกับงูไม่ได้รอใคร</span></p>
+    <details class="how"><summary>สถานะในระบบหมายถึงอะไร</summary><p>เป็นสถานะในระบบ Traffy ณ วันที่ได้ข้อมูล (27 ต.ค.) “กำลังดำเนินการ” อาจมีคนไปช่วยแล้วแต่ยังไม่ปิดเรื่อง และ “เสร็จสิ้น” คือปิดเรื่อง ไม่ได้แปลว่าแก้ปัญหาได้เสมอ</p></details>
+  </div>
+</section>
+
+<!-- ===== ถึงผู้มีอำนาจ ===== -->
+<section class="page" id="p-asks" data-ch="4">
+  <div class="eyebrow">ถึง รัฐบาล · กรุงเทพมหานคร · กรมป้องกันและบรรเทาสาธารณภัย</div>
+  <p class="goal">ทุกคำร้องสัตว์อันตรายในพื้นที่น้ำขังเกิน 3 วัน ต้องมีคนไปถึง<span class="sweep">ภายใน 72 ชั่วโมง</span></p>
+  <ol class="asks rise">
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-clock"/></svg><h3>นาฬิกา 72 ชั่วโมง</h3><p>พื้นที่ที่น้ำขังครบ 3 วัน ให้สูบน้ำ ส่งทีมจับสัตว์ และแจกบูทก่อนที่อื่น</p><span class="ev">ปลิงช่วงวันที่ 4–9 สูงกว่าปกติราว 45 เท่า และ 89% อยู่ในพื้นที่น้ำขังเกิน 3 วัน</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-elder"/></svg><h3>รู้ก่อนว่าใครอยู่ลำพัง</h3><p>ทำทะเบียนผู้สูงอายุและผู้ป่วยติดเตียงในเขตเสี่ยง แล้วเข้าถึงบ้านเหล่านี้เป็นลำดับแรก</p><span class="ev">คำร้องสัตว์อันตราย 40 เรื่องพูดถึงผู้สูงอายุในบ้าน</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-team"/></svg><h3>ทุกภาคส่วนร่วมมือกันรับมือเรื่องร้องเรียน</h3><p>หน่วยงานรัฐ สำนักงานเขต หน่วยแพทย์ และชุมชน ร่วมกันตอบคำร้องเรื่องสัตว์อันตรายให้เร็วขึ้น โดยเฉพาะช่วงวันที่ 4–9</p><span class="ev">ปิดเรื่องได้ภายใน 3 วันเพียง 1 ใน 10</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-mega"/></svg><h3>อย่าหยุดเตือนเมื่อน้ำลด</h3><p>สื่อสารเรื่องโรคฉี่หนูต่ออีกอย่างน้อย 2 สัปดาห์หลังน้ำลด</p><span class="ev">คำร้องเรื่องฉี่หนูแทบหายไปหลัง 2 ต.ค. ทั้งที่อาการเพิ่งเริ่มแสดง</span></li>
+  </ol>
+</section>
+
+<!-- ===== ถึงทุกคน: เช็กความพร้อม ===== -->
+<section class="page" id="p-ready" data-ch="4">
+  <div class="eyebrow">ถึงคนกรุงเทพฯ ทุกคน</div>
+  <h2>บ้านคุณพร้อมรับน้ำแค่ไหน?</h2>
+  <p class="muted">ระหว่างรอความช่วยเหลือ ดูแลตัวเองและเพื่อนบ้านให้ได้ แตะข้อที่บ้านคุณทำแล้วหรือรู้วิธีแล้ว ทำด้วยกันได้ทั้งเด็กและผู้ใหญ่</p>
+  <div class="meter" aria-live="polite"><div class="meter-top"><b id="rScore">0 / 12</b><span id="rMsg">เริ่มแตะข้อแรกได้เลย</span></div><div class="meter-bar"><i id="rBar"></i></div></div>
+  <div class="ready" id="ready">
+    <section style="--c:var(--silt)"><h3>ก่อนน้ำมา</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-boots"/></svg><span>เตรียมบูท ถุงมือ เกลือ ไฟฉาย</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-toilet"/></svg><span>ปิดฝาชักโครก ใส่ตะแกรงปลายท่อห้องน้ำชั้นล่าง</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-phone"/></svg><span>เซฟเบอร์ 199 (สัตว์เข้าบ้าน) และ 1669 (เจ็บป่วยฉุกเฉิน)</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-neighbor"/></svg><span>รู้ว่าเพื่อนบ้านคนไหนอยู่ลำพัง</span></button>
+    </section>
+    <section style="--c:var(--siren)"><h3>ระหว่างน้ำท่วม</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-night"/></svg><span>ไม่ลุยน้ำตอนกลางคืน</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-bandage"/></svg><span>ปิดแผลก่อนลุย ล้างตัวทันทีหลังลุย</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-salt"/></svg><span>ปลิงเกาะ อย่ากระชาก ใช้เกลือให้หลุดเอง แล้วกดแผล</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg><span>งูกัด อยู่นิ่ง ดาม ห้ามขันชะเนาะ รีบไปโรงพยาบาล</span></button>
+    </section>
+    <section style="--c:var(--safe)"><h3>หลังน้ำลด</h3>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-calendar"/></svg><span>จดไว้ว่าลุยน้ำวันไหน</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-thermo"/></svg><span>2 สัปดาห์ถัดมา ถ้ามีไข้ ปวดน่อง ตาแดง บอกหมอว่าเคยลุยน้ำ</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-pill"/></svg><span>ไม่ซื้อยาป้องกันฉี่หนูกินเอง</span></button>
+      <button type="button" aria-pressed="false"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-trash"/></svg><span>ระวังงูในกองขยะ และซากสัตว์ในท่อ</span></button>
+    </section>
+  </div>
+  <p class="note">ไม่รู้ว่า “ขันชะเนาะ” คืออะไร? <button type="button" class="tip" data-term="ขันชะเนาะ" data-tip="การใช้เชือกหรือผ้ารัดแน่นเหนือแผล ทำให้เลือดไปเลี้ยงไม่ได้ อาจทำให้อวัยวะเสียหาย จึงห้ามทำเมื่อถูกงูกัด">แตะดู</button></p>
+
+  <!-- ช่องเกม: ลิงก์ไป game.html -->
+  <a class="gamecard" href="game.html">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-game"/></svg>
+    <span class="gc-text"><b>เกม: เอาตัวรอด 16 วัน</b><span>ลองตัดสินใจเองว่าจะรอดจากปลิง งู และฉี่หนูได้ไหม</span></span>
+    <span class="gc-go">เล่นเกม →</span>
+  </a>
+</section>
+
+<!-- ===== คำถามสุดท้าย ===== -->
+<section class="page end" id="p-end" data-ch="4">
+  <figure class="end-art"><svg viewBox="0 0 480 320" role="img" aria-label="บ้านหลังเดิมกลางน้ำ มีปลิงเกาะผนัง และเรือกู้ภัยกำลังมุ่งหน้ามา"><use href="#scene-night"/><use href="#boat" x="14" y="198" width="112" height="56"/></svg></figure>
+  <p class="lead">ย้อนกลับไปคืนวันที่ 26 ก.ย. ผู้สูงอายุวัย 80 ปีคนนั้นขอแค่อาหาร และได้ไปอยู่กับลูกสาว</p>
+  <h2>ถึงผู้มีอำนาจ: ครั้งหน้า จะไปถึงก่อนวันที่ 4 ได้ไหม?</h2>
+  <h2 class="q2">ถึงทุกคน: ครั้งหน้า เราจะพร้อมกว่านี้ไหม?</h2>
+  <p class="lead">ครั้งหน้า ใครจะไปถึงบ้านหลังนั้นก่อน <span class="sweep red">ระหว่างปลิง หรือความช่วยเหลือ</span></p>
+  <p class="muted">94,587 คำร้อง คือ 94,587 ครั้งที่ใครสักคนขอให้มีคนได้ยิน</p>
+  <div class="cta-row">
+    <a class="cta-btn primary" href="https://www.traffy.in.th/" target="_blank" rel="noopener"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>แจ้งปัญหาใน Traffy Fondue</a>
+    <a class="cta-btn" href="tel:199"><b>199</b> งูหรือสัตว์อันตรายเข้าบ้าน</a>
+    <a class="cta-btn" href="tel:1669"><b>1669</b> เจ็บป่วยฉุกเฉิน</a>
+  </div>
+</section>
+</main>
+
+<!-- ===== เบื้องหลังข้อมูล ===== -->
+<footer class="behind" id="behind" data-ch="5">
+  <h2>เบื้องหลังข้อมูล</h2>
+  <ol class="pipe">
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-q"/></svg><b>1 · คำถาม</b><p>ตอนน้ำท่วม สัตว์อะไรอันตรายจริง อยู่ที่ไหน และความช่วยเหลือไปถึงทันไหม</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-db"/></svg><b>2 · เก็บข้อมูล</b><p>คำร้อง Traffy Fondue ที่มีพิกัดในกรุงเทพฯ 94,587 เรื่อง ช่วง 1 ก.ย.–27 ต.ค. 2569</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-funnel"/></svg><b>3 · เตรียมข้อมูล</b><p>ค้นชื่อสัตว์ 17 กลุ่ม ตัดคำที่ไม่ใช่สัตว์ เหลือคำร้องสัตว์อันตราย 738 เรื่อง ตัดบ้านเลขที่และชื่อหมู่บ้านออก</p></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-chart"/></svg><b>4 · วิเคราะห์</b><p>เทียบ 16 วันก่อนน้ำท่วมกับ 16 วันช่วงน้ำท่วม ดูรายวันและราย 50 เขต ซ้อนกับคำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป และนับเวลาปิดเรื่อง</p></li>
+  </ol>
+  <p class="arc"><b>โครงเรื่อง</b> ตาม Narrative Model ของ Brent Dykes: Setting (บทที่ 1 คืนที่น้ำมา) → Hook (จระเข้ 566 ตัว?) → Rising Insights (บทที่ 2 ผู้ต้องสงสัยตัวจริง) → Aha (บทที่ 3 น้ำที่ไม่ยอมไป) → Solution &amp; Next Steps (บทที่ 4 ใครจะไปถึงก่อน)</p>
+  <div class="cols">
+    <div><b>ข้อควรรู้</b><ul><li>ตัวเลขคือจำนวนคำร้องที่พูดถึงสัตว์ ไม่ใช่จำนวนสัตว์จริง</li><li>เขตที่คนใช้ Traffy Fondue มาก จะมีคำร้องมากตามไปด้วย</li><li>สถานะ “เสร็จสิ้น” คือปิดเรื่องในระบบ ไม่ได้แปลว่าแก้ปัญหาได้เสมอ</li></ul></div>
+    <div><b>แหล่งอ้างอิง</b><ul>
+      <li><a href="https://www.thansettakij.com/health-wellness/664849">ฐานเศรษฐกิจ: โรคไข้ฉี่หนู ระยะฟักตัว</a></li>
+      <li><a href="https://www.bangkokbiznews.com/health/1254276">กรุงเทพธุรกิจ: สธ.เตือนโรคฉี่หนูช่วงน้ำท่วม</a></li>
+      <li><a href="https://www.thaipbs.or.th/news/content/280457">Thai PBS: 4 ข้อห้ามถูกงูกัด</a></li>
+      <li><a href="https://scotlandisland.org.au/?p=284">Scotland Island: Leeches</a></li>
+    </ul></div>
+  </div>
+</footer>
+
+<div class="sheet" id="sheet" role="dialog" aria-modal="false" aria-labelledby="sheetT" hidden>
+  <b id="sheetT"></b><p id="sheetP"></p><button type="button" id="sheetX" aria-label="ปิด">ปิด</button>
+</div>
+
+<script src="assets/art.js"></script>
+<script src="data/story-data.js"></script>
+<script src="assets/story.js"></script>
+</body>
+</html>
