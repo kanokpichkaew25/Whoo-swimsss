@@ -7,15 +7,15 @@
 <!--
   ===== ช่องสำหรับเกม =====
   • ใส่เกมแทนส่วน <main class="game-slot"> ด้านล่างได้เลย
-  • ใช้สีและฟอนต์เดียวกับเรื่องหลักจาก assets/style.css
+  • ใช้สีและฟอนต์เดียวกับเรื่องหลักจาก style.css
   • ใช้ภาพวาดสัตว์ได้ทันที เช่น <svg viewBox="0 0 120 80"><use href="#leech"/></svg>
-    (รายชื่อภาพทั้งหมดอยู่บนสุดของ assets/art.js)
-  • ถ้าเกมมีโค้ดเยอะ แยกเป็นไฟล์ assets/game.js แล้วใส่ <script src="assets/game.js"></script> ท้ายไฟล์นี้
+    (รายชื่อภาพทั้งหมดอยู่บนสุดของ art.js)
+  • ถ้าเกมมีโค้ดเยอะ แยกเป็นไฟล์ game.js แล้วใส่ <script src="game.js"></script> ท้ายไฟล์นี้
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@500;600;700&family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="style.css">
 <style>
   .game-slot { max-width: 880px; margin: 0 auto; padding: 72px 24px 120px; display: flex; flex-direction: column; gap: 26px; position: relative; z-index: 1; }
   .game-slot h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.1; }
@@ -41,6 +41,6 @@
   </div>
   <p class="soon">เกมกำลังพัฒนา เร็วๆ นี้</p>
 </main>
-<script src="assets/art.js"></script>
+<script src="art.js"></script>
 </body>
 </html>
