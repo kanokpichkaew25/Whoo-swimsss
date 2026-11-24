@@ -399,13 +399,8 @@ mark.red { background: var(--leech); color: var(--bone); }
 /* เบื้องหลังข้อมูล */
 .behind { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 72px 24px 150px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 26px; font-size: 16px; color: var(--silt); }
 .behind h2 { color: var(--bone); font-size: 34px; }
-.pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-.pipe li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-.pipe svg { width: 48px; }
-.pipe b { color: var(--bone); font-family: var(--font-display); font-size: 19px; }
-.pipe p { font-size: 15.5px; line-height: 1.6; }
-.arc { font-size: 15.5px; max-width: none; }
-.arc b, .cols b { color: var(--bone); }
+.behind .src-lead { font-size: 18px; color: var(--bone); max-width: 70ch; }
+.cols b { color: var(--bone); }
 .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .cols ul { margin: 6px 0 0; padding-left: 20px; }
 
@@ -438,7 +433,6 @@ mark.red { background: var(--leech); color: var(--bone); }
   .bubble::before { left: 48px; top: -12px; border: 12px solid transparent; border-top: 0; border-bottom-color: var(--bone); }
   .fakes, .tickets, .split, .waves, .asks, .ready, .cols { grid-template-columns: minmax(0, 1fr); }
   .quiz { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sieve li { grid-template-columns: minmax(0, 1fr); gap: 2px; margin-left: 0 !important; }
   .sieve b { text-align: left; }
@@ -460,7 +454,6 @@ mark.red { background: var(--leech); color: var(--bone); }
   .guess-msg { min-height: 5em; }
 }
 @media (max-width: 480px) {
-  .pipe { grid-template-columns: minmax(0, 1fr); }
   .chap-now { font-size: 15px; padding: 6px 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -483,7 +476,7 @@ mark.red { background: var(--leech); color: var(--bone); }
     <li><a href="#ch2">2 · ผู้ต้องสงสัยตัวจริง</a></li>
     <li><a href="#ch3">3 · น้ำที่ไม่ยอมไป</a></li>
     <li><a href="#ch4">4 · ใครจะไปถึงก่อน</a></li>
-    <li><a href="#behind">เบื้องหลังข้อมูล</a></li>
+    <li><a href="#behind">ที่มาของข้อมูล</a></li>
   </ol>
 </nav>
 
@@ -797,16 +790,10 @@ mark.red { background: var(--leech); color: var(--bone); }
 </section>
 </main>
 
-<!-- ===== เบื้องหลังข้อมูล ===== -->
+<!-- ===== ที่มาของข้อมูล ===== -->
 <footer class="behind" id="behind" data-ch="5">
-  <h2>เบื้องหลังข้อมูล</h2>
-  <ol class="pipe">
-    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-q"/></svg><b>1 · คำถาม</b><p>ตอนน้ำท่วม สัตว์อะไรอันตรายจริง อยู่ที่ไหน และความช่วยเหลือไปถึงทันไหม</p></li>
-    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-db"/></svg><b>2 · เก็บข้อมูล</b><p>คำร้อง Traffy Fondue ที่มีพิกัดในกรุงเทพฯ 94,587 เรื่อง ช่วง 1 ก.ย.–27 ต.ค. 2569</p></li>
-    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-funnel"/></svg><b>3 · เตรียมข้อมูล</b><p>ค้นชื่อสัตว์ 17 กลุ่ม ตัดคำที่ไม่ใช่สัตว์ เหลือคำร้องสัตว์อันตราย 738 เรื่อง ตัดบ้านเลขที่และชื่อหมู่บ้านออก</p></li>
-    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-chart"/></svg><b>4 · วิเคราะห์</b><p>เทียบ 16 วันก่อนน้ำท่วมกับ 16 วันช่วงน้ำท่วม ดูรายวันและราย 50 เขต ซ้อนกับคำร้องที่บอกว่าน้ำขัง 3 วันขึ้นไป และนับเวลาปิดเรื่อง</p></li>
-  </ol>
-  <p class="arc"><b>โครงเรื่อง</b> ตาม Narrative Model ของ Brent Dykes: Setting (บทที่ 1 คืนที่น้ำมา) → Hook (จระเข้ 566 ตัว?) → Rising Insights (บทที่ 2 ผู้ต้องสงสัยตัวจริง) → Aha (บทที่ 3 น้ำที่ไม่ยอมไป) → Solution &amp; Next Steps (บทที่ 4 ใครจะไปถึงก่อน)</p>
+  <h2>ที่มาของข้อมูล</h2>
+  <p class="src-lead">เรื่องนี้ใช้คำร้องใน Traffy Fondue ที่มีพิกัดในกรุงเทพฯ 94,587 เรื่อง ช่วง 1 ก.ย.–27 ต.ค. 2569 คัดเหลือคำร้องที่พูดถึงสัตว์อันตรายจริง 738 เรื่อง และตัดบ้านเลขที่กับชื่อหมู่บ้านออกเพื่อความเป็นส่วนตัว</p>
   <div class="cols">
     <div><b>ข้อควรรู้</b><ul><li>ตัวเลขคือจำนวนคำร้องที่พูดถึงสัตว์ ไม่ใช่จำนวนสัตว์จริง</li><li>เขตที่คนใช้ Traffy Fondue มาก จะมีคำร้องมากตามไปด้วย</li><li>สถานะ “เสร็จสิ้น” คือปิดเรื่องในระบบ ไม่ได้แปลว่าแก้ปัญหาได้เสมอ</li></ul></div>
     <div><b>แหล่งอ้างอิง</b><ul>
@@ -1749,7 +1736,7 @@ const unlockGap = (() => {
     .filter(m => $(m[0]));
   const nodes = marks.map(m => $(m[0]));
   const nav = $('chap'), now = $('chapNow'), list = $('chapList'), num = $('chapNum'), name = $('chapName');
-  const NAMES = { 1: 'คืนที่น้ำมา', 2: 'ผู้ต้องสงสัยตัวจริง', 3: 'น้ำที่ไม่ยอมไป', 4: 'ใครจะไปถึงก่อน', 5: 'เบื้องหลังข้อมูล' };
+  const NAMES = { 1: 'คืนที่น้ำมา', 2: 'ผู้ต้องสงสัยตัวจริง', 3: 'น้ำที่ไม่ยอมไป', 4: 'ใครจะไปถึงก่อน', 5: 'ที่มาของข้อมูล' };
   const chs = [...document.querySelectorAll('[data-ch]')], links = [...list.querySelectorAll('a')];
   const topOf = n => n.getBoundingClientRect().top + scrollY;
   let cur = 0, ticking = false;
