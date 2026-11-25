@@ -251,6 +251,15 @@ mark.red { background: var(--leech); color: var(--bone); }
 @keyframes glow { 50% { box-shadow: 0 0 0 6px rgba(232, 137, 59, 0.25); background: rgba(232, 137, 59, 0.15); } }
 .letter { background: var(--bone); color: #1E1A14; border-radius: 6px; padding: 28px; font-size: 21px; line-height: 1.75; display: flex; flex-direction: column; gap: 10px; }
 .letter .meta { font-family: var(--font-mono); font-size: 13.5px; color: #5B544A; }
+.groups-lead { margin: 0 0 10px; }
+.groups { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.groups li { display: grid; grid-template-columns: 44px 52px minmax(0, 1fr); align-items: center; gap: 12px; padding: 8px 12px; border-radius: 10px; background: rgba(233, 227, 211, 0.05); }
+.groups svg { width: 44px; height: 44px; }
+.groups b { font-family: var(--font-display); font-weight: 700; font-size: 32px; line-height: 1; color: var(--leech); text-align: right; }
+.groups span { font-size: 17px; line-height: 1.35; }
+.groups-note { margin: 10px 0 0; font-size: 14px; }
+.voices { margin-top: 18px; }
+.ticket .meta .who { padding: 0 9px; border-radius: 20px; border: 1px solid var(--line); color: var(--bone); }
 
 /* Aha */
 .aha { font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.6vw, 52px); line-height: 1.3; max-width: none; }
@@ -610,16 +619,31 @@ mark.red { background: var(--leech); color: var(--bone); }
   <div class="split">
     <div class="home-left">
       <div class="cal" id="cal" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span></div>
-      <div><span class="big num heat-leech" style="font-size:72px" data-count="40" data-heat="leech">40</span><p class="muted">คำร้องเรื่องสัตว์อันตรายที่พูดถึงผู้สูงอายุในบ้าน</p></div>
+      <div>
+        <p class="muted groups-lead">คำร้องสัตว์อันตรายที่พูดถึงคนที่ลำบากเป็นพิเศษ</p>
+        <ul class="groups">
+          <li><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#c-kid"/></svg><b class="num" data-count="45">45</b><span>เด็กและนักเรียน</span></li>
+          <li><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#c-elder"/></svg><b class="num" data-count="40">40</b><span>ผู้สูงอายุ</span></li>
+          <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-meds"/></svg><b class="num" data-count="20">20</b><span>ผู้ป่วย ผู้ป่วยติดเตียง และผู้พิการ</span></li>
+          <li><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#c-adult"/></svg><b class="num" data-count="17">17</b><span>คนที่ต้องลุยน้ำไปทำงานหรือไปเรียน</span></li>
+        </ul>
+        <p class="note groups-note">นับจากคำร้องสัตว์อันตราย 738 เรื่อง คำร้องหนึ่งอาจพูดถึงคนหลายกลุ่ม</p>
+      </div>
     </div>
     <div class="letter">
-      <span class="meta">คำร้อง 15 ต.ค. · เขตสะพานสูง</span>
+      <span class="meta">คำร้อง 15 ต.ค. · เขตสะพานสูง · พ่อแม่ที่มีลูก</span>
       <span>“เราติดอยู่ในบ้าน 10 วัน ออกไปใช้ชีวิตภายนอกไม่ได้เพราะน้ำล้อม</span>
       <span>เราไม่อยากพาลูกลุยน้ำไปรับ เพราะกลัวสัตว์มีพิษและโรคฉี่หนู</span>
       <b>ได้แต่อดทนให้มันผ่านไป”</b>
     </div>
   </div>
-  <h2>สัตว์ไม่ได้ทำร้ายแค่ตอนกัด แต่ทำให้คน<span class="sweep red">ไม่กล้าก้าวออกจากบ้าน</span></h2>
+  <div class="tickets voices rise">
+    <div class="ticket"><div class="meta"><b>26 ก.ย. 09:46</b><span>สายไหม</span><span class="who">ครอบครัวที่มีเด็ก</span></div><q>ตอนนี้มีคนติดอยู่ชั้น 2 เป็นเด็ก 2 คน ผู้ใหญ่ 2 คน… ตอนนี้น้ำท่วมถึงก้นและมีปลิงเยอะ</q></div>
+    <div class="ticket"><div class="meta"><b>27 ก.ย. 11:02</b><span>บางกะปิ</span><span class="who">ผู้สูงอายุ</span></div><q>น้ำท่วมประมาณ 1 เมตร สองวัน มีสัตว์ร้ายคือปลิง ที่บ้านมีผู้สูงอายุ 80 กว่า ออกไปไหนลำบากมาก</q></div>
+    <div class="ticket"><div class="meta"><b>27 ก.ย. 19:19</b><span>ลาดพร้าว</span><span class="who">ผู้ป่วยติดเตียง</span></div><q>เร่งระบายน้ำออกเร็วที่สุด ที่บ้านมีผู้ป่วยติดเตียงค่ะ ต้องฟอกไต</q></div>
+    <div class="ticket"><div class="meta"><b>10 ต.ค. 00:05</b><span>หนองจอก</span><span class="who">คนทำงานกะดึก</span></div><q>พี่สาวทำงานกะดึก เลิกงานเที่ยงคืน ต้องเดินลุยน้ำเข้ามาสูงขนาดเข่า อันตราย</q></div>
+  </div>
+  <h2>สัตว์ไม่ได้ทำร้ายแค่ตอนกัด แต่ทำให้คนทุกวัย<span class="sweep red">ไม่กล้าก้าวออกจากบ้าน</span></h2>
 </section>
 
 <!-- ======================= บทที่ 3 · น้ำที่ไม่ยอมไป ======================= -->
@@ -732,7 +756,7 @@ mark.red { background: var(--leech); color: var(--bone); }
   <p class="goal">ทุกคำร้องสัตว์อันตรายในพื้นที่น้ำขังเกิน 3 วัน ต้องมีคนไปถึง<span class="sweep">ภายใน 72 ชั่วโมง</span></p>
   <ol class="asks rise">
     <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-clock"/></svg><h3>นาฬิกา 72 ชั่วโมง</h3><p>พื้นที่ที่น้ำขังครบ 3 วัน ให้สูบน้ำ ส่งทีมจับสัตว์ และแจกบูทก่อนที่อื่น</p><span class="ev">ปลิงช่วงวันที่ 4–9 สูงกว่าปกติราว 45 เท่า และ 89% อยู่ในพื้นที่น้ำขังเกิน 3 วัน</span></li>
-    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-elder"/></svg><h3>รู้ก่อนว่าใครอยู่ลำพัง</h3><p>ทำทะเบียนผู้สูงอายุและผู้ป่วยติดเตียงในเขตเสี่ยง แล้วเข้าถึงบ้านเหล่านี้เป็นลำดับแรก</p><span class="ev">คำร้องสัตว์อันตราย 40 เรื่องพูดถึงผู้สูงอายุในบ้าน</span></li>
+    <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-elder"/></svg><h3>รู้ก่อนว่าบ้านไหนต้องการความช่วยเหลือ</h3><p>ทำทะเบียนบ้านที่มีเด็กเล็ก ผู้สูงอายุ ผู้ป่วยติดเตียง และผู้พิการในเขตเสี่ยง แล้วเข้าถึงบ้านเหล่านี้เป็นลำดับแรก</p><span class="ev">คำร้องสัตว์อันตรายพูดถึงเด็ก 45 เรื่อง ผู้สูงอายุ 40 เรื่อง ผู้ป่วยและผู้พิการ 20 เรื่อง</span></li>
     <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-team"/></svg><h3>ให้ทุกภาคส่วนร่วมมือกันในการรับมือเรื่องร้องเรียน</h3><p>หน่วยงานรัฐ สำนักงานเขต หน่วยแพทย์ และชุมชน ร่วมกันตอบคำร้องเรื่องสัตว์อันตรายให้เร็วขึ้น โดยเฉพาะช่วงวันที่ 4–9</p><span class="ev">ปิดเรื่องได้ภายใน 3 วันเพียง 1 ใน 10</span></li>
     <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-mega"/></svg><h3>อย่าหยุดเตือนเมื่อน้ำลด</h3><p>สื่อสารเรื่องโรคฉี่หนูต่ออีกอย่างน้อย 2 สัปดาห์หลังน้ำลด</p><span class="ev">คำร้องเรื่องฉี่หนูแทบหายไปหลัง 2 ต.ค. ทั้งที่อาการเพิ่งเริ่มแสดง</span></li>
   </ol>
