@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>เกม: เอาตัวรอด 16 วัน</title>
+<title>เกม: เอาตัวรอด 16 วัน · ใครว่ายมากับน้ำ?</title>
+<meta name="description" content="เกมจำลองน้ำท่วม เลือกวัยของคุณ แล้วตัดสินใจเอาตัวรอดจากปลิง งู ตะขาบ และฉี่หนูตลอด 16 วัน">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230D181C'/%3E%3Cpath d='M0 40q8-6 16 0t16 0t16 0t16 0V64H0Z' fill='%232C626B'/%3E%3Cellipse cx='32' cy='29' rx='17' ry='7.5' fill='%23D9534F'/%3E%3Ccircle cx='44' cy='27' r='1.8' fill='%23E9E3D3'/%3E%3C/svg%3E">
 <meta name="theme-color" content="#0D181C">
 <!--
-  ===== ไฟล์นี้รวม style.css, art.js, story-data.js, story.js ไว้ในไฟล์เดียวแล้ว อัปไฟล์นี้ไฟล์เดียวก็ใช้ได้ =====
-  ===== ช่องสำหรับเกม =====
-  • ใส่เกมแทนส่วน <main class="game-slot"> ด้านล่างได้เลย
-  • ใช้สีและฟอนต์เดียวกับเรื่องหลักจาก style.css
-  • ใช้ภาพวาดสัตว์ได้ทันที เช่น <svg viewBox="0 0 120 80"><use href="#leech"/></svg>
-    (รายชื่อภาพทั้งหมดอยู่บนสุดของ art.js)
-  • ถ้าเกมมีโค้ดเยอะ แยกเป็นไฟล์ game.js แล้วใส่ <script src="game.js"></script> ท้ายไฟล์นี้
+  ===== ไฟล์นี้รวม style.css, art.js, story-data.js, story.js, game.js ไว้ในไฟล์เดียวแล้ว อัปไฟล์นี้ไฟล์เดียวก็ใช้ได้ =====
+  ===== เกม: เอาตัวรอด 16 วัน (ส่วนต่อขยายของเรื่อง "ใครว่ายมากับน้ำ?") =====
+  • ข้อความหน้าแรก ชื่อเกม และการ์ดตัวละคร 4 วัย แก้ได้ในไฟล์นี้
+  • เหตุการณ์ ตัวเลือก คำอธิบาย และไอเทม แก้ได้ใน game.js (มีคู่มือภาษาไทยอยู่บนสุดของไฟล์)
+  • ภาพวาดทั้งหมด (สัตว์ ตัวละคร ไอเทม) อยู่ใน art.js
+  • สีและฟอนต์ใช้ร่วมกับเรื่องหลักจาก style.css ส่วนหน้าตาเฉพาะของเกมอยู่ใน <style> ด้านล่าง
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -393,13 +393,8 @@ mark.red { background: var(--leech); color: var(--bone); }
 /* เบื้องหลังข้อมูล */
 .behind { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 72px 24px 150px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 26px; font-size: 16px; color: var(--silt); }
 .behind h2 { color: var(--bone); font-size: 34px; }
-.pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-.pipe li { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-.pipe svg { width: 48px; }
-.pipe b { color: var(--bone); font-family: var(--font-display); font-size: 19px; }
-.pipe p { font-size: 15.5px; line-height: 1.6; }
-.arc { font-size: 15.5px; max-width: none; }
-.arc b, .cols b { color: var(--bone); }
+.behind .src-lead { font-size: 18px; color: var(--bone); max-width: 70ch; }
+.cols b { color: var(--bone); }
 .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .cols ul { margin: 6px 0 0; padding-left: 20px; }
 
@@ -432,7 +427,6 @@ mark.red { background: var(--leech); color: var(--bone); }
   .bubble::before { left: 48px; top: -12px; border: 12px solid transparent; border-top: 0; border-bottom-color: var(--bone); }
   .fakes, .tickets, .split, .waves, .asks, .ready, .cols { grid-template-columns: minmax(0, 1fr); }
   .quiz { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .pipe { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .sieve li { grid-template-columns: minmax(0, 1fr); gap: 2px; margin-left: 0 !important; }
   .sieve b { text-align: left; }
@@ -454,7 +448,6 @@ mark.red { background: var(--leech); color: var(--bone); }
   .guess-msg { min-height: 5em; }
 }
 @media (max-width: 480px) {
-  .pipe { grid-template-columns: minmax(0, 1fr); }
   .chap-now { font-size: 15px; padding: 6px 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -464,29 +457,290 @@ mark.red { background: var(--leech); color: var(--bone); }
 
 </style>
 <style>
-  .game-slot { max-width: 880px; margin: 0 auto; padding: 72px 24px 120px; display: flex; flex-direction: column; gap: 26px; position: relative; z-index: 1; }
-  .game-slot h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.1; }
-  .game-slot h1 em { font-style: normal; color: var(--siren); }
-  .cast { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  .cast figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; text-align: center; font-family: var(--font-display); font-size: 19px; }
-  .cast svg { width: 100%; }
-  .soon { border: 1px dashed rgba(232, 137, 59, 0.6); border-radius: 16px; padding: 22px; background: rgba(232, 137, 59, 0.06); font-size: 20px; }
-  .back { width: fit-content; }
-  @media (max-width: 600px) { .cast { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  /* ===== น้ำด้านหลัง: สูงขึ้นลงตามช่วงเวลาในเกม ===== */
+  #flood { transition: height 1.4s cubic-bezier(.4, 0, .2, 1); }
+  #flood .murk { position: absolute; inset: 0; opacity: 0; background: linear-gradient(180deg, rgba(74, 92, 52, 0.5), rgba(40, 52, 30, 0.9)); transition: opacity 1.4s; }
+  #flood.murk .murk { opacity: 1; }
+  #flood .lane { position: absolute; inset: 0; overflow: hidden; }
+  #swimmer { position: absolute; left: 0; bottom: 18%; width: 110px; opacity: 0.5; animation: swim 24s linear infinite; }
+  #swimmer svg { display: block; width: 100%; height: auto; }
+  @keyframes swim { from { transform: translateX(-130px); } to { transform: translateX(100vw); } }
+
+  /* ===== โครงหน้า ===== */
+  .g-wrap { max-width: 720px; margin: 0 auto; padding: 14px 18px 120px; }
+  .g-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; margin-bottom: 14px; }
+  .g-back { color: var(--silt); text-decoration: none; font-size: 16px; padding: 8px 0; }
+  .g-back:hover { color: var(--siren); }
+  .g-brand { font-family: var(--font-display); font-size: 15px; color: var(--silt); }
+  .g-screen[hidden] { display: none !important; }
+  .g-wrap h1:focus, .g-wrap h2:focus { outline: none; }
+  .cta-btn { cursor: pointer; }
+  .cta-btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+
+  /* ===== หน้าแรก ===== */
+  .g-eyebrow { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em; color: var(--siren); }
+  #s-start h1 { font-size: clamp(44px, 10vw, 80px); line-height: 1.08; margin: 6px 0 14px; }
+  #s-start h1 em { font-style: normal; color: var(--siren); }
+  .g-cast { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 22px 0 4px; }
+  .g-cast figure { margin: 0; text-align: center; font-family: var(--font-display); font-size: 15px; color: var(--silt); }
+  .g-cast svg { width: 100%; max-width: 110px; }
+  .g-pick-h { font-size: 26px; margin: 24px 0 12px; }
+  .g-ages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .g-age { display: grid; justify-items: center; align-content: start; gap: 4px; padding: 14px 10px 16px; border-radius: 20px; background: var(--card); border: 1.5px solid var(--line); color: var(--bone); text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s, transform 0.2s; }
+  .g-age:hover { border-color: var(--siren); background: rgba(232, 137, 59, 0.08); transform: translateY(-3px); }
+  .g-age svg { width: 104px; height: 104px; border-radius: 50%; background: radial-gradient(circle at 50% 60%, rgba(44, 98, 107, 0.55), rgba(22, 49, 58, 0.6)); }
+  .g-age b { font-family: var(--font-display); font-size: 21px; margin-top: 6px; }
+  .g-age span { font-size: 15px; line-height: 1.45; color: var(--silt); }
+  .g-note { margin-top: 16px; font-size: 15px; color: var(--silt); }
+
+  /* ===== การ์ด ===== */
+  .g-card { background: #0F1D22; border: 1px solid var(--line); border-radius: 22px; padding: 22px 20px 24px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35); }
+  .g-hero { width: 132px; height: 132px; margin: 0 auto 8px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 50% 60%, rgba(44, 98, 107, 0.6), rgba(22, 49, 58, 0.7)); }
+  .g-hero svg { width: 100%; height: 100%; }
+  .g-hero.sad { filter: grayscale(0.5); }
+  .g-kicker { font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.06em; color: var(--siren); }
+  .g-card h2 { font-size: clamp(26px, 6vw, 34px); margin: 2px 0 8px; }
+  .g-text { font-size: 20px; line-height: 1.65; }
+  .g-news { display: grid; gap: 2px; margin: 16px 0; padding: 12px 14px; border-radius: 14px; background: rgba(217, 83, 79, 0.1); border: 1px solid rgba(217, 83, 79, 0.35); font-size: 17px; line-height: 1.55; max-width: none; }
+  .g-news b { font-family: var(--font-display); color: var(--leech); }
+  .g-rules { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 8px; font-size: 17px; line-height: 1.5; }
+  .g-rules li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: center; }
+  .g-rules svg { width: 28px; height: 28px; }
+  .g-rules .r-ok { color: var(--safe); }
+  .g-rules .r-heart { color: var(--leech); }
+  .g-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+
+  /* ===== แถบสถานะระหว่างเล่น ===== */
+  .hud { position: sticky; top: 0; z-index: 5; margin: 0 -18px 16px; padding: 10px 18px; background: rgba(13, 24, 28, 0.95); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .hud-row { display: flex; align-items: center; gap: 10px; }
+  .hud-who { display: flex; align-items: center; gap: 8px; flex: none; }
+  .hud-who svg { width: 42px; height: 42px; border-radius: 50%; background: var(--water); }
+  .hud-who span { font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+  .hud-day { flex: 1; min-width: 0; line-height: 1.25; }
+  .hud-day b { display: block; font-family: var(--font-display); font-size: 20px; white-space: nowrap; }
+  .hud-day span { display: block; font-size: 13.5px; color: var(--silt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hud-hearts { display: flex; gap: 1px; flex: none; }
+  .hud-hearts svg { width: 25px; height: 25px; color: var(--leech); }
+  .hud-hearts svg.empty { color: rgba(233, 227, 211, 0.16); }
+  .hud-bag { flex: none; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 4px 12px 4px 6px; border-radius: 30px; border: 1px solid rgba(232, 137, 59, 0.55); background: rgba(232, 137, 59, 0.1); color: var(--bone); cursor: pointer; }
+  .hud-bag svg { width: 32px; height: 32px; }
+  .hud-bag b { font-family: var(--font-mono); font-size: 17px; font-weight: 500; }
+  .track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; margin-top: 8px; }
+  .track span { padding-top: 5px; border-top: 4px solid rgba(233, 227, 211, 0.14); font-size: 12.5px; line-height: 1.3; color: var(--silt); text-align: center; white-space: nowrap; }
+  .track .done { border-color: rgba(232, 137, 59, 0.45); }
+  .track .on { border-color: var(--siren); color: var(--bone); font-weight: 600; }
+  .bagbox { margin-top: 10px; padding: 12px; border-radius: 16px; background: var(--water); border: 1px solid var(--line); max-height: 52vh; overflow: auto; }
+  .bag-h { font-family: var(--font-display); font-weight: 600; font-size: 17px; margin-bottom: 8px; }
+  .bag-h small { display: block; font-family: var(--font-body); font-weight: 400; font-size: 14px; color: var(--silt); }
+  .bagbox ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+  .bagbox li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 14.5px; line-height: 1.4; }
+  .bagbox li svg { width: 44px; height: 44px; }
+  .bagbox li b { display: block; font-size: 15.5px; }
+  .bagbox li span { color: var(--silt); }
+  .bagbox li.used { opacity: 0.5; }
+
+  /* ===== เหตุการณ์และตัวเลือก ===== */
+  .g-scene { height: 132px; display: grid; place-items: center; margin: -4px 0 8px; border-radius: 16px; background: radial-gradient(closest-side, rgba(44, 98, 107, 0.45), transparent); }
+  .g-scene svg { height: 100%; width: auto; max-width: 100%; }
+  .g-ask { font-family: var(--font-display); font-weight: 600; font-size: 18px; color: var(--silt); margin: 16px 0 10px; }
+  .g-choices { display: grid; gap: 10px; }
+  .g-choice { display: grid; grid-template-columns: 36px minmax(0, 1fr); align-items: center; gap: 12px; width: 100%; min-height: 62px; padding: 12px 16px 12px 12px; border-radius: 16px; border: 1.5px solid rgba(233, 227, 211, 0.24); background: rgba(233, 227, 211, 0.05); color: var(--bone); font-size: 18px; line-height: 1.5; text-align: left; cursor: pointer; transition: border-color 0.15s, background 0.15s, opacity 0.2s; }
+  .g-choice:hover:not(:disabled) { border-color: var(--siren); background: rgba(232, 137, 59, 0.09); }
+  .g-num { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(233, 227, 211, 0.1); font-family: var(--font-mono); font-size: 16px; }
+  .g-choice:disabled { cursor: default; }
+  .g-choice.right { border-color: var(--safe); background: rgba(98, 180, 141, 0.14); }
+  .g-choice.right .g-num { background: var(--safe); color: var(--night); }
+  .g-choice.wrong { border-color: var(--leech); background: rgba(217, 83, 79, 0.14); }
+  .g-choice.wrong .g-num { background: var(--leech); color: var(--night); }
+  .g-choice.dim { opacity: 0.45; }
+
+  /* ===== รอบจัดกระเป๋า ===== */
+  .g-pack { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .g-tile { position: relative; display: grid; justify-items: center; align-content: start; gap: 4px; min-height: 118px; padding: 12px 6px 10px; border-radius: 16px; border: 1.5px solid rgba(233, 227, 211, 0.24); background: rgba(233, 227, 211, 0.05); color: var(--bone); font-size: 15.5px; line-height: 1.35; text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s, opacity 0.2s; }
+  .g-tile svg { width: 58px; height: 58px; }
+  .g-tile:hover:not(:disabled) { border-color: var(--siren); }
+  .g-tile[aria-pressed="true"] { border-color: var(--siren); background: rgba(232, 137, 59, 0.14); }
+  .g-tile[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 6px; right: 6px; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--siren); color: var(--night); font-size: 14px; font-weight: 700; line-height: 1; }
+  .g-tile.good { border-color: var(--safe); background: rgba(98, 180, 141, 0.14); }
+  .g-tile.good::after { background: var(--safe); }
+  .g-tile.bad { border-color: var(--leech); background: rgba(217, 83, 79, 0.12); }
+  .g-tile.bad::after { content: "✕"; background: var(--leech); }
+  .g-tile.dim { opacity: 0.4; }
+  .g-tile:disabled { cursor: default; }
+  .g-go { margin-top: 2px; }
+
+  /* ===== ผลของการตัดสินใจ ===== */
+  .g-fb { display: grid; gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px dashed rgba(233, 227, 211, 0.22); }
+  .g-fb[hidden] { display: none; }
+  .g-verdict { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 700; font-size: 27px; line-height: 1.2; }
+  .g-verdict svg { width: 30px; height: 30px; flex: none; }
+  .g-fb.ok .g-verdict { color: var(--safe); }
+  .g-fb.no .g-verdict { color: var(--leech); }
+  .g-fb.mid .g-verdict { color: var(--siren); }
+  .g-result { font-size: 19px; }
+  .g-gain { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px 14px; border-radius: 16px; border: 1px solid; }
+  .g-gain svg { width: 60px; height: 60px; }
+  .g-gain b { display: block; font-family: var(--font-display); font-size: 19px; line-height: 1.3; }
+  .g-gain span { display: block; font-size: 15.5px; line-height: 1.45; color: var(--silt); }
+  .g-gain.get, .g-gain.heal { background: rgba(98, 180, 141, 0.12); border-color: rgba(98, 180, 141, 0.45); }
+  .g-gain.loss { background: rgba(217, 83, 79, 0.12); border-color: rgba(217, 83, 79, 0.45); }
+  .g-gain.saved { background: rgba(232, 137, 59, 0.12); border-color: rgba(232, 137, 59, 0.5); }
+  .g-gain.heal svg, .g-gain.loss svg { color: var(--leech); width: 48px; height: 48px; justify-self: center; }
+  .g-gain.loss svg { opacity: 0.6; }
+  .g-right { padding: 10px 14px; border-radius: 14px; background: rgba(98, 180, 141, 0.08); border: 1px solid rgba(98, 180, 141, 0.3); font-size: 17px; max-width: none; }
+  .g-right b { display: block; font-family: var(--font-display); font-size: 15px; color: var(--safe); }
+  .g-why { padding: 12px 14px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+  .g-why b { font-family: var(--font-display); color: var(--siren); }
+  .g-why p { font-size: 17.5px; }
+  .g-real { margin: 0; padding: 10px 14px; border-left: 3px solid var(--siren); border-radius: 0 14px 14px 0; background: rgba(232, 137, 59, 0.06); }
+  .g-real figcaption { font-family: var(--font-mono); font-size: 12.5px; color: var(--silt); }
+  .g-real blockquote { margin: 2px 0 0; font-family: var(--font-display); font-size: 18px; }
+  .g-fact { font-size: 16.5px; color: var(--silt); }
+  .g-fact b { display: block; font-family: var(--font-display); font-size: 14px; color: var(--bone); }
+  .g-tip { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 16px; line-height: 1.5; color: var(--silt); max-width: none; }
+  .g-tip svg { width: 40px; height: 40px; }
+  .g-picks { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .g-picks li { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 10px; align-items: center; padding: 8px 12px; border-radius: 14px; border: 1px solid; }
+  .g-picks li.ok { border-color: rgba(98, 180, 141, 0.45); background: rgba(98, 180, 141, 0.1); }
+  .g-picks li.no { border-color: rgba(217, 83, 79, 0.45); background: rgba(217, 83, 79, 0.1); }
+  .g-picks svg { width: 50px; height: 50px; }
+  .g-picks b { display: block; font-family: var(--font-display); font-size: 17px; line-height: 1.35; }
+  .g-picks span { display: block; font-size: 15px; line-height: 1.45; color: var(--silt); }
+  .g-next { justify-self: start; margin-top: 4px; }
+
+  /* ===== จบเกม ===== */
+  .g-endhead { display: grid; justify-items: center; gap: 4px; text-align: center; }
+  .g-endhead .g-text { max-width: 46ch; }
+  .g-stars { display: flex; gap: 6px; }
+  .g-stars svg { width: 40px; height: 40px; color: #F2C46B; }
+  .g-stars svg.off { color: rgba(233, 227, 211, 0.15); }
+  .g-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 18px 0; }
+  .g-stat { padding: 10px 6px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); text-align: center; }
+  .g-stat b { display: block; font-family: var(--font-display); font-size: 30px; line-height: 1.2; }
+  .g-stat b small { font-size: 16px; color: var(--silt); }
+  .g-stat span { display: block; font-size: 13.5px; line-height: 1.35; color: var(--silt); }
+  #endCard h3 { font-size: 20px; margin: 22px 0 10px; }
+  .g-bagend { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
+  .g-bagend li { display: grid; justify-items: center; gap: 2px; padding: 8px 4px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); text-align: center; font-size: 14px; line-height: 1.35; }
+  .g-bagend svg { width: 48px; height: 48px; }
+  .g-bagend small { display: block; color: var(--silt); }
+  .g-bagend li.used { opacity: 0.55; }
+  .g-lessons { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .g-lessons li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 17px; line-height: 1.5; }
+  .g-lessons i { display: grid; place-items: center; width: 26px; height: 26px; margin-top: 1px; border-radius: 50%; background: var(--safe); color: var(--night); }
+  .g-lessons i svg { width: 16px; height: 16px; }
+  .g-lessons li.no i { background: var(--leech); }
+  .g-closing { margin: 22px 0 8px; padding: 14px 16px; border-radius: 16px; background: rgba(232, 137, 59, 0.08); border: 1px solid rgba(232, 137, 59, 0.4); }
+  .g-closing p { font-size: 17px; }
+  .g-closing a { display: inline-block; margin-top: 6px; font-family: var(--font-display); font-weight: 600; }
+  .g-sos { margin: 28px auto 0; font-size: 15px; color: var(--silt); text-align: center; }
+  .g-sos b { font-family: var(--font-mono); font-weight: 500; color: var(--bone); }
+
+  /* ===== เอฟเฟกต์ ===== */
+  .pop { animation: pop 0.55s cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+  @keyframes pop { from { transform: scale(0.2) rotate(-12deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .shake { animation: shake 0.45s; }
+  @keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+  .pulse { animation: pulse 0.6s; }
+  @keyframes pulse { 40% { transform: scale(1.18); } }
+
+  @media (max-width: 600px) {
+    .g-wrap { padding: 8px 14px 100px; }
+    .hud { margin: 0 -14px 14px; padding: 8px 14px; }
+    .hud-who span { display: none; }
+    .hud-who svg { width: 38px; height: 38px; }
+    .hud-day b { font-size: 18px; }
+    .hud-hearts svg { width: 22px; height: 22px; }
+    .track span { font-size: 11.5px; }
+    .g-card { padding: 18px 16px 20px; border-radius: 20px; }
+    .g-text { font-size: 19px; }
+    .g-choice { font-size: 17px; min-height: 58px; padding: 10px 12px 10px 10px; gap: 10px; }
+    .g-pack { gap: 8px; }
+    .g-tile { min-height: 110px; font-size: 14.5px; }
+    .g-tile svg { width: 50px; height: 50px; }
+    .g-age svg { width: 88px; height: 88px; }
+    .g-age b { font-size: 19px; }
+    .g-age span { font-size: 14px; }
+    .g-scene { height: 112px; }
+    .g-verdict { font-size: 24px; }
+    .g-actions .cta-btn { flex: 1 1 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #swimmer { animation: none; transform: translateX(12vw); }
+    #flood, #flood .murk { transition: none; }
+    .pop, .shake, .pulse { animation: none; }
+    .g-age:hover { transform: none; }
+  }
 </style>
 </head>
-<body>
-<main class="game-slot">
-  <a class="cta-btn back" href="index.html#p-ready">← กลับไปที่เรื่อง</a>
-  <h1>เอาตัวรอด <em>16 วัน</em></h1>
-  <p class="lead">น้ำท่วมบ้านคุณ 16 วัน ลองตัดสินใจเองทุกวันว่าจะรอดจากผู้ต้องสงสัยเหล่านี้ได้ไหม</p>
-  <div class="cast">
-    <figure><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#leech"/></svg>ปลิง</figure>
-    <figure><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#snake"/></svg>งู</figure>
-    <figure><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#centipede"/></svg>ตะขาบ</figure>
-    <figure><svg viewBox="0 0 120 80" aria-hidden="true"><use href="#rat"/></svg>หนู / ฉี่หนู</figure>
-  </div>
-  <p class="soon">เกมกำลังพัฒนา เร็วๆ นี้</p>
+<body class="game">
+<div id="flood" aria-hidden="true"><div class="body"></div><div class="murk"></div><div class="lane"><div id="swimmer" hidden></div></div><svg viewBox="0 0 400 20" preserveAspectRatio="none"><path d="M0 10 Q 25 0 50 10 T 100 10 T 150 10 T 200 10 T 250 10 T 300 10 T 350 10 T 400 10 V 20 H 0 Z" fill="rgba(38,84,92,0.55)"/></svg></div>
+
+<main class="g-wrap">
+  <nav class="g-top" aria-label="ลิงก์กลับ"><a class="g-back" href="index.html#p-ready">← กลับไปที่เรื่อง</a><span class="g-brand">ใครว่ายมากับน้ำ?</span></nav>
+
+  <!-- ===== หน้าแรก: เลือกตัวละคร ===== -->
+  <section class="g-screen" id="s-start" aria-labelledby="t-start">
+    <p class="g-eyebrow">เกมจำลองน้ำท่วม</p>
+    <h1 id="t-start" tabindex="-1">เอาตัวรอด <em>16 วัน</em></h1>
+    <p class="lead">น้ำท่วมบ้านคุณ 16 วัน แบบเดียวกับกรุงเทพฯ ปี 2569 ทุกการตัดสินใจมีผล ตอบถูกได้ไอเทมยังชีพ ลองดูว่าจะรอดจากปลิง งู ตะขาบ และฉี่หนูได้ไหม</p>
+    <div class="g-cast" aria-hidden="true">
+      <figure><svg viewBox="0 0 120 80"><use href="#leech"/></svg><figcaption>ปลิง</figcaption></figure>
+      <figure><svg viewBox="0 0 120 80"><use href="#snake"/></svg><figcaption>งู</figcaption></figure>
+      <figure><svg viewBox="0 0 120 80"><use href="#centipede"/></svg><figcaption>ตะขาบ</figcaption></figure>
+      <figure><svg viewBox="0 0 120 80"><use href="#rat"/></svg><figcaption>หนู / ฉี่หนู</figcaption></figure>
+    </div>
+    <h2 class="g-pick-h">เลือกตัวละคร</h2>
+    <div class="g-ages">
+      <button type="button" class="g-age" data-age="k"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#c-kid"/></svg><b>เด็ก 10 ขวบ</b><span>อยู่กับพ่อแม่และน้องเล็ก</span></button>
+      <button type="button" class="g-age" data-age="t"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#c-teen"/></svg><b>วัยรุ่น 15 ปี</b><span>ดูแลน้องตอนพ่อแม่ไปทำงาน</span></button>
+      <button type="button" class="g-age" data-age="a"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#c-adult"/></svg><b>วัยทำงาน 35 ปี</b><span>ต้องไปทำงาน และดูแลพ่อแม่</span></button>
+      <button type="button" class="g-age" data-age="e"><svg viewBox="0 0 120 120" aria-hidden="true"><use href="#c-elder"/></svg><b>ผู้สูงอายุ 72 ปี</b><span>อยู่บ้านคนเดียว ลูกทำงานอยู่ไกล</span></button>
+    </div>
+    <p class="g-note">เหตุการณ์สุ่มใหม่ทุกครั้งที่เล่น และเปลี่ยนไปตามวัย · 8 เหตุการณ์ · ราว 5 นาที</p>
+  </section>
+
+  <!-- ===== แนะนำตัวละคร ===== -->
+  <section class="g-screen" id="s-intro" hidden aria-labelledby="introName">
+    <div class="g-card">
+      <div class="g-hero" id="introPic"></div>
+      <p class="g-kicker">ตัวละครของคุณ</p>
+      <h2 id="introName" tabindex="-1">คุณคือ</h2>
+      <p class="g-text" id="introText"></p>
+      <p class="g-news"><b>ข่าวด่วน</b><span>น้ำกำลังมาถึงกรุงเทพฯ ฝั่งตะวันออก <span id="introDistrict"></span> เป็นหนึ่งในเขตที่คนแจ้งว่าน้ำขังมากที่สุดในข้อมูลจริง</span></p>
+      <ul class="g-rules">
+        <li><svg class="r-ok" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>ตอบถูก ได้ไอเทมยังชีพเก็บใส่กระเป๋า</li>
+        <li><svg class="r-heart" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-heart"/></svg>ตอบผิด เสียหัวใจ 1 ดวง จากทั้งหมด 3 ดวง</li>
+        <li><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-pack"/></svg>ไอเทมในกระเป๋า ช่วยกันพลาดได้ชิ้นละ 1 ครั้ง</li>
+      </ul>
+      <div class="g-actions">
+        <button type="button" class="cta-btn primary" id="goPlay">เริ่มเตรียมตัว →</button>
+        <button type="button" class="cta-btn" id="introBack">เปลี่ยนตัวละคร</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ระหว่างเล่น ===== -->
+  <section class="g-screen" id="s-play" hidden aria-label="กำลังเล่น">
+    <header class="hud" id="hud">
+      <div class="hud-row">
+        <div class="hud-who" id="hudWho"></div>
+        <div class="hud-day" id="hudDay" aria-live="polite"></div>
+        <div class="hud-hearts" id="hudHearts" role="img" aria-label="หัวใจ"></div>
+        <button type="button" class="hud-bag" id="hudBag" aria-expanded="false" aria-controls="bagBox"><svg viewBox="0 0 64 64" aria-hidden="true"><use href="#i-pack"/></svg><span class="sr">กระเป๋ายังชีพ มีของ </span><b id="bagCount">0</b><span class="sr"> ชิ้น</span></button>
+      </div>
+      <div class="track" id="hudTrack" aria-hidden="true"></div>
+      <div class="bagbox" id="bagBox" hidden></div>
+    </header>
+    <article class="g-card" id="card"></article>
+  </section>
+
+  <!-- ===== จบเกม ===== -->
+  <section class="g-screen" id="s-end" hidden aria-label="ผลการเอาตัวรอด">
+    <div class="g-card" id="endCard"></div>
+  </section>
+
+  <p class="g-sos">เกิดเหตุจริง โทร <b>199</b> เมื่องูหรือสัตว์อันตรายเข้าบ้าน · <b>1669</b> เมื่อเจ็บป่วยฉุกเฉิน</p>
 </main>
 <script>
 /* ภาพวาดทั้งหมดของเว็บ วาดเองด้วย SVG (ไม่ใช้รูปจากที่อื่น)
@@ -499,7 +753,10 @@ mark.red { background: var(--leech); color: var(--bone); }
      ไอคอน 64×64  : i-boots i-gloves i-salt i-torch i-toilet i-phone i-neighbor i-night
                     i-bandage i-shower i-calendar i-thermo i-pill i-trash
                     i-clock i-elder i-team i-mega i-q i-db i-funnel i-chart i-game
-     ไอคอน 32×32  : i-house (สีตาม color ของ CSS) */
+     ไอคอนเกม 64×64 : i-water i-firstaid i-stick i-meds i-bag i-whistle i-plug i-pack
+                      i-battery i-sandal i-teddy i-dryer
+     ตัวละคร 120×120 : c-kid เด็ก · c-teen วัยรุ่น · c-adult วัยทำงาน · c-elder ผู้สูงอายุ
+     ไอคอน 32×32  : i-house i-heart (สีตาม color ของ CSS) */
 (() => {
   const W = '#0D181C';
   /* ตะขาบ: ปล้องเรียงตามเส้นโค้ง */
@@ -791,11 +1048,1110 @@ mark.red { background: var(--leech); color: var(--bone); }
   <path d="M18 28v10M13 33h10" stroke="#16313A" stroke-width="3.5" stroke-linecap="round"/>
   <circle cx="44" cy="30" r="3" fill="#E8893B"/><circle cx="50" cy="36" r="3" fill="#D9534F"/>
 </symbol>
+<symbol id="c-kid" viewBox="0 0 120 120">
+  <circle cx="27" cy="58" r="10" fill="#3A2A1E"/><circle cx="93" cy="58" r="10" fill="#3A2A1E"/>
+  <circle cx="31" cy="51" r="3.2" fill="#D9534F"/><circle cx="89" cy="51" r="3.2" fill="#D9534F"/>
+  <rect x="51" y="76" width="18" height="16" rx="6" fill="#F0C29A"/>
+  <path d="M22 120c0-22 16-33 38-33s38 11 38 33Z" fill="#F2C46B"/>
+  <path d="M48 88q12 9 24 0" fill="none" stroke="#D9A447" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="60" cy="57" r="26" fill="#F0C29A"/>
+  <path d="M34 56c0-17 11-27 26-27s26 10 26 27c-5-7-14-12-26-12s-21 5-26 12Z" fill="#3A2A1E"/>
+  <circle cx="50" cy="61" r="3.3" fill="#2A1E16"/><circle cx="70" cy="61" r="3.3" fill="#2A1E16"/>
+  <circle cx="51" cy="60" r="1.1" fill="#fff"/><circle cx="71" cy="60" r="1.1" fill="#fff"/>
+  <circle cx="44" cy="69" r="4" fill="#E8897A" opacity=".45"/><circle cx="76" cy="69" r="4" fill="#E8897A" opacity=".45"/>
+  <path d="M52 71q8 7 16 0" fill="none" stroke="#2A1E16" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+<symbol id="c-teen" viewBox="0 0 120 120">
+  <rect x="51" y="76" width="18" height="16" rx="6" fill="#E7B386"/>
+  <path d="M20 120c0-23 17-34 40-34s40 11 40 34Z" fill="#F4F1E8"/>
+  <path d="M49 87l11 11 11-11" fill="none" stroke="#C9C2B0" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M28 99l11 21h7l-9-23Z" fill="#2E4A7A"/>
+  <circle cx="34" cy="60" r="5" fill="#E7B386"/><circle cx="86" cy="60" r="5" fill="#E7B386"/>
+  <circle cx="60" cy="56" r="26" fill="#E7B386"/>
+  <path d="M33 55c-2-17 10-29 27-29 18 0 29 12 27 29l-6-8-6 5-6-7-8 6-8-6-6 7-6-5Z" fill="#1E1A16"/>
+  <circle cx="50" cy="61" r="3.2" fill="#1E1A16"/><circle cx="70" cy="61" r="3.2" fill="#1E1A16"/>
+  <circle cx="51" cy="60" r="1" fill="#fff"/><circle cx="71" cy="60" r="1" fill="#fff"/>
+  <path d="M53 71q7 5 14 0" fill="none" stroke="#1E1A16" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+<symbol id="c-adult" viewBox="0 0 120 120">
+  <path d="M32 60c0-21 12-33 28-33s28 12 28 33v22c-7 4-15 6-28 6s-21-2-28-6Z" fill="#2B211B"/>
+  <rect x="51" y="76" width="18" height="15" rx="6" fill="#DDA57A"/>
+  <path d="M20 120c0-23 17-33 40-33s40 10 40 33Z" fill="#E8893B"/>
+  <path d="M51 87l9 11 9-11Z" fill="#DDA57A"/>
+  <path d="M44 92v28M76 92v28" stroke="#9A4F1E" stroke-width="2.5"/>
+  <circle cx="60" cy="56" r="25" fill="#DDA57A"/>
+  <path d="M35 55c0-16 11-25 25-25s25 9 25 25c-10-2-21-8-27-16-5 8-13 13-23 16Z" fill="#2B211B"/>
+  <circle cx="50" cy="62" r="3" fill="#2A1E16"/><circle cx="70" cy="62" r="3" fill="#2A1E16"/>
+  <circle cx="51" cy="61" r="1" fill="#fff"/><circle cx="71" cy="61" r="1" fill="#fff"/>
+  <circle cx="35.5" cy="66" r="2" fill="#F2C46B"/><circle cx="84.5" cy="66" r="2" fill="#F2C46B"/>
+  <path d="M53 71q7 6 14 0" fill="none" stroke="#2A1E16" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+<symbol id="c-elder" viewBox="0 0 120 120">
+  <rect x="51" y="77" width="18" height="15" rx="6" fill="#E8BE98"/>
+  <path d="M20 120c0-23 17-33 40-33s40 10 40 33Z" fill="#7E9291"/>
+  <path d="M50 88h20l-5 32H55Z" fill="#E9E3D3"/>
+  <circle cx="46" cy="104" r="1.8" fill="#C9C2B0"/><circle cx="46" cy="113" r="1.8" fill="#C9C2B0"/>
+  <circle cx="35" cy="60" r="5" fill="#E8BE98"/><circle cx="85" cy="60" r="5" fill="#E8BE98"/>
+  <circle cx="60" cy="57" r="25" fill="#E8BE98"/>
+  <path d="M35 57c-1-16 10-27 25-27s26 11 25 27c-3-5-6-8-9-9-5 3-10 4-16 4s-11-1-16-4c-3 1-6 4-9 9Z" fill="#D8D4CC"/>
+  <circle cx="50" cy="62" r="7.5" fill="none" stroke="#5B544A" stroke-width="2"/><circle cx="70" cy="62" r="7.5" fill="none" stroke="#5B544A" stroke-width="2"/>
+  <path d="M57.5 62h5" stroke="#5B544A" stroke-width="2"/>
+  <circle cx="50" cy="62" r="2.4" fill="#2A1E16"/><circle cx="70" cy="62" r="2.4" fill="#2A1E16"/>
+  <path d="M51 74q9 6 18 0" fill="none" stroke="#2A1E16" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M40 70q2 3 5 3M80 70q-2 3-5 3" fill="none" stroke="#C99A75" stroke-width="1.6" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-water" viewBox="0 0 64 64">
+  <rect x="25" y="5" width="14" height="7" rx="2" fill="#62B48D"/>
+  <path d="M26 12h12v5c5 3 8 7 8 12v25a4 4 0 0 1 -4 4H22a4 4 0 0 1 -4 -4V29c0 -5 3 -9 8 -12Z" fill="#BFE3EE"/>
+  <path d="M18 38h28v16a4 4 0 0 1 -4 4H22a4 4 0 0 1 -4 -4Z" fill="#6FB3C8"/>
+  <rect x="18" y="27" width="28" height="9" fill="#E9E3D3"/>
+</symbol>
+<symbol id="i-firstaid" viewBox="0 0 64 64">
+  <path d="M24 15v-4a3 3 0 0 1 3 -3h10a3 3 0 0 1 3 3v4" fill="none" stroke="#C9C2B0" stroke-width="3"/>
+  <rect x="8" y="15" width="48" height="40" rx="6" fill="#E9E3D3"/>
+  <rect x="27" y="23" width="10" height="24" rx="2" fill="#D9534F"/><rect x="20" y="30" width="24" height="10" rx="2" fill="#D9534F"/>
+</symbol>
+<symbol id="i-stick" viewBox="0 0 64 64">
+  <path d="M12 55L49 13" stroke="#B88A4A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M49 13c4 -5 11 -1 7 5" fill="none" stroke="#B88A4A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M15 52l-4 5" stroke="#8E6A3A" stroke-width="7" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-meds" viewBox="0 0 64 64">
+  <rect x="9" y="20" width="46" height="31" rx="5" fill="#93A6A5"/>
+  <rect x="9" y="13" width="46" height="11" rx="4" fill="#E9E3D3"/>
+  <g fill="#16313A"><rect x="15" y="28" width="9" height="17" rx="2"/><rect x="28" y="28" width="9" height="17" rx="2"/><rect x="41" y="28" width="9" height="17" rx="2"/></g>
+  <circle cx="19.5" cy="36.5" r="2.8" fill="#F2C46B"/><circle cx="32.5" cy="36.5" r="2.8" fill="#62B48D"/><circle cx="45.5" cy="36.5" r="2.8" fill="#F07A74"/>
+</symbol>
+<symbol id="i-bag" viewBox="0 0 64 64">
+  <path d="M19 25c-7 8 -9 18 -7 26c2 6 10 8 20 8s18 -2 20 -8c2 -8 0 -18 -7 -26Z" fill="#33454A" stroke="#93A6A5" stroke-width="1.5"/>
+  <path d="M24 25l-4 -13l8 6l4 -11l4 11l8 -6l-4 13Z" fill="#33454A" stroke="#93A6A5" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M22 25h20" stroke="#E8893B" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-whistle" viewBox="0 0 64 64">
+  <rect x="5" y="27" width="28" height="11" rx="3" fill="#F2A562"/>
+  <circle cx="40" cy="39" r="14" fill="#E8893B"/>
+  <circle cx="40" cy="39" r="4.5" fill="#16313A"/>
+  <rect x="22" y="27" width="9" height="5" fill="#16313A" opacity=".45"/>
+  <path d="M48 15q5 -6 11 -5M41 14q0 -6 3 -9M54 25q6 0 8 3" stroke="#E9E3D3" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-plug" viewBox="0 0 64 64">
+  <rect x="24" y="7" width="4" height="14" rx="1.5" fill="#93A6A5"/><rect x="36" y="7" width="4" height="14" rx="1.5" fill="#93A6A5"/>
+  <rect x="17" y="19" width="30" height="23" rx="5" fill="#E9E3D3"/>
+  <path d="M32 42v8q0 6 -6 6h-10" fill="none" stroke="#93A6A5" stroke-width="4" stroke-linecap="round"/>
+  <path d="M53 27l-6 10h7l-5 10" fill="none" stroke="#F2C46B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-pack" viewBox="0 0 64 64">
+  <path d="M24 13a8 8 0 0 1 16 0v4h-4v-4a4 4 0 0 0 -8 0v4h-4Z" fill="#93A6A5"/>
+  <rect x="12" y="17" width="40" height="41" rx="10" fill="#E8893B"/>
+  <rect x="20" y="36" width="24" height="16" rx="4" fill="#B9662A"/>
+  <path d="M20 42h24" stroke="#F2A562" stroke-width="2"/>
+</symbol>
+<symbol id="i-battery" viewBox="0 0 64 64">
+  <rect x="14" y="8" width="36" height="50" rx="8" fill="#93A6A5"/>
+  <rect x="19" y="13" width="26" height="40" rx="4" fill="#16313A"/>
+  <path d="M35 17l-10 17h8l-4 15l11-19h-8Z" fill="#F2C46B"/>
+  <rect x="26" y="3" width="12" height="7" rx="2" fill="#93A6A5"/>
+</symbol>
+<symbol id="i-sandal" viewBox="0 0 64 64">
+  <ellipse cx="23" cy="34" rx="11" ry="23" fill="#62B48D"/><ellipse cx="44" cy="34" rx="11" ry="23" fill="#62B48D"/>
+  <ellipse cx="23" cy="34" rx="8" ry="19" fill="#86CBA8"/><ellipse cx="44" cy="34" rx="8" ry="19" fill="#86CBA8"/>
+  <path d="M15 32q8 -12 16 0M36 32q8 -12 16 0M23 21v6M44 21v6" fill="none" stroke="#E8893B" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-teddy" viewBox="0 0 64 64">
+  <circle cx="18" cy="14" r="7" fill="#B9662A"/><circle cx="46" cy="14" r="7" fill="#B9662A"/>
+  <ellipse cx="32" cy="48" rx="16" ry="13" fill="#B9662A"/>
+  <circle cx="32" cy="26" r="15" fill="#C77B3C"/>
+  <ellipse cx="32" cy="31" rx="6.5" ry="5" fill="#E9C9A0"/>
+  <circle cx="26" cy="23" r="2.2" fill="#16313A"/><circle cx="38" cy="23" r="2.2" fill="#16313A"/><circle cx="32" cy="29.5" r="2" fill="#16313A"/>
+  <circle cx="32" cy="49" r="7" fill="#E9C9A0"/>
+</symbol>
+<symbol id="i-dryer" viewBox="0 0 64 64">
+  <path d="M30 30l-6 24h10l4 -16Z" fill="#7E9291"/>
+  <path d="M8 20a14 14 0 0 1 14 -14h20v26H22a14 14 0 0 1 -14 -12Z" fill="#E8893B"/>
+  <circle cx="22" cy="19" r="6" fill="#B9662A"/>
+  <rect x="42" y="10" width="7" height="18" rx="2" fill="#93A6A5"/>
+  <path d="M53 13h7M53 19h8M53 25h7" stroke="#F2C46B" stroke-width="2.5" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-heart" viewBox="0 0 32 32">
+  <path d="M16 28S3 20 3 11.5a7 7 0 0 1 13 -3.6a7 7 0 0 1 13 3.6C29 20 16 28 16 28Z" fill="currentColor"/>
+</symbol>
 <symbol id="i-house" viewBox="0 0 32 32">
   <path d="M4 15L16 5L28 15V28H4Z" fill="currentColor"/><rect x="13" y="19" width="6" height="9" fill="${W}" opacity=".35"/>
 </symbol>
 </svg>`;
   document.body.insertAdjacentHTML('afterbegin', svg);
+})();
+
+</script>
+<script>
+/* ================================================================
+   เกม: เอาตัวรอด 16 วัน   (ใช้คู่กับ game.html และ art.js)
+   ================================================================
+   วิธีแก้เนื้อหาเกม (แก้แค่ส่วน "เนื้อหา" ไม่ต้องแตะส่วน "เครื่องเกม")
+   • AGES    ตัวละคร 4 วัย   k = เด็ก · t = วัยรุ่น · a = วัยทำงาน · e = ผู้สูงอายุ
+   • ITEMS   ไอเทมยังชีพ   [ชื่อ, ภาพจาก art.js, ใช้ทำอะไร]
+   • PACK    ของในรอบ "จัดกระเป๋า"   good = ของที่ควรเอา · bad = ของหลอก (อยู่ใน DECOY)
+   • EVENTS  เหตุการณ์ทั้งหมด แต่ละเรื่องมี
+       ph     ช่วงเวลา   0 ก่อนน้ำมา · 1 วันที่ 1–3 · 2 วันที่ 4–9 · 3 น้ำเพิ่งลด · 4 หลังน้ำลด 1–2 สัปดาห์
+       ages   วัยที่เจอเรื่องนี้ เช่น 'ktae' = ทุกวัย · 'ae' = วัยทำงานและผู้สูงอายุ
+       art    ภาพจาก art.js   title ชื่อเรื่อง   text เรื่องที่เกิดขึ้น
+       c      ตัวเลือก 3 ข้อ [ตัวเลือก, ผลที่ตามมา]  ข้อแรกคือข้อที่ถูกเสมอ (เกมสลับลำดับให้เอง)
+       why    เหตุผล   fact ข้อมูลจริงจากเรื่องหลัก   real คำร้องจริง [วันเวลา · เขต, ข้อความ]
+       give   ไอเทมที่ได้เมื่อตอบถูก   guard ไอเทมที่ช่วยกันพลาด   learn บทเรียนที่แสดงตอนจบเกม
+   • ข้อความแยกตามวัยได้ เช่น  text: { k: 'สำหรับเด็ก', _: 'สำหรับวัยอื่นทั้งหมด' }
+   • [ก|ข|ค] = สุ่มคำใดคำหนึ่ง   {name} ชื่อตัวละคร   {district} เขต   {day} วันที่ หรือจำนวนวันหลังน้ำลด
+   • ตัวเลขใน fact ต้องตรงกับเรื่องหลักใน index.html เสมอ
+   • แต่ละรอบเกมสุ่ม: ก่อนน้ำมา 1 · วันที่ 1–3 สองเรื่อง · วันที่ 4–9 สามเรื่อง · น้ำเพิ่งลด 1 · หลังน้ำลด 1
+     แต่ละช่วงควรมีเรื่องสำหรับทุกวัยมากกว่าจำนวนที่สุ่ม เรื่องจะได้ไม่ซ้ำ
+   ================================================================ */
+(() => {
+'use strict';
+
+/* =========================== เนื้อหา =========================== */
+
+const AGES = {
+  k: { pic: 'c-kid', label: 'เด็ก 10 ขวบ', names: ['น้องฝน', 'น้องข้าวหอม', 'น้องใบเตย'],
+       intro: '{name} อายุ 10 ขวบ อยู่กับพ่อแม่และน้องเล็ก ในบ้านชั้นเดียวที่เขต{district}' },
+  t: { pic: 'c-teen', label: 'วัยรุ่น 15 ปี', names: ['ต้า', 'บอส', 'ภูมิ'],
+       intro: '{name} อายุ 15 ปี ต้องดูแลน้องตอนพ่อแม่ไปทำงาน บ้านอยู่ที่เขต{district}' },
+  a: { pic: 'c-adult', label: 'วัยทำงาน 35 ปี', names: ['ก้อย', 'นุ่น', 'แพร'],
+       intro: '{name} อายุ 35 ปี ต้องไปทำงาน และดูแลพ่อแม่ที่อายุมาก บ้านอยู่ที่เขต{district}' },
+  e: { pic: 'c-elder', label: 'ผู้สูงอายุ 72 ปี', names: ['ยายบุญ', 'ยายแดง', 'ยายผ่อง'],
+       intro: '{name} อายุ 72 ปี อยู่บ้านคนเดียว ลูกสาวทำงานอยู่ไกล บ้านอยู่ที่เขต{district}' },
+};
+/* 5 เขตที่มีคำร้องเรื่องน้ำขัง 3 วันขึ้นไปมากที่สุดในเรื่องหลัก */
+const DISTRICTS = ['ลาดกระบัง', 'ประเวศ', 'สะพานสูง', 'หนองจอก', 'มีนบุรี'];
+
+const ITEMS = {
+  boots:    ['รองเท้าบูท', 'i-boots', 'ลุยน้ำแล้วปลิงเกาะยาก ของมีคมบาดไม่ได้'],
+  gloves:   ['ถุงมือยาง', 'i-gloves', 'ใส่ตอนเก็บกวาด กันเชื้อโรคและสัตว์ที่ซ่อนอยู่'],
+  salt:     ['เกลือ', 'i-salt', 'โรยที่ตัวปลิง ให้มันหลุดเองโดยไม่ต้องกระชาก'],
+  torch:    ['ไฟฉาย', 'i-torch', 'ส่องทางตอนไฟดับ เห็นงูก่อนจะเหยียบ'],
+  phone:    ['เบอร์ฉุกเฉิน', 'i-phone', 'งูหรือสัตว์อันตรายเข้าบ้านโทร 199 เจ็บป่วยฉุกเฉินโทร 1669'],
+  battery:  ['พาวเวอร์แบงก์', 'i-battery', 'มือถือมีแบตไว้ติดต่อขอความช่วยเหลือตอนไฟดับ'],
+  bandage:  ['พลาสเตอร์กันน้ำ', 'i-bandage', 'ปิดแผลก่อนลุยน้ำ กันเชื้อโรคเข้าแผล'],
+  water:    ['น้ำดื่ม', 'i-water', 'น้ำสะอาดไว้ดื่มและล้างแผล ตอนออกไปซื้อไม่ได้'],
+  firstaid: ['ชุดปฐมพยาบาล', 'i-firstaid', 'ล้างแผล ใส่ยา ปิดแผลได้ทันที'],
+  stick:    ['ไม้ยาวคลำทาง', 'i-stick', 'คลำหาหลุมและฝาท่อที่เปิดอยู่ใต้น้ำ'],
+  meds:     ['ยาประจำตัว', 'i-meds', 'ยาที่ต้องกินทุกวัน เตรียมให้พอและใส่ถุงกันน้ำ'],
+  bag:      ['ถุงดำกันน้ำ', 'i-bag', 'ใส่ของสำคัญหรือรองเท้า มัดปากถุง กันน้ำและกันสัตว์มุดเข้าไป'],
+  neighbor: ['เพื่อนบ้าน', 'i-neighbor', 'คนที่คอยดูกันและกันตอนน้ำล้อมบ้าน'],
+  thermo:   ['ปรอทวัดไข้', 'i-thermo', 'คอยวัดไข้ 2 สัปดาห์หลังลุยน้ำ'],
+  calendar: ['สมุดจดวันลุยน้ำ', 'i-calendar', 'จดไว้บอกหมอว่าลุยน้ำวันไหน'],
+  soap:     ['สบู่', 'i-shower', 'ล้างตัวและล้างแผลทันทีหลังลุยน้ำ'],
+  whistle:  ['นกหวีด', 'i-whistle', 'เป่าเรียกคนช่วย ได้ยินไกลกว่าเสียงตะโกน'],
+  grate:    ['ตะแกรงปิดท่อ', 'i-toilet', 'ปิดปลายท่อ กันงูและหนูขึ้นมาในบ้าน'],
+};
+/* ตอบถูกแต่มีไอเทมนั้นแล้วและหัวใจเต็ม จะได้ไอเทมจากรายการนี้แทน */
+const BONUS = ['water', 'torch', 'whistle', 'bandage', 'soap', 'gloves', 'boots', 'salt', 'firstaid', 'battery', 'bag'];
+const DECOY = {
+  sandal: ['รองเท้าแตะ', 'i-sandal', 'หลุดง่าย เท้าโดนของมีคมบาดและปลิงเกาะง่าย ใส่บูทดีกว่า'],
+  teddy:  ['ตุ๊กตาตัวโต', 'i-teddy', 'ช่วยให้อุ่นใจ แต่กินที่ในกระเป๋า และไม่ช่วยตอนเจอปลิงหรืองู'],
+  game:   ['เครื่องเกม', 'i-game', 'สนุกก็จริง แต่แบตหมดเร็วตอนไฟดับ'],
+  dryer:  ['ไดร์เป่าผม', 'i-dryer', 'ต้องใช้ไฟฟ้า แต่ตอนน้ำท่วมมักต้องตัดไฟ'],
+};
+const PACK = {
+  text: { k: 'ข่าวเตือนภัย! น้ำจะมาถึงคืนนี้ แม่ให้หนูเลือกของใส่กระเป๋าฉุกเฉินได้ 3 อย่าง',
+          t: 'ข่าวเตือนภัย! น้ำจะมาถึงคืนนี้ พ่อแม่ให้คุณจัดกระเป๋าฉุกเฉินของคุณกับน้อง เลือกได้ 3 อย่าง',
+          a: 'ข่าวเตือนภัย! น้ำจะมาถึงคืนนี้ จัดกระเป๋าฉุกเฉินของบ้าน เลือกได้ 3 อย่าง',
+          e: 'ข่าวเตือนภัย! น้ำจะมาถึงคืนนี้ ยายจัดกระเป๋าฉุกเฉินได้ 3 อย่าง' },
+  good: { k: ['boots', 'torch', 'whistle', 'water', 'bandage', 'salt'],
+          t: ['boots', 'torch', 'battery', 'salt', 'whistle', 'water', 'bandage', 'firstaid'],
+          a: ['boots', 'torch', 'battery', 'salt', 'gloves', 'water', 'firstaid', 'bag', 'phone'],
+          e: ['boots', 'torch', 'meds', 'water', 'whistle', 'battery', 'firstaid', 'bag', 'phone'] },
+  bad:  { k: ['sandal', 'teddy', 'game'], t: ['sandal', 'game', 'dryer'], a: ['sandal', 'dryer'], e: ['sandal', 'dryer'] },
+};
+
+const EVENTS = [
+/* ---------------- 0 · ก่อนน้ำมา ---------------- */
+{ id: 'toilet', ph: 0, ages: 'ktae', art: 'i-toilet', title: 'ทางลับของงู',
+  text: { k: 'น้ำจะมาถึงคืนนี้ แม่ให้หนูช่วยเตรียมห้องน้ำชั้นล่าง ต้องทำอะไรนะ?',
+          t: 'น้ำจะมาถึงคืนนี้ พ่อแม่ฝากให้เตรียมห้องน้ำชั้นล่างก่อนออกไปทำงาน',
+          a: 'น้ำจะมาถึงคืนนี้ ห้องน้ำชั้นล่างควรเตรียมยังไง?',
+          e: 'น้ำจะมาถึงคืนนี้ ห้องน้ำชั้นล่างของยายควรเตรียมยังไง?' },
+  c: [['ปิดฝาชักโครก หาของหนักทับ และใส่ตะแกรงที่ปลายท่อ', 'คืนนั้นไม่มีอะไรโผล่ขึ้นมาจากท่อเลย'],
+      ['เปิดฝาชักโครกไว้ ให้น้ำระบายได้เร็ว', '[ตีสอง|ตีสาม] มีเสียงกุกกักในห้องน้ำ… มีบางอย่างขึ้นมาจากท่อ'],
+      ['ยังไม่ต้องทำอะไร รอน้ำมาก่อน', 'พอน้ำมาจริง ห้องน้ำท่วมจนเข้าไปปิดอะไรไม่ได้แล้ว']],
+  why: 'งูและหนูหนีน้ำมาตามท่อได้ การปิดฝาชักโครกและปิดปลายท่อ ช่วยกันสัตว์ขึ้นมาในบ้าน',
+  real: ['29 ก.ย. 23:26 · มีนบุรี', 'งูอยู่ในห้องน้ำค่ะ'],
+  give: 'grate', learn: 'ปิดฝาชักโครก ใส่ตะแกรงปลายท่อ ก่อนน้ำมา' },
+
+{ id: 'plug', ph: 0, ages: 'ktae', art: 'i-plug', title: 'ปลั๊กไฟข้างพื้น',
+  text: { k: 'น้ำเริ่มซึมเข้าบ้านแล้ว ปลั๊กไฟข้างพื้นอยู่ใกล้น้ำ แท็บเล็ตของหนูแบตใกล้หมด',
+          t: 'น้ำเริ่มซึมเข้าบ้านแล้ว ปลั๊กไฟข้างพื้นอยู่ใกล้น้ำ มือถือแบตเหลือ [5|3]%',
+          _: 'น้ำจะมาถึงคืนนี้ ปลั๊กไฟ พัดลม และตู้เย็นชั้นล่าง อยู่ติดพื้น' },
+  c: { k: [['ไม่เสียบชาร์จ ไปบอกพ่อแม่ให้ตัดไฟชั้นล่าง', 'พ่อตัดไฟทันก่อนน้ำถึงปลั๊ก ทุกคนปลอดภัย'],
+           ['รีบเสียบชาร์จ ก่อนน้ำขึ้นสูง', 'มีประกายไฟแปลบที่ปลั๊ก! หนูสะดุ้งถอยแทบไม่ทัน'],
+           ['ใช้มือเปียกๆ ดึงปลั๊กพัดลมออก', 'มือหนูชาแปลบ โชคดีที่ไม่เป็นอะไรมาก']],
+       t: [['ไม่ใช้ปลั๊กล่าง โทรบอกพ่อแม่ให้ตัดไฟชั้นล่าง', 'พ่อบอกวิธีตัดไฟ ไฟชั้นล่างดับก่อนน้ำถึงปลั๊ก'],
+           ['เสียบชาร์จแป๊บเดียว น้ำยังไม่ถึง', 'น้ำซัดเข้ามาโดนปลั๊ก มีประกายไฟแปลบ!'],
+           ['ใช้มือเปียกๆ ดึงปลั๊กพัดลมออก', 'มือชาแปลบ โชคดีที่ไม่เป็นอะไรมาก']],
+       _: [['ย้ายเครื่องใช้ไฟฟ้าขึ้นที่สูง ถ้าน้ำจะถึงปลั๊ก ตัดไฟชั้นล่าง', 'น้ำมาถึงปลั๊กจริงๆ แต่ไฟถูกตัดไว้แล้ว ทุกคนปลอดภัย'],
+           ['ปล่อยไว้ก่อน รอน้ำมาถึงค่อยถอดปลั๊ก', 'พอน้ำมา ต้องลุยน้ำไปถอดปลั๊ก เสี่ยงไฟดูด'],
+           ['เอาเทปพันปลั๊กไว้ กันน้ำเข้า', 'เทปกันน้ำไม่ได้ ไฟยังรั่วลงน้ำได้']] },
+  why: { k: 'น้ำนำไฟฟ้า ห้ามแตะปลั๊กหรือสวิตช์ตอนตัวเปียก และให้ผู้ใหญ่ตัดไฟชั้นล่าง',
+         t: 'น้ำนำไฟฟ้า ห้ามแตะปลั๊กหรือสวิตช์ตอนตัวเปียก ถ้าน้ำจะถึงปลั๊กให้ตัดไฟชั้นล่าง',
+         _: 'น้ำนำไฟฟ้า ปลั๊กที่จมน้ำทำให้ไฟรั่วได้ การไฟฟ้านครหลวงแนะนำให้ย้ายปลั๊กและเครื่องใช้ไฟฟ้าขึ้นสูงกว่าระดับน้ำ ไฟฟ้ามีปัญหาโทร 1130' },
+  give: 'torch', learn: { k: 'ไม่แตะปลั๊กตอนตัวเปียก บอกผู้ใหญ่ให้ตัดไฟ', t: 'ไม่แตะปลั๊กตอนตัวเปียก ตัดไฟก่อนน้ำถึงปลั๊ก', _: 'ยกเครื่องใช้ไฟฟ้าขึ้นสูง ตัดไฟก่อนน้ำถึงปลั๊ก' } },
+
+{ id: 'numbers', ph: 0, ages: 'ktae', art: 'i-phone', title: 'เบอร์ที่ต้องมี',
+  text: { k: 'พ่อให้หนูจำเบอร์ฉุกเฉินไว้ 2 เบอร์ก่อนน้ำมา ควรจำเบอร์ไหน?',
+          t: 'ก่อนน้ำมา ควรเซฟเบอร์ไหนไว้ในมือถือ เผื่อเกิดเรื่องตอนพ่อแม่ไม่อยู่?',
+          a: 'ก่อนน้ำมา ควรเซฟเบอร์ไหนไว้ในมือถือของทุกคนในบ้าน?',
+          e: 'ลูกโทรมาบอกให้ยายจดเบอร์ฉุกเฉินแปะไว้ข้างโทรศัพท์ จดเบอร์ไหนดี?' },
+  c: { e: [['199 เมื่องูหรือสัตว์อันตรายเข้าบ้าน และ 1669 เมื่อเจ็บป่วยฉุกเฉิน', 'วันที่เกิดเรื่อง ยายมองเห็นเบอร์ทันที กดโทรได้เลย'],
+           ['ไม่ต้องจด ลูกรู้เบอร์อยู่แล้ว', 'คืนที่เกิดเรื่อง โทรหาลูกไม่ติด และยายจำเบอร์ฉุกเฉินไม่ได้'],
+           ['จดเบอร์ร้านขายของปากซอยไว้ก็พอ', 'ร้านรับสาย แต่ช่วยจับงูไม่ได้']],
+       _: [['199 เมื่องูหรือสัตว์อันตรายเข้าบ้าน และ 1669 เมื่อเจ็บป่วยฉุกเฉิน', 'วันที่เกิดเรื่องจริง กดโทรได้ทันที ไม่ต้องหา'],
+           ['ไม่ต้องเซฟ ค่อยค้นในเน็ตตอนเกิดเรื่อง', 'ตอนเกิดเรื่องจริง มือสั่น เน็ตก็หลุด หาเบอร์ไม่เจอ'],
+           ['เบอร์เพื่อนสนิทเบอร์เดียวก็พอ', 'เพื่อนรับสาย แต่ไม่รู้ว่าจะช่วยจับงูยังไง']] },
+  why: '199 คือสายด่วนดับเพลิงและกู้ภัยของกรุงเทพฯ มาช่วยจับงูและสัตว์อันตรายที่เข้าบ้านได้ ส่วน 1669 คือเบอร์เจ็บป่วยฉุกเฉิน',
+  fact: 'คำร้องเรื่องงูเพิ่มจาก 57 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 96 เรื่อง (16 วันที่น้ำท่วม)',
+  give: 'phone', learn: 'เซฟเบอร์ 199 (สัตว์เข้าบ้าน) และ 1669 (เจ็บป่วยฉุกเฉิน)' },
+
+{ id: 'nextdoor', ph: 0, ages: 'ktae', art: 'i-neighbor', title: 'ใครอยู่คนเดียว',
+  text: { k: 'บ้านข้างๆ มีคุณยายอยู่คนเดียว น้ำจะมาคืนนี้ หนูช่วยอะไรได้บ้าง?',
+          t: 'บ้านข้างๆ มีคุณยายอายุ 80 อยู่คนเดียว น้ำจะมาคืนนี้',
+          a: 'บ้านข้างๆ มีคุณยายอายุ 80 อยู่คนเดียว ลูกๆ ทำงานต่างจังหวัด น้ำจะมาคืนนี้',
+          e: 'ยายอยู่บ้านคนเดียว ลูกสาวทำงานอยู่ไกล น้ำจะมาคืนนี้' },
+  c: { k: [['บอกพ่อแม่ ให้ไปบอกคุณยายและขอเบอร์ไว้', 'พ่อแม่ไปบอกคุณยาย และตกลงกันว่าจะแวะไปดูทุกวัน'],
+           ['คุณยายคงรู้อยู่แล้ว ไม่ต้องบอกใคร', 'คืนนั้นน้ำมาเร็ว คุณยายยกของหนีน้ำไม่ทัน'],
+           ['รอให้น้ำมาก่อน ค่อยไปดู', 'พอน้ำมา ก็ลุยไปบ้านคุณยายไม่ได้แล้ว']],
+       e: [['บอกเพื่อนบ้านว่าอยู่คนเดียว ขอเบอร์ไว้ และโทรบอกลูก', 'เพื่อนบ้านแวะมาดูยายทุกเช้า'],
+           ['ไม่อยากรบกวนใคร อยู่เงียบๆ ดีกว่า', 'น้ำล้อมบ้าน 3 วัน ไม่มีใครรู้ว่ายายต้องการอะไร'],
+           ['รอให้น้ำมาก่อน ค่อยโทรหาลูก', 'คืนนั้นไฟดับ มือถือแบตหมด โทรหาลูกไม่ได้']],
+       _: [['แวะไปบอก ขอเบอร์ไว้ ตกลงว่าจะมาดูทุกวัน', 'วันที่ 2 คุณยายโทรมาขอให้ช่วยยกของ คุณไปทันพอดี'],
+           ['คงมีลูกหลานมาดูแลแล้ว ไม่ต้องยุ่ง', 'สองวันต่อมา ไม่มีใครเห็นคุณยายเลย'],
+           ['ส่งข้อความในกลุ่มไลน์หมู่บ้านก็พอ', 'คุณยายไม่ได้เล่นไลน์ เลยไม่มีใครรู้ว่าคุณยายต้องการอะไร']] },
+  why: 'คนที่อยู่ลำพัง โดยเฉพาะผู้สูงอายุ ขอความช่วยเหลือได้ยากที่สุดตอนน้ำล้อมบ้าน ถ้ารู้ก่อนว่าใครอยู่คนเดียว ก็ไปถึงได้เร็ว',
+  fact: 'คำร้องเรื่องสัตว์อันตราย 40 เรื่อง พูดถึงผู้สูงอายุในบ้าน',
+  give: 'neighbor', learn: { e: 'บอกเพื่อนบ้านและลูกหลานว่าอยู่คนเดียว', _: 'รู้ว่าเพื่อนบ้านคนไหนอยู่ลำพัง' } },
+
+{ id: 'food', ph: 0, ages: 'ktae', art: 'i-water', title: 'ของกินตอนไฟดับ',
+  text: { k: 'แม่ให้หนูช่วยเลือกของกินเก็บไว้ เผื่อน้ำท่วมหลายวันและไฟดับ',
+          t: 'ต้องตุนของกินไว้ให้ตัวเองกับน้อง เผื่อน้ำท่วมหลายวันและต้องตัดไฟ',
+          a: 'ต้องตุนของกินไว้ทั้งบ้าน เผื่อน้ำท่วมหลายวันและต้องตัดไฟ',
+          e: 'ยายต้องตุนของกินไว้ เผื่อน้ำท่วมหลายวันและต้องตัดไฟ' },
+  c: { k: [['น้ำดื่ม ขนมปัง และปลากระป๋อง ที่กินได้เลย', 'ไฟดับไป 5 วัน แต่ยังมีของกินครบ'],
+           ['ไอศกรีมกับนมเต็มตู้เย็น', 'ไฟดับวันเดียว ไอศกรีมละลาย นมก็เสีย'],
+           ['ข้าวสารถุงใหญ่ กับหม้อหุงข้าว', 'พอตัดไฟ หม้อหุงข้าวก็ใช้ไม่ได้']],
+       _: [['น้ำดื่ม และอาหารแห้งที่กินได้เลยโดยไม่ต้องหุง', 'ไฟดับไป 5 วัน แต่ยังมีของกินครบ'],
+           ['ข้าวสารถุงใหญ่ กับหม้อหุงข้าว', 'พอตัดไฟ หม้อหุงข้าวก็ใช้ไม่ได้'],
+           ['หมูและผักสดเต็มตู้เย็น', 'ไฟดับ 2 วัน ของสดเสียหมด']] },
+  why: 'ตอนน้ำท่วมมักต้องตัดไฟเพื่อความปลอดภัย น้ำดื่มสะอาดและอาหารที่ไม่ต้องใช้ไฟจึงสำคัญที่สุด',
+  real: ['26 ก.ย. 20:07 · สะพานสูง', 'ผู้สูงอายุประมาณ 80 ปี อยู่บ้านเพียงลำพัง… ต้องตัดไฟเพื่อความปลอดภัย จึงทำอาหารไม่ได้'],
+  give: 'water', learn: 'ตุนน้ำดื่มและอาหารที่ไม่ต้องใช้ไฟ' },
+
+{ id: 'meds', ph: 0, ages: 'ae', art: 'i-meds', title: 'ยาเหลือ 3 วัน',
+  text: { a: 'แม่ของคุณต้องกินยาความดันทุกวัน ยาเหลืออีก 3 วัน น้ำจะมาคืนนี้',
+          e: 'ยายต้องกินยาความดันทุกวัน ยาเหลืออีก 3 วัน น้ำจะมาคืนนี้' },
+  c: { a: [['รีบพาแม่ไปรับยาเพิ่มให้พอ ใส่ถุงกันน้ำ เก็บไว้ที่สูง', 'น้ำท่วมนานกว่าที่คิด แต่แม่มียากินครบทุกวัน'],
+           ['ยายังเหลือ เดี๋ยวน้ำก็ลด', 'น้ำไม่ลดเลย ยาของแม่หมดตั้งแต่วันที่ 4'],
+           ['ให้แม่กินวันละครึ่งเม็ด ยาจะได้อยู่นานขึ้น', 'ความดันของแม่ขึ้นจนเวียนหัว เพราะกินยาไม่ครบ']],
+       e: [['รีบไปรับยาเพิ่มให้พอ ใส่ถุงกันน้ำ เก็บไว้ที่สูง', 'น้ำท่วมนานกว่าที่คิด แต่ยายมียากินครบทุกวัน'],
+           ['ยายังเหลือ เดี๋ยวน้ำก็ลด', 'น้ำไม่ลดเลย ยาหมดตั้งแต่วันที่ 4'],
+           ['กินวันละครึ่งเม็ด ยาจะได้อยู่นานขึ้น', 'ความดันขึ้นจนเวียนหัว เพราะกินยาไม่ครบ']] },
+  why: 'น้ำท่วมอาจอยู่นานหลายวัน ออกไปซื้อยาได้ยาก ควรเตรียมยาประจำตัวให้พอ และห้ามลดยาเอง',
+  fact: 'ในเรื่องของเรา น้ำท่วมกรุงเทพฯ ยาว 16 วัน ตั้งแต่ 25 ก.ย. ถึง 10 ต.ค.',
+  give: 'meds', learn: 'เตรียมยาประจำตัวให้พอ ห้ามลดยาเอง' },
+
+/* ---------------- 1 · วันที่ 1–3 สัตว์หนีน้ำขึ้นบ้าน ---------------- */
+{ id: 'snakebath', ph: 1, ages: 'ktae', art: 'snake', title: 'เสียงขู่ในห้องน้ำ',
+  text: { k: '[ตอนดึก|ตอนตีหนึ่ง] หนูตื่นมาเข้าห้องน้ำ เห็นงูขดอยู่ข้างชักโครก!',
+          t: 'น้องวิ่งมาบอกว่ามีงูในห้องน้ำ ส่วนพ่อแม่ยังไม่กลับจากที่ทำงาน',
+          a: '[สี่ทุ่ม|เที่ยงคืน|ตีหนึ่ง] เปิดประตูห้องน้ำ เจองูขดอยู่ข้างชักโครก',
+          e: '[ตอนดึก|ตีสอง] ยายลุกไปเข้าห้องน้ำ เห็นงูขดอยู่ข้างชักโครก' },
+  c: { k: [['ถอยออกมาช้าๆ ปิดประตู แล้วไปปลุกพ่อแม่', 'พ่อโทร 199 เจ้าหน้าที่มาจับงูออกไป'],
+           ['เอาไม้กวาดไปเขี่ยให้มันออกไป', 'งูตกใจฉกใส่ไม้กวาด หนูวิ่งหนีแทบไม่ทัน'],
+           ['เข้าไปถ่ายรูปใกล้ๆ ไว้อวดเพื่อน', 'งูขู่ฟ่อ หนูสะดุ้งจนลื่นล้ม']],
+       t: [['พาน้องออกห่าง ปิดประตู แล้วโทร 199', 'เจ้าหน้าที่มาถึง และจับงูออกไปได้'],
+           ['หาไม้มาตีให้ตาย', 'งูฉกสวนกลับมา เกือบโดนมือ'],
+           ['ราดน้ำร้อนใส่ ให้มันหนีไป', 'งูหนีเข้าซอกหลังตู้ ตอนนี้ไม่รู้ว่ามันอยู่ไหน']],
+       a: [['ถอยห่าง 2–3 เมตร ปิดประตู จำว่ามันไปทางไหน แล้วโทร 199', 'เจ้าหน้าที่มาถึง และจับงูออกไปได้'],
+           ['จับหางแล้วเหวี่ยงออกนอกบ้าน', 'งูหันมาฉก เกือบโดนแขน'],
+           ['ฉีดสเปรย์ฆ่าแมลงใส่', 'งูหนีเข้าท่อ แล้วไปโผล่ที่อื่นในบ้านแทน']],
+       e: [['ถอยออกช้าๆ ปิดประตู แล้วโทร 199 หรือโทรเรียกเพื่อนบ้าน', 'เจ้าหน้าที่มาถึง และจับงูออกไปได้'],
+           ['เอาไม้กวาดไล่เอง', 'ยายเสียหลักล้ม งูเลื้อยผ่านไปใกล้มือ'],
+           ['รอให้มันไปเอง แล้วเข้าห้องน้ำต่อ', 'งูยังขดอยู่หลังถังน้ำ ยายเกือบเหยียบ']] },
+  why: 'อย่าเข้าใกล้ จับ หรือตีงูเอง ให้อยู่ห่างอย่างน้อย 2–3 เมตร จำไว้ว่ามันไปทางไหน แล้วโทร 199 ให้ผู้เชี่ยวชาญมาจับ',
+  real: ['29 ก.ย. 23:26 · มีนบุรี', 'งูอยู่ในห้องน้ำค่ะ'],
+  fact: 'คำร้องเรื่องงูเพิ่มจาก 57 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 96 เรื่อง (16 วันที่น้ำท่วม)',
+  give: 'torch', guard: 'phone', learn: { k: 'เจองู ถอยห่าง ไม่จับเอง บอกผู้ใหญ่', _: 'เจองู ถอยห่าง ไม่จับเอง โทร 199' } },
+
+{ id: 'snakebite', ph: 1, ages: 'ktae', art: 'snake', title: 'คุณลุงโดนงูกัด',
+  text: { k: 'คุณลุงข้างบ้านโดนงูกัดที่ขา ตะโกนให้ช่วย หนูอยู่ใกล้ที่สุด',
+          e: 'ลุงข้างบ้านวัยเดียวกับยายโดนงูกัดที่ขา ตะโกนให้ช่วย',
+          _: 'คุณลุงข้างบ้านโดนงูกัดที่ขา ตะโกนให้ช่วย' },
+  c: { k: [['บอกคุณลุงให้อยู่นิ่งๆ แล้ววิ่งไปตามผู้ใหญ่ให้โทร 1669', 'ผู้ใหญ่โทร 1669 รถพยาบาลมารับคุณลุงไปโรงพยาบาลทัน'],
+           ['หาเชือกมารัดขาคุณลุงแน่นๆ', 'ขาคุณลุงบวมเขียว เจ็บกว่าเดิม'],
+           ['วิ่งไปจับงูตัวนั้นมาให้หมอดู', 'งูฉก เกือบโดนมือหนู']],
+       _: [['ให้คุณลุงอยู่นิ่ง ดามขาไว้ แล้วโทร 1669 พาไปโรงพยาบาล', 'คุณลุงถึงมือหมอได้ทัน'],
+           ['ใช้เชือกรัดเหนือแผลแน่นๆ (ขันชะเนาะ)', 'ขาบวมเขียว เลือดไปเลี้ยงขาไม่ได้'],
+           ['กรีดแผลแล้วดูดพิษออก', 'แผลใหญ่ขึ้น และเสี่ยงติดเชื้อ']] },
+  why: 'งูกัดให้อยู่นิ่ง ดามส่วนที่โดนกัดไว้ แล้วรีบไปโรงพยาบาล ห้ามขันชะเนาะ ห้ามกรีด ห้ามดูดแผล เพราะทำให้อาการแย่ลง',
+  real: ['29 ก.ย. 18:45 · สะพานสูง', 'คุณลุงข้างบ้านโดนงูกัดค่ะ ตะขาบจะถึงขาแล้วค่ะ ช่วยด้วย'],
+  fact: 'ถึงวันที่ 27 ต.ค. คำร้องนี้ยังไม่ปิดในระบบ (สถานะ “กำลังดำเนินการ”) ความช่วยเหลืออาจมาช้า เราจึงต้องปฐมพยาบาลให้เป็น',
+  give: 'firstaid', guard: 'phone', learn: 'งูกัด อยู่นิ่ง ดาม ห้ามขันชะเนาะ รีบไปโรงพยาบาล' },
+
+{ id: 'shoes', ph: 1, ages: 'ktae', art: 'centipede', title: 'อะไรอยู่ในรองเท้า?',
+  text: { k: 'เช้านี้หนูจะใส่รองเท้าผ้าใบที่วางไว้หน้าบ้านทั้งคืน',
+          t: 'เช้านี้จะใส่รองเท้าผ้าใบที่ถอดไว้หน้าบ้านตั้งแต่เมื่อวาน',
+          a: 'เช้านี้ต้องรีบออกไปช่วยเพื่อนบ้าน รองเท้าบูทวางอยู่หน้าบ้านทั้งคืน',
+          e: 'เช้านี้ยายจะใส่รองเท้าที่วางไว้ข้างประตูทั้งคืน' },
+  c: [['เคาะรองเท้าแรงๆ และส่องดูข้างในก่อนใส่', 'ตะขาบตัวยาวหล่นออกมา! โชคดีที่เคาะก่อน'],
+      ['ใส่เลย ไม่มีอะไรหรอก', 'ตะขาบในรองเท้ากัดนิ้วเท้า ปวดและบวมแดง'],
+      ['เอามือล้วงเข้าไปดูก่อน', 'ตะขาบกัดนิ้วมือ ปวดจนน้ำตาไหล']],
+  why: 'ช่วงน้ำท่วม งูและตะขาบหนีน้ำมาซ่อนในที่แห้งและมืด เช่น รองเท้า กองผ้า และใต้ที่นอน เคาะและส่องดูก่อนเสมอ',
+  fact: 'ช่วงวันที่ 1–3 คำร้องเรื่องตะขาบต่อวัน สูงกว่าก่อนน้ำท่วม 8 เท่า',
+  give: 'bag', guard: 'firstaid', learn: 'เคาะและส่องรองเท้าก่อนใส่' },
+
+{ id: 'centipede', ph: 1, ages: 'ktae', art: 'centipede', title: 'ตะขาบกัด!',
+  text: { k: 'ตอนเก็บผ้าห่ม ตะขาบกัดนิ้วหนู ปวดมากและเริ่มบวม',
+          t: 'น้องโดนตะขาบกัดนิ้ว ร้องไห้เพราะปวดมาก นิ้วเริ่มบวม',
+          a: 'ตอนยกกองผ้า ตะขาบกัดมือ ปวดแสบและเริ่มบวม',
+          e: 'ตอนหยิบผ้าห่ม ตะขาบกัดมือยาย ปวดแสบและเริ่มบวม' },
+  c: { k: [['บอกพ่อแม่ ล้างแผลด้วยน้ำสะอาด ใส่ยา แล้วประคบเย็น', 'ปวดน้อยลง วันรุ่งขึ้นก็ยุบบวม'],
+           ['ไม่บอกใคร เดี๋ยวก็หาย', 'คืนนั้นนิ้วบวมเป่ง ปวดจนนอนไม่หลับ'],
+           ['เอาน้ำที่ท่วมหน้าบ้านล้างแผล', 'แผลสกปรกกว่าเดิม เริ่มอักเสบ']],
+       _: [['ล้างแผลด้วยน้ำสะอาด ใส่ยาฆ่าเชื้อ ประคบเย็น ถ้าปวดมากหรือหายใจลำบากไปหาหมอ', 'อาการค่อยๆ ดีขึ้นใน 2 วัน'],
+           ['เอาไฟลนแผล ให้พิษหาย', 'แผลพองเพิ่มจากไฟลวก แถมยังปวดเหมือนเดิม'],
+           ['ไม่ต้องทำอะไร เดี๋ยวก็หาย', 'แผลสกปรก เริ่มอักเสบ บวมแดงกว่าเดิม']] },
+  why: 'โดนตะขาบกัด ให้ล้างแผลด้วยน้ำสะอาด ใส่ยาฆ่าเชื้อ และประคบเย็นถ้าบวม ส่วนใหญ่ดีขึ้นใน 2 วัน แต่ถ้าปวดมาก บวมลาม หรือหายใจลำบาก ต้องไปหาหมอ',
+  fact: 'คำร้องเรื่องตะขาบเพิ่มจาก 6 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 24 เรื่อง (16 วันที่น้ำท่วม)',
+  give: 'soap', guard: 'firstaid', learn: 'ตะขาบกัด ล้างแผล ใส่ยา ประคบเย็น' },
+
+{ id: 'night', ph: 1, ages: 'ktae', art: 'i-night', title: 'ลุยน้ำตอนมืด',
+  text: { k: 'ตอนค่ำ เพื่อนมาชวนไปเล่นน้ำที่หน้าซอย',
+          t: 'สามทุ่มแล้ว พ่อแม่ยังติดอยู่ที่ทำงาน น้องบอกว่าหิว ร้านปากซอยยังเปิดอยู่',
+          a: 'สามทุ่มแล้ว เพื่อนชวนลุยน้ำไปซื้อของที่ร้านปากซอย',
+          e: 'ค่ำแล้ว ยาแก้ปวดหมด ยายอยากลุยน้ำไปร้านขายยา' },
+  c: { k: [['ไม่ไป บอกเพื่อนว่าตอนมืดมองไม่เห็นงูในน้ำ', 'เพื่อนเลยเปลี่ยนมาเล่นบนบ้านแทน'],
+           ['ไปแป๊บเดียว ก่อนพ่อแม่รู้', 'ในความมืด หนูเหยียบอะไรนิ่มๆ ใต้น้ำ… แล้วมันก็ขยับ!'],
+           ['แอบไปตอนพ่อแม่หลับ', 'หนูสะดุดฝาท่อที่เปิดอยู่ใต้น้ำ ขาเป็นแผล']],
+       t: [['หาของกินในบ้านให้น้องไปก่อน ไม่ลุยน้ำตอนมืด', 'น้องอิ่มกับขนมปังและนม พ่อแม่กลับถึงบ้านตอนดึก'],
+           ['ลุยไปซื้อคนเดียว เร็วๆ', 'มืดจนมองไม่เห็นทาง ขาสะดุดท่อจนเป็นแผล'],
+           ['พาน้องลุยไปด้วยกัน', 'น้องลื่นล้มในน้ำมืดๆ ตัวเปียกและร้องไห้']],
+       a: [['รอพรุ่งนี้เช้าค่อยไป ตอนกลางวันมองเห็นทาง', 'ตอนเช้าเห็นเลยว่ามีฝาท่อเปิดอยู่กลางทาง'],
+           ['ไปเลย ใช้ไฟมือถือส่องเอา', 'แสงมือถือส่องได้แค่ผิวน้ำ ขาไปสะดุดอะไรบางอย่างใต้น้ำ'],
+           ['ไปเลย ใส่รองเท้าแตะ เดินเร็วดี', 'รองเท้าหลุด เท้าโดนเศษแก้วบาด']],
+       e: [['โทรขอให้เพื่อนบ้านหรือลูกช่วยซื้อ หรือรอตอนเช้า', 'เพื่อนบ้านแวะเอายามาให้ตอนเช้า'],
+           ['ลุยไปคนเดียวตอนนี้เลย', 'ยายลื่นล้มในน้ำมืดๆ ลุกขึ้นเองแทบไม่ไหว'],
+           ['ลุยไป เดินชิดกำแพงไว้', 'กำแพงมีสายไฟห้อยลงมาใกล้น้ำ ยายเกือบจับโดน']] },
+  why: 'ตอนกลางคืนมองไม่เห็นงู ปลิง หลุม หรือฝาท่อที่เปิดอยู่ใต้น้ำ ถ้าจำเป็นต้องลุย ให้ลุยตอนกลางวันและไปกับคนอื่น',
+  fact: 'วันที่ 26 ก.ย. น้ำท่วมสูงสุด คนแจ้งเรื่องน้ำท่วมถึง 5,089 เรื่องในวันเดียว',
+  give: 'stick', guard: 'torch', learn: 'ไม่ลุยน้ำตอนกลางคืน' },
+
+{ id: 'rat', ph: 1, ages: 'ktae', art: 'rat', title: 'หนูหนีน้ำ',
+  text: { k: 'เจอลูกหนูตัวเล็กๆ หนีน้ำมาเกาะบันไดบ้าน ตัวเปียกและสั่น น่าสงสารมาก',
+          t: 'น้องเจอหนูหนีน้ำมาอยู่บนบันได น้องจะเอามือจับไปเลี้ยง',
+          _: 'หนูหนีน้ำขึ้นมาบนบ้าน กัดถุงข้าวสารและขนมปังจนขาด' },
+  c: { k: [['ไม่จับ บอกพ่อแม่ และล้างมือถ้าแตะของที่หนูเดินผ่าน', 'พ่อเก็บอาหารใส่กล่องปิดสนิท หนูเลยไม่วนกลับมา'],
+           ['จับใส่กล่องไว้เลี้ยง', 'หนูกัดนิ้วจนเลือดออก'],
+           ['ใช้มือหยิบไปปล่อยข้างนอก', 'มือหนูเปื้อนฉี่หนูโดยไม่รู้ตัว']],
+       t: [['ห้ามน้องจับ พาไปล้างมือ แล้วเก็บอาหารใส่กล่องปิดสนิท', 'หนูหาของกินไม่ได้ เลยไม่วนกลับมา'],
+           ['ให้น้องเลี้ยงไว้ในกล่อง', 'หนูกัดนิ้วน้องจนเลือดออก'],
+           ['ให้น้องใช้มือหยิบไปปล่อยข้างนอก', 'มือน้องเปื้อนฉี่หนูโดยไม่รู้ตัว']],
+       _: [['ทิ้งอาหารที่หนูกัด แล้วเก็บของกินใส่กล่องปิดสนิท', 'หนูหาของกินไม่ได้ เลยไม่วนกลับมา'],
+           ['ตัดส่วนที่หนูกัดทิ้ง ที่เหลือกินต่อ', 'สองวันต่อมา ปวดท้องและท้องเสีย'],
+           ['ปล่อยไว้ เดี๋ยวน้ำลดมันก็ไปเอง', 'หนูมากันเป็นครอบครัว ฉี่และขี้เต็มครัว']] },
+  why: 'ฉี่หนูอาจมีเชื้อโรคฉี่หนู อย่าจับหนูด้วยมือเปล่า เก็บอาหารให้มิดชิด และทิ้งอาหารที่หนูกัดแล้ว',
+  fact: 'คำร้องเรื่องหนูและฉี่หนูเพิ่มจาก 29 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 67 เรื่อง (16 วันที่น้ำท่วม)',
+  give: 'gloves', guard: 'soap', learn: 'ไม่จับหนูด้วยมือเปล่า เก็บอาหารให้มิดชิด' },
+
+{ id: 'croc', ph: 1, ages: 'ktae', art: 'croc', title: 'ข่าวจระเข้หลุด!',
+  text: { k: 'เพื่อนในห้องส่งข้อความมาว่า “มีจระเข้หลุดมาในซอยบ้านเราแล้ว!”',
+          t: 'กลุ่มไลน์ห้องแชร์คลิป “จระเข้หลุดมาแถวบ้านเรา!” ใครๆ ก็แชร์ต่อ',
+          a: 'กลุ่มไลน์หมู่บ้านแชร์โพสต์ “จระเข้หลุดจากฟาร์ม มาถึงเขต{district}แล้ว!”',
+          e: 'ลูกส่งคลิปมาในไลน์ “แม่ระวังนะ จระเข้หลุด!” ยายตกใจมาก' },
+  c: { k: [['ไม่ตื่นตกใจ ถามพ่อแม่ก่อนว่าจริงไหม', 'พ่อบอกว่าไม่มีประกาศจริง แต่ให้ระวังงูกับปลิงแทน'],
+           ['ชวนเพื่อนไปดูจระเข้ที่หน้าซอย', 'ไม่เจอจระเข้ แต่ขากลับเจอปลิงเกาะขา'],
+           ['ส่งต่อให้ทุกคนในห้อง', 'เพื่อนหลายคนกลัวจนไม่กล้านอน ทั้งที่เป็นข่าวไม่จริง']],
+       e: [['โทรถามลูกหรือเพื่อนบ้านว่ามีประกาศจริงไหม', 'ลูกเช็กแล้ว เป็นคลิปเก่าจากที่อื่น'],
+           ['ส่งต่อให้เพื่อนทุกคน', 'เพื่อนๆ ของยายตกใจกันทั้งกลุ่ม ทั้งที่เป็นข่าวไม่จริง'],
+           ['ไม่กล้าลงจากเตียงทั้งวัน', 'ยายไม่ได้กินข้าวจนอ่อนเพลีย ทั้งที่ข่าวไม่จริง']],
+       _: [['เช็กประกาศจากหน่วยงานทางการก่อนแชร์', 'ไม่มีประกาศจริง โพสต์นั้นเป็นคลิปเก่าจากที่อื่น'],
+           ['แชร์ต่อทันที เผื่อช่วยเตือนคนอื่น', 'คนแตกตื่นทั้งซอย แต่ไม่มีใครระวังปลิงกับงูที่อยู่ใกล้ตัวกว่า'],
+           ['ลุยน้ำออกไปดูให้เห็นกับตา', 'ไม่เจอจระเข้ แต่โดนปลิงเกาะขาสองตัว']] },
+  why: 'ข่าวลือทำให้เรากลัวผิดเรื่อง เช็กจากหน่วยงานทางการก่อนแชร์ แล้วระวังสัตว์ที่เจอบ่อยจริง อย่างปลิง งู และตะขาบ',
+  fact: 'ในข้อมูลจริง คำร้องที่ค้นเจอคำว่า “จระเข้” 566 เรื่อง เป็นจระเข้ตัวจริงแค่ 1 ตัว และมันตายแล้ว',
+  give: 'battery', learn: 'เช็กข่าวก่อนแชร์ ระวังสัตว์ที่เจอบ่อยจริง' },
+
+{ id: 'slip', ph: 1, ages: 'e', art: 'i-elder', title: 'พื้นลื่นตอนดึก',
+  text: { e: 'น้ำซึมเข้าบ้านจนพื้นเปียก ไฟก็ตัดแล้ว ตอนดึกยายจะเดินไปห้องน้ำ' },
+  c: [['เปิดไฟฉาย เดินช้าๆ จับราวหรือผนังไว้', 'ถึงห้องน้ำอย่างปลอดภัย และเห็นปลิงตัวเล็กบนพื้นทัน'],
+      ['เดินในความมืด คุ้นทางอยู่แล้ว', 'ยายลื่นล้ม ข้อมือซ้น'],
+      ['จุดเทียนวางไว้บนพื้น', 'เทียนล้มใกล้ผ้าม่าน เกือบไฟไหม้']],
+  why: 'ผู้สูงอายุลื่นล้มได้ง่ายเมื่อพื้นเปียกและมืด ใช้ไฟฉายแทนเทียน เดินช้าๆ และมีที่จับ',
+  fact: 'คำร้องเรื่องสัตว์อันตราย 40 เรื่อง พูดถึงผู้สูงอายุในบ้าน',
+  give: 'whistle', guard: 'torch', learn: 'พื้นเปียกตอนมืด ใช้ไฟฉาย เดินช้าๆ' },
+
+/* ---------------- 2 · วันที่ 4–9 น้ำขัง น้ำเน่า ---------------- */
+{ id: 'leech', ph: 2, ages: 'ktae', art: 'leech', title: 'ปลิงเกาะขา!',
+  text: { k: 'ตอนลุยน้ำกลับบ้านกับแม่ หนูเห็นปลิงตัวดำเกาะที่ขา',
+          t: 'ตอนพาน้องลุยน้ำกลับบ้าน น้องร้องว่ามีปลิงเกาะขา',
+          a: 'ลุยน้ำกลับจากที่ทำงาน มีปลิงตัวดำเกาะที่น่อง เลือดเริ่มไหล',
+          e: 'ปลิงเข้ามาในบ้านตามน้ำ และเกาะที่เท้ายาย' },
+  c: { k: [['บอกแม่ ให้โรยเกลือที่ตัวปลิง รอให้มันหลุดเอง', 'ปลิงหดตัวแล้วหลุดออกเอง แม่ล้างแผลให้'],
+           ['ดึงออกแรงๆ ทันที', 'ปลิงขาด ปากของมันยังติดอยู่ในแผล'],
+           ['เกาแรงๆ ให้มันหลุด', 'แผลถลอกใหญ่ขึ้น ปลิงก็ยังไม่หลุด']],
+       t: [['ให้น้องยืนนิ่ง โรยเกลือที่ตัวปลิง รอให้หลุด แล้วกดแผล', 'ปลิงหดตัวหลุดออกเอง แผลเล็กนิดเดียว'],
+           ['กระชากออกเร็วๆ ให้จบ', 'ปากปลิงค้างในแผล สามวันต่อมาแผลบวมแดง'],
+           ['เอาไฟแช็กลนตัวปลิง', 'ไฟลวกขาน้อง เป็นแผลพอง']],
+       a: [['ใช้เกลือหรือน้ำเกลือที่ตัวปลิง รอให้หลุดเอง แล้วล้างแผลและกดไว้', 'ปลิงหลุดเอง แผลเล็กและสะอาด'],
+           ['กระชากออกทันที', 'ปากปลิงค้างในแผล สามวันต่อมาแผลบวมแดง'],
+           ['เอาบุหรี่จี้ให้หลุด', 'ปลิงหลุด แต่ขาโดนไฟลวกเป็นแผลเพิ่ม']],
+       e: [['โรยเกลือที่ตัวปลิง รอให้หลุด แล้วกดแผลไว้', 'ปลิงหลุดเอง ยายล้างแผลและกดไว้จนเลือดหยุด'],
+           ['ดึงออกแรงๆ', 'ปากปลิงค้างในแผล สามวันต่อมาแผลบวมแดง'],
+           ['เอาไฟจากเทียนลน', 'ไฟลวกเท้ายาย เป็นแผลพอง']] },
+  why: 'ถ้ากระชาก ปากปลิงอาจขาดค้างในแผล ทำให้อักเสบติดเชื้อ ส่วนไฟทำให้ผิวไหม้ ใช้เกลือหรือน้ำส้มสายชูให้ปลิงหลุดเอง แล้วล้างแผลด้วยสบู่และน้ำสะอาด',
+  real: { e: ['26 ก.ย. 20:07 · สะพานสูง', 'ผู้สูงอายุประมาณ 80 ปี อยู่บ้านเพียงลำพัง น้ำท่วมสูง ปลิงเข้ามาในบ้าน และเกาะตามร่างกาย'] },
+  fact: 'คำร้องเรื่องปลิงเพิ่มจาก 3 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 75 เรื่อง (16 วันที่น้ำท่วม) มากขึ้น 25 เท่า',
+  give: 'salt', guard: 'firstaid', learn: 'ปลิงเกาะ อย่ากระชาก ใช้เกลือให้หลุดเอง' },
+
+{ id: 'bleed', ph: 2, ages: 'ktae', art: 'leech', title: 'เลือดไม่ยอมหยุด',
+  text: { k: 'ปลิงหลุดไปแล้ว แต่แผลที่ขาหนูยังมีเลือดซึมไม่หยุด',
+          t: 'ปลิงหลุดจากขาน้องแล้ว แต่เลือดยังซึมไม่หยุด น้องตกใจร้องไห้',
+          a: 'ปลิงหลุดไปครึ่งชั่วโมงแล้ว แต่เลือดยังซึมไม่หยุด',
+          e: 'ตีสี่ยายตื่นมา เห็นผ้าปูที่นอนเปื้อนเลือด ปลิงกัดตอนไหนก็ไม่รู้' },
+  c: { k: [['ให้แม่ล้างแผลด้วยสบู่ แล้วใช้ผ้าสะอาดกดไว้นานๆ', 'เลือดหยุดในไม่กี่นาที'],
+           ['เอาโคลนพอกแผลให้เลือดหยุด', 'แผลสกปรก วันรุ่งขึ้นบวมแดง'],
+           ['ช่างมัน แล้วกลับไปเล่นน้ำต่อ', 'แผลเปิดแช่น้ำเน่า เสี่ยงติดเชื้อโรคฉี่หนู']],
+       e: [['ล้างแผล ใช้ผ้าสะอาดกดไว้ ถ้าเลือดไม่หยุดโทร 1669', 'เลือดหยุดในไม่กี่นาที'],
+           ['เอายาเส้นพอกแผล', 'แผลสกปรก วันรุ่งขึ้นบวมแดง'],
+           ['ปล่อยไว้ เดี๋ยวก็หยุดเอง แล้วนอนต่อ', 'ตื่นมาอีกที เลือดยังซึม และแผลเริ่มบวม']],
+       _: [['ล้างแผลด้วยสบู่และน้ำสะอาด แล้วใช้ผ้าสะอาดกดไว้นานๆ', 'เลือดหยุดในไม่กี่นาที'],
+           ['เอายาเส้นหรือดินพอกแผล', 'แผลสกปรก วันรุ่งขึ้นบวมแดง'],
+           ['ช่างมัน แล้วลุยน้ำต่อ', 'แผลเปิดแช่น้ำเน่า เสี่ยงติดเชื้อโรคฉี่หนู']] },
+  why: 'ปลิงกัดไม่เจ็บ เพราะน้ำลายของมันมีสารชาและสารที่ทำให้เลือดไม่แข็งตัว เลือดจึงไหลนาน ให้ล้างแผลแล้วกดไว้ ถ้าเลือดไม่หยุดหรือแผลบวมแดง ไปหาหมอ',
+  real: ['26 ก.ย. 04:43 · สะพานสูง', 'ผู้อาศัย…โดนปลิงกัดเลือดไหลไม่หยุด'],
+  give: 'bandage', guard: 'firstaid', learn: 'ปลิงกัดเลือดไม่หยุด ล้างแผลแล้วกดไว้' },
+
+{ id: 'wade', ph: 2, ages: 'ktae', art: 'i-bandage', title: 'ก่อนลุยน้ำ',
+  text: { k: 'แม่ต้องพาหนูลุยน้ำไปบ้านยาย หนูมีแผลถลอกที่เข่า',
+          t: 'ต้องลุยน้ำไปรับของแจกให้ทั้งบ้าน ขามีแผลจากล้มเมื่อวาน',
+          a: 'ต้องลุยน้ำไปรับของแจก เท้ามีแผลถลอก',
+          e: 'ยายต้องลุยน้ำไปขึ้นเรืออาสา หน้าแข้งมีแผล' },
+  c: { k: [['ให้แม่ปิดแผลกันน้ำ ใส่บูท และอาบน้ำทันทีที่ถึง', 'ถึงบ้านยาย แผลยังแห้งสะอาด'],
+           ['ลุยไปเลย แผลนิดเดียวเอง', 'น้ำเน่าเข้าแผล สองวันต่อมาแผลบวมแดง'],
+           ['ใส่รองเท้าแตะไป ไม่ต้องอาบน้ำ', 'รองเท้าหลุดกลางทาง แผลเริ่มอักเสบ']],
+       _: [['ปิดแผลด้วยพลาสเตอร์กันน้ำ ใส่บูท และล้างตัวทันทีที่กลับมา', 'กลับถึงบ้าน แผลยังแห้งสะอาด'],
+           ['ลุยไปเลย แผลนิดเดียวเอง', 'น้ำเน่าเข้าแผล สองวันต่อมาแผลบวมแดง'],
+           ['ใส่รองเท้าแตะไป แล้วค่อยล้างตัวพรุ่งนี้', 'รองเท้าหลุดกลางทาง แผลแช่น้ำเน่าทั้งวัน เริ่มอักเสบ']] },
+  why: 'เชื้อโรคฉี่หนูเข้าทางแผลและผิวที่แช่น้ำนานๆ ปิดแผลก่อนลุย ใส่บูท และล้างตัวด้วยสบู่ทันทีหลังลุย',
+  real: { k: ['15 ต.ค. · สะพานสูง', 'เราไม่อยากพาลูกลุยน้ำไปรับ เพราะกลัวสัตว์มีพิษและโรคฉี่หนู'] },
+  fact: 'วันที่ 4–9 น้ำเริ่มขังและเน่า เป็นช่วงที่คำร้องเรื่องสัตว์อันตรายสูงที่สุด',
+  give: 'boots', guard: 'bandage', learn: 'ปิดแผลก่อนลุย ใส่บูท ล้างตัวทันทีหลังลุย' },
+
+{ id: 'wash', ph: 2, ages: 'ktae', art: 'i-shower', title: 'กลับจากลุยน้ำ',
+  text: { k: 'หนูเพิ่งลุยน้ำกลับถึงบ้าน เหนื่อยมาก อยากนอนเลย',
+          t: 'พาน้องลุยน้ำกลับถึงบ้าน ทั้งคู่เหนื่อยมาก น้องอยากนอนเลย',
+          a: 'ลุยน้ำกลับถึงบ้านตอนค่ำ เหนื่อยมาก อยากนอนเลย',
+          e: 'ยายลุยน้ำกลับจากรับของแจก เหนื่อยมาก อยากนอนพัก' },
+  c: { k: [['อาบน้ำฟอกสบู่ทันที แล้วให้แม่ช่วยดูว่ามีแผลไหม', 'แม่เจอรอยปลิงกัดเล็กๆ ที่ข้อเท้า ล้างทันพอดี'],
+           ['นอนก่อน ค่อยอาบน้ำพรุ่งนี้', 'ตื่นมาตัวคัน มีผื่นขึ้นที่ขา'],
+           ['ล้างแค่เท้าก็พอ', 'ไม่มีใครเห็นรอยปลิงกัดที่น่อง แผลเริ่มบวม']],
+       t: [['ให้น้องอาบน้ำฟอกสบู่ทันที แล้วช่วยดูว่ามีแผลไหม', 'เจอรอยปลิงกัดเล็กๆ ที่ข้อเท้าน้อง ล้างทันพอดี'],
+           ['ให้น้องนอนก่อน ค่อยอาบพรุ่งนี้', 'น้องตื่นมาตัวคัน มีผื่นขึ้นที่ขา'],
+           ['ล้างแค่เท้าก็พอ', 'ไม่มีใครเห็นรอยปลิงกัดที่น่องน้อง แผลเริ่มบวม']],
+       _: [['อาบน้ำฟอกสบู่ทันที เช็ดตัวให้แห้ง แล้วดูว่ามีแผลไหม', 'เจอรอยปลิงกัดเล็กๆ ที่ข้อเท้า ล้างทันพอดี'],
+           ['นอนก่อน ค่อยอาบน้ำพรุ่งนี้', 'ตื่นมาตัวคัน มีผื่นขึ้นที่ขา'],
+           ['ล้างแค่เท้าก็พอ', 'ไม่เห็นรอยปลิงกัดที่น่อง แผลเริ่มบวม']] },
+  why: 'น้ำท่วมขังมีเชื้อโรค ควรล้างตัวด้วยสบู่ทันทีหลังลุยน้ำ และสำรวจว่ามีแผลหรือปลิงเกาะไหม',
+  fact: 'ช่วงวันที่ 4–9 คำร้องเรื่องปลิงต่อวัน สูงกว่าก่อนน้ำท่วมราว 45 เท่า',
+  give: 'soap', guard: 'bandage', learn: 'ล้างตัวด้วยสบู่ทันทีหลังลุยน้ำ' },
+
+{ id: 'play', ph: 2, ages: 'kt', art: 'scene-stagnant', title: 'ลงเล่นน้ำดีไหม?',
+  text: { k: 'น้ำขังหน้าบ้านมาหลายวันแล้ว เพื่อนๆ ลงไปเล่นน้ำกันสนุกมาก',
+          t: 'น้องอยากลงไปเล่นน้ำหน้าบ้านกับเพื่อนๆ ร้องจะไปให้ได้' },
+  c: { k: [['ไม่ลงเล่น ชวนเพื่อนมาเล่นบนบ้านแทน', 'เย็นนั้น เพื่อนที่ลงเล่นน้ำโดนปลิงเกาะไปสามคน'],
+           ['ลงไปเล่นแป๊บเดียว', 'แป๊บเดียวก็มีปลิงเกาะขาสองตัว'],
+           ['ลงไปเล่น แต่ไม่ดำน้ำ', 'ตกเย็นตัวคันไปหมด และมีปลิงเกาะหลังเข่า']],
+       t: [['ไม่ให้ลง ชวนน้องเล่นเกมบนบ้านแทน', 'น้องงอนนิดหน่อย แต่ปลอดภัย'],
+           ['ให้ไปแป๊บเดียว', 'น้องกลับมาพร้อมปลิงเกาะขา'],
+           ['ให้ไปได้ ถ้าใส่ห่วงยาง', 'ห่วงยางกันจมได้ แต่กันปลิงและเชื้อโรคไม่ได้']] },
+  why: 'น้ำที่ขังหลายวันจะเน่า มีเชื้อโรคฉี่หนูและปลิง เด็กที่ลงเล่นน้ำจึงเสี่ยงมาก',
+  fact: 'ปลิง 67 จาก 75 เรื่อง อยู่ในพื้นที่ที่น้ำขังเกิน 3 วัน',
+  give: 'whistle', guard: 'boots', learn: 'ไม่ลงเล่นน้ำที่ท่วมขัง' },
+
+{ id: 'checkin', ph: 2, ages: 'kta', art: 'i-elder', title: 'คุณยายเงียบไป',
+  text: { k: 'สองวันแล้วที่ไม่เห็นคุณยายข้างบ้านเปิดหน้าต่างเลย',
+          _: 'สองวันแล้วที่คุณยายข้างบ้านไม่เปิดหน้าต่าง โทรไปก็ไม่รับ' },
+  c: { k: [['รีบบอกพ่อแม่ ให้ไปดูคุณยาย', 'พ่อไปเคาะประตู พบว่าคุณยายไม่สบาย และอาหารหมดแล้ว'],
+           ['คุณยายคงไปอยู่กับลูกแล้วมั้ง', 'อีกสองวันต่อมา ถึงมีคนรู้ว่าคุณยายติดอยู่ในบ้าน'],
+           ['ตะโกนเรียกจากหน้าต่าง แล้วรอ', 'ไม่มีเสียงตอบ และไม่มีใครรู้ว่าคุณยายเป็นอะไร']],
+       t: [['ไปเคาะประตูกับผู้ใหญ่ ถ้าไม่มีเสียงตอบ โทร 1669', 'คุณยายไม่สบาย อาหารหมดแล้ว แต่ได้รับความช่วยเหลือทัน'],
+           ['คุณยายคงไปอยู่กับลูกแล้ว ไม่ต้องยุ่ง', 'อีกสองวันต่อมา ถึงมีคนรู้ว่าคุณยายติดอยู่ในบ้าน'],
+           ['ส่งไลน์ไปถาม แล้วรอ', 'ไม่มีใครอ่าน และไม่มีใครรู้ว่าคุณยายเป็นอะไร']],
+       _: [['ไปเคาะประตูถามอาการ ถ้าไม่มีเสียงตอบ โทร 1669', 'คุณยายไม่สบาย อาหารหมดแล้ว แต่ได้รับความช่วยเหลือทัน'],
+           ['คงไปอยู่กับลูกแล้ว ไม่ต้องยุ่ง', 'อีกสองวันต่อมา ถึงมีคนรู้ว่าคุณยายติดอยู่ในบ้าน'],
+           ['ส่งไลน์ไปถาม แล้วรอ', 'ไม่มีใครอ่าน และไม่มีใครรู้ว่าคุณยายเป็นอะไร']] },
+  why: 'ช่วงน้ำล้อมบ้าน ผู้สูงอายุที่อยู่ลำพังอาจขาดอาหาร ขาดยา หรือเจ็บป่วยโดยไม่มีใครรู้ เพื่อนบ้านคือคนที่ไปถึงได้เร็วที่สุด',
+  real: ['26 ก.ย. 20:07 · สะพานสูง', 'ผู้สูงอายุประมาณ 80 ปี อยู่บ้านเพียงลำพัง… สิ่งที่ขอ คือ อาหาร และได้ไปอยู่กับลูกสาว'],
+  give: 'neighbor', guard: 'phone', learn: 'แวะดูผู้สูงอายุที่อยู่ลำพัง' },
+
+{ id: 'alone', ph: 2, ages: 'e', art: 'i-elder', title: 'ติดอยู่ในบ้าน',
+  text: { e: 'ยายติดอยู่ในบ้านมาหลายวันแล้ว ไฟตัดแล้ว อาหารใกล้หมด โทรหาลูกก็ไม่ค่อยติด' },
+  c: [['โทรหาเพื่อนบ้าน บอกตรงๆ ว่าอยู่คนเดียวและต้องการอะไร', 'เพื่อนบ้านเอาข้าวมาให้ และช่วยติดต่อลูกให้มารับ'],
+      ['อดทนไว้ ไม่อยากรบกวนใคร', 'ยายกินน้อยจนหน้ามืด เกือบล้ม'],
+      ['ลุยน้ำออกไปซื้อของเองคนเดียว', 'น้ำสูงถึงเอว ยายเดินไม่ไหว ต้องหันกลับ']],
+  why: 'การขอความช่วยเหลือไม่ใช่การรบกวน บอกให้ชัดว่าอยู่คนเดียว อายุเท่าไหร่ และต้องการอะไร คนช่วยจะได้เตรียมของมาถูก',
+  real: ['26 ก.ย. 20:07 · สะพานสูง', 'ผู้สูงอายุประมาณ 80 ปี อยู่บ้านเพียงลำพัง… สิ่งที่ขอ คือ อาหาร และได้ไปอยู่กับลูกสาว'],
+  give: 'water', guard: 'water', learn: 'บอกให้คนอื่นรู้ว่าอยู่ลำพังและต้องการอะไร' },
+
+{ id: 'boat', ph: 2, ages: 'ktae', art: 'boat', title: 'เรืออาสามาถึง',
+  text: { k: 'เรืออาสามารับครอบครัวไปศูนย์พักพิง แม่ให้หนูเตรียมของใส่ถุงได้ 1 ถุง',
+          t: 'เรืออาสามารับไปศูนย์พักพิง พ่อแม่ให้คุณช่วยเก็บของของน้อง',
+          a: 'เรืออาสามารับไปศูนย์พักพิง แต่พ่อวัย 75 ไม่ยอมไป บอกว่าห่วงบ้าน',
+          e: 'เรืออาสามาชวนยายไปอยู่ศูนย์พักพิง แต่ยายห่วงบ้าน' },
+  c: { k: [['เสื้อผ้า ยาของน้อง และไฟฉาย ใส่ถุงกันน้ำ', 'ที่ศูนย์พักพิง ของในถุงได้ใช้ทุกชิ้น'],
+           ['ของเล่นเต็มถุง', 'ไม่มีเสื้อผ้าแห้งให้เปลี่ยน แถมลืมยาของน้อง'],
+           ['ไม่ต้องเอาอะไรไป เดี๋ยวก็กลับ', 'ต้องอยู่ศูนย์พักพิงหลายวัน ไม่มีเสื้อผ้าเปลี่ยนเลย']],
+       t: [['ยา เสื้อผ้า มือถือกับที่ชาร์จ ใส่ถุงกันน้ำ', 'ที่ศูนย์พักพิง ของในถุงได้ใช้ทุกชิ้น'],
+           ['ของเล่นและขนมของน้องเต็มถุง', 'ไม่มีเสื้อผ้าแห้งให้เปลี่ยน แถมลืมยาของน้อง'],
+           ['ไปตัวเปล่า เดี๋ยวค่อยกลับมาเอา', 'กลับมาเอาไม่ได้ เพราะน้ำสูงขึ้นอีก']],
+       a: [['ค่อยๆ คุยว่าทำไมต้องไป ช่วยเก็บยาและของสำคัญ แล้วไปด้วยกัน', 'พ่อยอมไป และมียากินครบทุกมื้อ'],
+           ['ปล่อยพ่ออยู่บ้านคนเดียวตามใจ', 'คืนนั้นน้ำสูงขึ้น พ่อติดอยู่ในบ้านคนเดียว'],
+           ['พาพ่อขึ้นเรือทันที ไม่ต้องเอาอะไรไป', 'พ่อขึ้นเรือ แต่ลืมยาความดันไว้ที่บ้าน']],
+       e: [['ไปด้วย เอายาประจำตัวกับเอกสารใส่ถุงกันน้ำ แล้วโทรบอกลูก', 'ลูกรู้ว่ายายอยู่ไหน และมาเยี่ยมได้'],
+           ['ไม่ไป ห่วงบ้าน', 'คืนนั้นน้ำสูงขึ้นอีก ยายติดอยู่ในบ้านคนเดียว'],
+           ['ไป แต่ไม่เอาอะไรไปเลย', 'ที่ศูนย์พักพิง ยายไม่มียาความดันกิน']] },
+  why: 'ถ้าบ้านไม่ปลอดภัย ศูนย์พักพิงคือทางเลือกที่ดี เตรียมยา เสื้อผ้า และของสำคัญใส่ถุงกันน้ำ และบอกญาติว่าไปอยู่ที่ไหน',
+  fact: { a: 'คำร้องเรื่องสัตว์อันตราย 40 เรื่อง พูดถึงผู้สูงอายุในบ้าน', e: 'คำร้องเรื่องสัตว์อันตราย 40 เรื่อง พูดถึงผู้สูงอายุในบ้าน' },
+  give: 'bag', guard: 'bag', learn: 'ไปศูนย์พักพิงพร้อมยาและของจำเป็น' },
+
+{ id: 'traffy', ph: 2, ages: 'tae', art: 'i-mega', title: 'แจ้งให้มีคนรู้',
+  text: { t: 'น้ำขังหน้าบ้านมาหลายวัน ปลิงเยอะมาก คุณอยากแจ้งให้หน่วยงานรู้',
+          a: 'น้ำขังหน้าบ้านมาหลายวัน ปลิงเยอะจนเด็กในซอยโดนกัดหลายคน',
+          e: 'น้ำขังหน้าบ้านมาหลายวัน ปลิงเข้าบ้านทุกวัน แต่ยายใช้แอปไม่เป็น' },
+  c: { e: [['ให้ลูกหลานหรือเพื่อนบ้านช่วยแจ้ง พร้อมรูปและตำแหน่ง บอกว่ามีผู้สูงอายุอยู่ลำพัง', 'คำร้องบอกชัดว่าใครต้องการความช่วยเหลือ และอยู่ที่ไหน'],
+           ['ไม่แจ้ง เพราะใช้แอปไม่เป็น', 'ไม่มีใครรู้ว่ายายต้องการความช่วยเหลือ'],
+           ['รอให้เจ้าหน้าที่ผ่านมาเอง', 'รอมา 3 วัน ยังไม่มีใครผ่านมาเลย']],
+       _: [['แจ้งใน Traffy Fondue พร้อมรูป ปักหมุด บอกว่าน้ำขังกี่วันและมีใครเสี่ยง', 'คำร้องของคุณบอกชัดว่าที่ไหนต้องการความช่วยเหลือ และทำไม'],
+           ['โพสต์บ่นในโซเชียลอย่างเดียว', 'คนกดไลก์เยอะ แต่ไม่มีหน่วยงานไหนรู้ตำแหน่ง'],
+           ['พิมพ์แค่ว่า “ช่วยด้วย” ไม่ใส่รูป ไม่ปักหมุด', 'เจ้าหน้าที่ไม่รู้ว่าเกิดอะไร และเกิดที่ไหน']] },
+  why: 'ข้อมูลยิ่งชัด ยิ่งช่วยให้ส่งความช่วยเหลือไปถูกที่ ทุกตัวเลขในเรื่องของเรามาจากคนที่ลงมือแจ้งแบบนี้',
+  fact: 'คำร้องเรื่องสัตว์อันตรายช่วงน้ำท่วม 332 เรื่อง ปิดได้ภายใน 3 วันแค่ 1 ใน 10 ระหว่างรอ เราต้องดูแลตัวเองให้ได้ด้วย',
+  give: 'battery', learn: 'แจ้ง Traffy Fondue ให้ชัด มีรูปและตำแหน่ง' },
+
+{ id: 'commute', ph: 2, ages: 'ta', art: 'i-stick', title: 'ต้องออกจากซอย',
+  text: { t: 'ต้องลุยน้ำออกจากซอยไปรับยาให้น้อง น้ำสูงถึงเข่า',
+          a: 'หัวหน้าให้เข้าออฟฟิศ ต้องลุยน้ำสูงถึงเข่าออกจากซอย' },
+  c: [['ใส่บูท ลุยตอนกลางวัน ไปกับเพื่อนบ้าน และใช้ไม้คลำทาง', 'ไม้กระทบฝาท่อที่เปิดอยู่ใต้น้ำ เลยเดินอ้อมได้ทัน'],
+      ['เดินเกาะเสาไฟไป จะได้มีที่จับ', 'มีคนตะโกนเตือนว่าเสาไฟอาจมีไฟรั่ว ต้องรีบถอยออกมา'],
+      ['ลุยคนเดียว ใส่รองเท้าแตะ ไปให้เร็ว', 'ตกหลุมใต้น้ำ ข้อเท้าพลิก']],
+  why: 'น้ำท่วมซ่อนหลุม ฝาท่อที่เปิดอยู่ และไฟรั่ว ลุยตอนกลางวัน ไปกับคนอื่น ใช้ไม้คลำทาง และอยู่ให้ห่างจากเสาไฟ',
+  fact: 'ช่วงน้ำท่วมมีคำร้อง 3,336 เรื่องที่บอกว่าน้ำขัง 3 วันขึ้นไป มากที่สุดที่ลาดกระบัง ประเวศ สะพานสูง หนองจอก และมีนบุรี',
+  give: 'stick', guard: 'boots', learn: 'ลุยน้ำกลางวัน มีเพื่อน ใช้ไม้คลำทาง ห่างเสาไฟ' },
+
+/* ---------------- 3 · น้ำเพิ่งลด ---------------- */
+{ id: 'clean', ph: 3, ages: 'ktae', art: 'i-gloves', title: 'เก็บกวาดหลังน้ำลด',
+  text: { k: 'น้ำลดแล้ว! บ้านเต็มไปด้วยโคลน หนูอยากช่วยพ่อแม่เก็บกวาด',
+          t: 'น้ำลดแล้ว บ้านเต็มไปด้วยโคลน คุณกับน้องต้องช่วยกันเก็บกวาด',
+          a: 'น้ำลดแล้ว บ้านเต็มไปด้วยโคลนและขยะที่ลอยมาติด',
+          e: 'น้ำลดแล้ว ลูกยังมาไม่ถึง ยายอยากเริ่มเก็บกวาดบ้านเอง' },
+  c: { k: [['ใส่บูทกับถุงมือ แล้วช่วยเก็บของที่ไม่มีคม', 'ช่วยพ่อแม่ได้เยอะ แถมไม่มีแผลสักนิด'],
+           ['เดินเท้าเปล่า เล่นโคลนไปด้วย', 'เหยียบเศษแก้วในโคลน เท้าเป็นแผล'],
+           ['เอามือล้วงหาของใต้กองโคลน', 'นิ้วโดนตะปูเก่าข่วน เลือดออก']],
+       e: [['ใส่บูทและถุงมือ เก็บแค่ของเบาๆ ที่เหลือรอลูกหรือเพื่อนบ้านช่วย', 'บ้านค่อยๆ สะอาด ยายไม่เจ็บตัว'],
+           ['ยกตู้เย็นที่จมน้ำเองคนเดียว', 'ยายปวดหลังจนลุกไม่ไหว'],
+           ['เดินเท้าเปล่าลุยโคลนเก็บของ', 'เหยียบเศษกระเบื้อง เท้าเป็นแผล']],
+       _: [['ใส่บูทและถุงมือยางก่อนเก็บกวาด', 'เก็บกวาดเสร็จ ไม่มีแผลสักแผล'],
+           ['เดินเท้าเปล่า มือเปล่า สะดวกกว่า', 'เหยียบตะปูในโคลน แผลลึก'],
+           ['ใส่รองเท้าแตะกับถุงมือผ้า', 'ถุงมือผ้าชุ่มโคลน มือเปื้อนเชื้อโรคไปหมด']] },
+  why: 'โคลนหลังน้ำลดอาจมีเชื้อโรคฉี่หนู เศษแก้ว ตะปู และสัตว์ที่ยังซ่อนอยู่ ใส่บูทและถุงมือยางทุกครั้ง',
+  fact: 'ช่วงวันที่ 4–9 คำร้องเรื่องหนูเพิ่มขึ้นราว 3 เท่า',
+  give: 'gloves', guard: 'boots', learn: 'ใส่บูทและถุงมือยางตอนเก็บกวาด' },
+
+{ id: 'pile', ph: 3, ages: 'ktae', art: 'i-trash', title: 'กองขยะหลังบ้าน',
+  text: { k: 'หลังบ้านมีกองไม้และขยะที่ลอยมาติด หนูอยากเข้าไปหาของเล่นที่หาย',
+          e: 'หลังบ้านมีกองไม้และขยะลอยมาติด ยายจะหยิบกะละมังที่อยู่ในกอง',
+          _: 'ต้องย้ายกองไม้และขยะที่ลอยมาติดหลังบ้าน' },
+  c: { k: [['ไม่เข้าไปเอง ให้ผู้ใหญ่ใช้ไม้ยาวเขี่ยดูก่อน', 'พ่อเขี่ยดู มีงูตัวเล็กเลื้อยออกมา!'],
+           ['มุดเข้าไปหาเองเลย', 'งูที่ซ่อนอยู่ขู่ฟ่อ หนูวิ่งหนีจนล้ม'],
+           ['เอามือล้วงหาใต้กองไม้', 'ตะขาบกัดนิ้ว ปวดมาก']],
+       e: [['ใช้ไม้ยาวเขี่ยดูก่อน ถ้าเห็นงูให้ถอย แล้วโทร 199', 'มีงูเลื้อยออกมา ยายถอยทัน และโทร 199'],
+           ['ก้มล้วงมือเข้าไปหยิบเลย', 'ตะขาบกัดมือยาย ปวดมาก'],
+           ['ยกแผ่นไม้ออกเองทีละแผ่น', 'งูขู่ฟ่อ ยายตกใจจนเสียหลัก']],
+       _: [['ใส่ถุงมือ ใช้ไม้ยาวเขี่ยหรือเคาะก่อน ดูว่ามีงูไหม', 'มีงูเลื้อยหนีออกไป ก่อนที่มือจะไปโดน'],
+           ['ใช้มือเปล่ายกออกเลย จะได้เร็ว', 'งูที่ขดอยู่ใต้แผ่นไม้ฉก เกือบโดนมือ'],
+           ['จุดไฟเผาทั้งกอง', 'ควันลอยเข้าบ้านคนอื่น และงูหนีเข้าบ้านคุณแทน']] },
+  why: 'หลังน้ำลด งูและตะขาบยังซ่อนอยู่ในกองขยะ กองไม้ และซอกที่มืดและชื้น ใช้ไม้ยาวเขี่ยดูก่อน ถ้าเห็นงูให้ถอยออกมาแล้วโทร 199',
+  give: 'torch', guard: 'gloves', learn: 'ระวังงูในกองขยะ ใช้ไม้เขี่ยดูก่อน' },
+
+{ id: 'power', ph: 3, ages: 'ae', art: 'i-plug', title: 'เปิดไฟได้หรือยัง?',
+  text: { a: 'น้ำลดแล้ว ปลั๊กชั้นล่างเพิ่งโผล่พ้นน้ำ ทุกคนอยากเปิดไฟและพัดลม',
+          e: 'น้ำลดแล้ว ยายอยากเปิดไฟชั้นล่าง แต่ปลั๊กยังเปื้อนโคลนอยู่' },
+  c: [['ยังไม่เปิด รอให้ช่างไฟหรือการไฟฟ้าตรวจก่อน', 'ช่างเจอปลั๊กที่ไฟรั่ว 2 จุด ซ่อมก่อนเปิดใช้'],
+      ['สับคัตเอาต์เปิดไฟเลย', 'ไฟช็อตดังเปรี๊ยะ! ปลั๊กมีควันขึ้น'],
+      ['เปิดพัดลมที่จมน้ำมาเป่าบ้านให้แห้ง', 'พัดลมช็อต มีควันออกจากมอเตอร์']],
+  why: 'ปลั๊กและเครื่องใช้ไฟฟ้าที่จมน้ำอาจมีไฟรั่ว ต้องแห้งสนิทและให้ช่างตรวจก่อนเปิดใช้ ไฟฟ้ามีปัญหาโทรการไฟฟ้านครหลวง 1130',
+  give: 'torch', learn: 'ให้ช่างตรวจไฟก่อนเปิดใช้หลังน้ำลด' },
+
+{ id: 'drain', ph: 3, ages: 'ta', art: 'rat', title: 'กลิ่นเหม็นจากท่อ',
+  text: { t: 'มีกลิ่นเหม็นจากท่อหน้าบ้าน น้องเปิดดู เจอซากหนูติดอยู่',
+          a: 'มีกลิ่นเหม็นจากท่อหน้าบ้าน เปิดดูเจอซากหนูติดอยู่' },
+  c: [['ใส่ถุงมือยาง ใช้ถุงหยิบ มัดปากถุง แล้วล้างมือด้วยสบู่', 'ท่อหายเหม็น และไม่มีใครต้องแตะซากด้วยมือเปล่า'],
+      ['ใช้มือเปล่าหยิบทิ้ง แล้วค่อยล้างมือ', 'นิ้วมีแผลเล็กๆ อยู่แล้ว เชื้อโรคจากซากหนูเข้าแผลได้'],
+      ['ปล่อยไว้ เดี๋ยวก็ย่อยสลายเอง', 'กลิ่นแรงขึ้นทุกวัน แมลงวันตอมเต็มหน้าบ้าน']],
+  why: 'ซากหนูและฉี่หนูอาจมีเชื้อโรคฉี่หนู ห้ามแตะด้วยมือเปล่า ใส่ถุงมือ ใช้ถุงหยิบ และล้างมือด้วยสบู่',
+  fact: 'คำร้องเรื่องหนูและฉี่หนูเพิ่มจาก 29 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 67 เรื่อง (16 วันที่น้ำท่วม)',
+  give: 'gloves', guard: 'soap', learn: 'ไม่แตะซากสัตว์ด้วยมือเปล่า' },
+
+{ id: 'school', ph: 3, ages: 'kt', art: 'i-boots', title: 'กลับไปโรงเรียน',
+  text: { k: 'น้ำลดแล้ว! วันแรกที่ได้กลับไปโรงเรียน ทางเดินยังมีแอ่งน้ำขังเป็นจุดๆ',
+          t: 'โรงเรียนเปิดแล้ว ทางเดินยังมีแอ่งน้ำขัง น้องชอบกระโดดเหยียบแอ่งน้ำ' },
+  c: { k: [['เดินอ้อมแอ่งน้ำ ใส่รองเท้าหุ้มส้น', 'ถึงโรงเรียนเท้าแห้ง ไม่มีแผล'],
+           ['กระโดดเหยียบแอ่งน้ำเล่น', 'แอ่งน้ำลึกกว่าที่คิด ขาเปื้อนโคลนเน่าทั้งวัน'],
+           ['ถอดรองเท้าเดินลุยไป', 'เหยียบเศษแก้วในแอ่งน้ำ เท้าเป็นแผล']],
+       t: [['จูงมือน้องเดินอ้อมแอ่งน้ำ', 'ถึงโรงเรียนเท้าแห้ง ไม่มีแผล'],
+           ['ปล่อยน้องกระโดดเล่น', 'แอ่งน้ำลึกกว่าที่คิด น้องเปื้อนโคลนเน่าทั้งตัว'],
+           ['ให้น้องถอดรองเท้าเดิน จะได้ไม่เปียก', 'น้องเหยียบเศษแก้วในแอ่งน้ำ เท้าเป็นแผล']] },
+  why: 'แอ่งน้ำที่ยังขังหลังน้ำลด อาจมีเชื้อโรคฉี่หนูและของมีคม เดินอ้อม และใส่รองเท้าหุ้มส้น',
+  give: 'boots', guard: 'bandage', learn: 'เดินอ้อมแอ่งน้ำขังหลังน้ำลด' },
+
+/* ---------------- 4 · หลังน้ำลด 1–2 สัปดาห์ ---------------- */
+{ id: 'fever', ph: 4, ages: 'ktae', art: 'scene-germ', title: 'ไข้หลังน้ำลด',
+  text: { k: '{day} วันหลังน้ำลด หนูมีไข้สูง ปวดน่อง และตาแดง',
+          t: '{day} วันหลังน้ำลด น้องมีไข้สูง ปวดน่อง และตาแดง',
+          a: '{day} วันหลังน้ำลด คุณมีไข้สูง ปวดน่องมาก และตาแดง',
+          e: '{day} วันหลังน้ำลด ยายมีไข้สูง ปวดน่อง และตาแดง' },
+  c: { k: [['บอกพ่อแม่ว่าเคยลุยน้ำ แล้วไปหาหมอ', 'หมอตรวจเจอเร็ว รักษาทัน'],
+           ['ไม่บอกใคร กลัวโดนดุที่แอบไปเล่นน้ำ', 'ไข้ไม่ลด อาการหนักขึ้นจนต้องนอนโรงพยาบาล'],
+           ['กินยาลดไข้ แล้วนอนรอให้หาย', 'ไข้ลงแป๊บเดียว แล้วก็กลับมาสูงอีก']],
+       t: [['พาน้องไปหาหมอ และบอกว่าน้องเคยลุยน้ำวันไหน', 'หมอตรวจเจอเร็ว น้องได้รักษาทัน'],
+           ['ให้น้องกินยาลดไข้ แล้วไปโรงเรียน', 'ไข้ลงแป๊บเดียว แล้วก็กลับมาสูงอีก'],
+           ['ซื้อยาฆ่าเชื้อมาให้น้องกินเอง', 'กินผิดยา อาการไม่ดีขึ้น แถมเสียเวลารักษา']],
+       a: [['ไปหาหมอ และบอกว่าเคยลุยน้ำวันไหน', 'หมอตรวจเจอเร็ว รักษาทัน'],
+           ['กินยาลดไข้ แล้วไปทำงานต่อ', 'ไข้ลงแป๊บเดียว แล้วก็กลับมาสูงอีก'],
+           ['ซื้อยาฆ่าเชื้อกินเองตามที่เพื่อนแนะนำ', 'กินผิดยา อาการไม่ดีขึ้น แถมเสียเวลารักษา']],
+       e: [['โทรให้ลูกหรือเพื่อนบ้านพาไปหาหมอ และบอกว่าเคยลุยน้ำ', 'หมอตรวจเจอเร็ว รักษาทัน'],
+           ['คงแค่ไข้หวัด นอนพักก็หาย', 'ไข้ไม่ลด อาการหนักขึ้นจนต้องนอนโรงพยาบาล'],
+           ['รอลูกว่าง ค่อยไปหาหมอสัปดาห์หน้า', 'อาการหนักขึ้นเรื่อยๆ ระหว่างรอ']] },
+  why: 'เชื้อโรคฉี่หนูใช้เวลา 1–2 สัปดาห์กว่าจะแสดงอาการ ถ้ามีไข้สูง ปวดน่อง ตาแดง ต้องรีบไปหาหมอ และบอกว่าเคยลุยน้ำ หมอจะได้ตรวจถูกโรค',
+  real: ['30 ก.ย. 10:42 · ลาดกระบัง', 'มีผู้ป่วยโรคฉี่หนู ต้องการยารักษาด่วน'],
+  fact: 'คำร้องเรื่องฉี่หนูแทบหายไปหลัง 2 ต.ค. ทั้งที่อาการเพิ่งเริ่มแสดง',
+  give: 'thermo', guard: 'calendar', learn: 'ไข้ ปวดน่อง ตาแดง หลังลุยน้ำ รีบหาหมอ บอกว่าเคยลุยน้ำ' },
+
+{ id: 'diary', ph: 4, ages: 'ktae', art: 'i-calendar', title: 'จบแล้วจริงไหม?',
+  text: { k: 'น้ำลดแล้ว ใครๆ ก็บอกว่าจบแล้ว แต่ช่วงน้ำท่วม หนูลุยน้ำไปหลายวัน',
+          t: 'น้ำลดแล้ว ใครๆ ก็บอกว่าจบแล้ว แต่คุณกับน้องลุยน้ำไปหลายวัน',
+          a: 'น้ำลดแล้ว ใครๆ ก็บอกว่าจบแล้ว แต่คุณลุยน้ำไปทำงานเกือบทุกวัน',
+          e: 'น้ำลดแล้ว ลูกบอกว่าจบแล้ว แต่ยายลุยน้ำไปรับของแจกหลายครั้ง' },
+  c: { k: [['ให้แม่ช่วยจดว่าลุยน้ำวันไหน แล้วคอยดูอาการต่อ 2 สัปดาห์', 'วันที่มีไข้ หมอรู้ทันทีว่าต้องตรวจโรคอะไร'],
+           ['ลืมๆ ไปเถอะ น้ำลดแล้วก็ปลอดภัย', 'สองสัปดาห์ต่อมามีไข้ แต่ไม่มีใครนึกถึงโรคฉี่หนู'],
+           ['ขอยาของพี่มากินกันไว้ก่อน', 'ยาไม่ใช่ของหนู กินแล้วมีผื่นขึ้นทั้งตัว']],
+       _: [['จดไว้ว่าลุยน้ำวันไหน แล้วคอยดูอาการต่ออีก 2 สัปดาห์', 'วันที่มีไข้ หมอรู้ทันทีว่าต้องตรวจโรคอะไร'],
+           ['ลืมๆ ไปเถอะ น้ำลดแล้วก็ปลอดภัย', 'สองสัปดาห์ต่อมามีไข้ แต่ไม่มีใครนึกถึงโรคฉี่หนู'],
+           ['กินยาฆ่าเชื้อกันไว้ก่อนเลย', 'กินยาโดยไม่จำเป็น เสี่ยงแพ้ยาและทำให้เชื้อดื้อยา']] },
+  why: 'อันตรายไม่ได้จบตอนน้ำลด เชื้อโรคฉี่หนูใช้เวลา 1–2 สัปดาห์กว่าจะแสดงอาการ การจดวันลุยน้ำช่วยให้หมอรักษาได้เร็ว',
+  fact: 'คำร้องเรื่องฉี่หนูแทบหายไปหลัง 2 ต.ค. ทั้งที่อาการเพิ่งเริ่มแสดง',
+  give: 'calendar', guard: 'thermo', learn: 'จดวันลุยน้ำ แล้วดูอาการต่อ 2 สัปดาห์' },
+
+{ id: 'pills', ph: 4, ages: 'tae', art: 'i-pill', title: 'ยากันฉี่หนู?',
+  text: { t: 'ในกลุ่มไลน์ห้อง มีคนบอกให้ซื้อยาฆ่าเชื้อมากินกันโรคฉี่หนู',
+          a: 'เพื่อนร่วมงานซื้อยาฆ่าเชื้อมากินกันโรคฉี่หนู แล้วชวนคุณซื้อด้วย',
+          e: 'เพื่อนบ้านเอายาฆ่าเชื้อมาแบ่ง บอกว่ากินแล้วกันโรคฉี่หนูได้' },
+  c: { e: [['ขอบคุณ แต่ไม่กิน ถ้ากังวลจะถามหมอหรือเภสัชกร', 'หมอแนะนำให้คอยดูอาการแทน ถ้ามีไข้ค่อยมาตรวจ'],
+           ['กินตามที่เพื่อนบอกเลย', 'กินแล้วมีผื่นแพ้ยาขึ้นทั้งตัว'],
+           ['กินครึ่งหนึ่ง เก็บไว้ครึ่งหนึ่ง', 'กินไม่ครบ เสี่ยงทำให้เชื้อดื้อยา']],
+       _: [['ไม่ซื้อกินเอง ถ้ากังวลให้ปรึกษาหมอหรือเภสัชกร', 'หมอแนะนำให้คอยดูอาการแทน ถ้ามีไข้ค่อยมาตรวจ'],
+           ['ซื้อมากินกันไว้ก่อน ทั้งบ้าน', 'กินแล้วมีผื่นแพ้ยาขึ้นทั้งตัว'],
+           ['กินยาที่เหลือจากคราวก่อนแทน', 'ยาไม่ตรงโรค กินไม่ครบ เสี่ยงทำให้เชื้อดื้อยา']] },
+  why: 'ไม่ควรซื้อยาป้องกันโรคฉี่หนูกินเอง ยาฆ่าเชื้อควรใช้ตามที่หมอหรือเภสัชกรแนะนำ ถ้ากินเองอาจแพ้ยาหรือทำให้เชื้อดื้อยา',
+  give: 'thermo', learn: 'ไม่ซื้อยาป้องกันฉี่หนูกินเอง' },
+
+{ id: 'tell', ph: 4, ages: 'k', art: 'i-thermo', title: 'ความลับของน้อง',
+  text: { k: 'น้องเล็กมีไข้ ปวดขา น้องกระซิบว่าแอบลงไปเล่นน้ำเมื่อ[สัปดาห์ก่อน|สิบวันก่อน] แล้วขอให้หนูเก็บเป็นความลับ' },
+  c: [['บอกพ่อแม่ทันที ว่าน้องเคยลงเล่นน้ำ', 'พ่อแม่พาน้องไปหาหมอ บอกหมอว่าเคยลุยน้ำ น้องได้รักษาทัน'],
+      ['เก็บเป็นความลับตามที่สัญญา', 'ไข้ของน้องไม่ลดสามวัน กว่าจะได้ไปหาหมอ อาการก็หนักแล้ว'],
+      ['ให้น้องกินยาลดไข้ของหนูไปก่อน', 'ไข้ลงแป๊บเดียว แล้วก็กลับมาสูงอีก']],
+  why: 'เรื่องที่เกี่ยวกับความปลอดภัยต้องบอกผู้ใหญ่ ไข้ ปวดน่อง ตาแดง หลังลุยน้ำ อาจเป็นโรคฉี่หนู ต้องบอกหมอว่าเคยลุยน้ำ',
+  fact: 'คำร้องเรื่องหนูและฉี่หนูเพิ่มจาก 29 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 67 เรื่อง (16 วันที่น้ำท่วม)',
+  give: 'thermo', guard: 'calendar', learn: 'มีไข้หลังลุยน้ำ ต้องบอกผู้ใหญ่' },
+];
+
+/* ข้อความตอนจบเกม เชื่อมกลับไปที่เรื่องหลัก */
+const CLOSING = 'ในชีวิตจริง คำร้องเรื่องสัตว์อันตรายช่วงน้ำท่วม 332 เรื่อง ปิดได้ภายใน 3 วันแค่ 1 ใน 10 ระหว่างรอความช่วยเหลือ สิ่งที่ช่วยเราได้คือการเตรียมตัวและเพื่อนบ้าน';
+
+/* =========================== เครื่องเกม =========================== */
+
+const PHASES = ['ก่อนน้ำมา', 'วันที่ 1–3', 'วันที่ 4–9', 'หลังน้ำลด'];
+const WATER = [7, 34, 28, 12, 5];          /* ความสูงน้ำ (vh) ของแต่ละช่วง */
+const SWIMMER = [null, 'snake', 'leech', 'rat', null];
+const PLAN = [[0, 1], [1, 2], [2, 3], [3, 1], [4, 1]];   /* [ช่วง, จำนวนเรื่อง] */
+const TOTAL = PLAN.reduce((s, p) => s + p[1], 0);
+const OK_WORDS = ['ถูกต้อง!', 'เยี่ยมเลย!', 'ตัดสินใจได้ดี!', 'ใช่เลย!'];
+const NO_WORDS = ['อุ๊ย! ไม่ใช่วิธีนี้', 'พลาดไปนิด', 'ยังไม่ใช่'];
+const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const VB = { snake: '0 0 120 80', rat: '0 0 120 80', centipede: '0 0 120 80', leech: '0 0 120 80', croc: '0 0 140 80',
+             'croc-x': '0 0 140 80', boat: '0 0 120 60', 'scene-climb': '0 0 160 110', 'scene-stagnant': '0 0 160 110',
+             'scene-germ': '0 0 160 110', 'scene-night': '0 0 480 320', 'i-heart': '0 0 32 32', 'i-house': '0 0 32 32' };
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rnd = n => Math.floor(Math.random() * n);
+const pick = a => a[rnd(a.length)];
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const byAge = (v, age) => (v && typeof v === 'object' && !Array.isArray(v)) ? (age in v ? v[age] : v._) : v;
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+const vary = s => s.replace(/\[([^\]]+)\]/g, (_, g) => pick(g.split('|')));
+const dateOf = d => { const t = new Date(2026, 8, 24 + d); return t.getDate() + ' ' + TH_M[t.getMonth()]; };
+const vbOf = id => VB[id] || (id.startsWith('c-') ? '0 0 120 120' : '0 0 64 64');
+const art = (id, cls) => `<svg${cls ? ` class="${cls}"` : ''} viewBox="${vbOf(id)}" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`;
+const ICON = {
+  check: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  cross: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>',
+  star: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.6l-6 3.3 1.3-6.7-5-4.7 6.8-.8Z" fill="currentColor"/></svg>',
+};
+
+/* จำว่าเคยเล่นเรื่องไหนไปแล้ว (แยกตามวัย) เพื่อให้รอบใหม่ได้เรื่องใหม่ */
+const SEEN_KEY = 'whoswims-game-seen';
+const MEM = {};
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); if (v) return JSON.parse(v); } catch (e) { /* ใช้ความจำชั่วคราวแทน */ } return k in MEM ? MEM[k] : d; },
+  set(k, v) { MEM[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ไม่เป็นไร */ } },
+};
+
+function draw(age, ph, n) {
+  const pool = EVENTS.filter(e => e.ph === ph && e.ages.includes(age));
+  const seenAll = store.get(SEEN_KEY, {});
+  const key = age + ph;
+  let seen = (seenAll[key] || []).filter(id => pool.some(e => e.id === id));
+  let out = shuffle(pool.filter(e => !seen.includes(e.id))).slice(0, n);
+  if (out.length < n) {          /* เล่นครบทุกเรื่องแล้ว เริ่มวนใหม่ โดยเลี่ยงเรื่องที่เพิ่งเล่นในรอบก่อน */
+    const last = seenAll[key + 'L'] || [];
+    seen = [];
+    const rest = shuffle(pool.filter(e => !out.includes(e))).sort((x, y) => last.includes(x.id) - last.includes(y.id));
+    out = out.concat(rest.slice(0, n - out.length));
+  }
+  seenAll[key + 'L'] = out.map(e => e.id);
+  seenAll[key] = seen.concat(out.map(e => e.id));
+  store.set(SEEN_KEY, seenAll);
+  return out;
+}
+
+function buildRun(age) {
+  const rounds = [{ kind: 'pack', ph: 0, day: 0 }];
+  const days = {
+    0: () => [0],
+    1: n => shuffle([1, 2, 3]).slice(0, n).sort((a, b) => a - b),
+    2: n => shuffle([4, 5, 6, 7, 8, 9]).slice(0, n).sort((a, b) => a - b),
+    3: () => [1 + rnd(3)],
+    4: () => [pick([10, 12, 14])],
+  };
+  PLAN.forEach(([ph, n]) => {
+    const d = days[ph](n);
+    draw(age, ph, n).forEach((ev, j) => rounds.push({ kind: 'event', ev, ph, day: d[j] }));
+  });
+  return rounds;
+}
+
+let S = null;
+const card = () => $('#card');
+
+function when(r) {
+  if (r.ph === 0) return ['ก่อนน้ำมา', dateOf(0) + ' · คืนนี้น้ำจะมา'];
+  if (r.ph <= 2) return ['วันที่ ' + r.day, 'จาก 16 วัน · ' + dateOf(r.day)];
+  return ['หลังน้ำลด ' + r.day + ' วัน', dateOf(16 + r.day)];
+}
+const fill = (s, r) => vary(String(s)).replace(/\{name\}/g, S.name).replace(/\{district\}/g, S.district).replace(/\{day\}/g, r ? r.day : '');
+
+function prepare(r) {
+  if (r.view) return r.view;
+  const age = S.age, ev = r.ev;
+  const f = v => { v = byAge(v, age); return v == null ? '' : fill(v, r); };
+  const real = byAge(ev.real, age);
+  r.view = {
+    title: f(ev.title), text: f(ev.text), why: f(ev.why), fact: f(ev.fact), learn: f(ev.learn),
+    real: real ? [real[0], fill(real[1], r)] : null,
+    choices: shuffle(byAge(ev.c, age).map((c, i) => ({ t: fill(c[0], r), res: fill(c[1], r), ok: i === 0 }))),
+  };
+  return r.view;
+}
+
+/* ---------- หน้าจอ ---------- */
+function show(id) {
+  $$('.g-screen').forEach(s => { s.hidden = s.id !== id; });
+  document.body.dataset.screen = id;
+  window.scrollTo(0, 0);
+  const h = $('#' + id + ' [data-focus]') || $('#' + id + ' h1, #' + id + ' h2');
+  if (h) h.focus({ preventScroll: true });
+}
+
+function setWater(ph) {
+  const f = $('#flood');
+  if (!f) return;
+  f.style.height = WATER[ph] + 'vh';
+  f.classList.toggle('murk', ph === 2);
+  const sw = $('#swimmer'), who = SWIMMER[ph];
+  if (!sw) return;
+  sw.hidden = !who;
+  if (who) sw.innerHTML = art(who);
+}
+
+function startAge(age) {
+  const A = AGES[age];
+  S = { age, name: pick(A.names), district: pick(DISTRICTS), hearts: 3, bag: [], log: [], pack: [], rounds: [], i: 0 };
+  $('#introPic').innerHTML = art(A.pic);
+  $('#introName').textContent = 'คุณคือ ' + S.name;
+  $('#introText').textContent = fill(A.intro);
+  $('#introDistrict').textContent = 'เขต' + S.district;
+  setWater(0);
+  show('s-intro');
+}
+
+function startPlay() {
+  S.rounds = buildRun(S.age);
+  S.i = 0;
+  show('s-play');
+  renderRound();
+}
+
+/* ---------- แถบสถานะ ---------- */
+function renderHud(r) {
+  const seg = Math.min(r.ph, 3);
+  $('#hudTrack').innerHTML = PHASES.map((t, i) => `<span class="${i < seg ? 'done' : i === seg ? 'on' : ''}">${t}</span>`).join('');
+  const [big, small] = when(r);
+  $('#hudDay').innerHTML = `<b>${big}</b><span>${small}</span>`;
+  $('#hudWho').innerHTML = art(AGES[S.age].pic) + `<span>${esc(S.name)}</span>`;
+  renderHearts();
+  renderBag();
+}
+
+function renderHearts(anim) {
+  const el = $('#hudHearts');
+  el.innerHTML = [0, 1, 2].map(i => art('i-heart', i < S.hearts ? '' : 'empty')).join('');
+  el.setAttribute('aria-label', 'หัวใจเหลือ ' + S.hearts + ' จาก 3 ดวง');
+  if (anim && !reduce) { el.classList.remove('shake', 'pulse'); void el.offsetWidth; el.classList.add(anim); }
+}
+
+function renderBag(pop) {
+  const btn = $('#hudBag');
+  $('#bagCount').textContent = S.bag.length;
+  if (pop && !reduce) { btn.classList.remove('pulse'); void btn.offsetWidth; btn.classList.add('pulse'); }
+  $('#bagBox').innerHTML = S.bag.length
+    ? `<p class="bag-h">กระเป๋ายังชีพ · ${S.bag.length} ชิ้น <small>ไอเทมช่วยกันพลาดได้ชิ้นละ 1 ครั้ง</small></p><ul>` +
+      S.bag.map(b => { const it = ITEMS[b.id]; return `<li class="${b.used ? 'used' : ''}">${art(it[1])}<div><b>${it[0]}</b><span>${b.used ? 'ใช้ไปแล้ว' : it[2]}</span></div></li>`; }).join('') + '</ul>'
+    : '<p class="bag-h">กระเป๋ายังว่างอยู่ <small>ตอบถูกเพื่อรับไอเทมยังชีพ</small></p>';
+}
+
+function toggleBag(force) {
+  const box = $('#bagBox'), btn = $('#hudBag');
+  const open = force != null ? force : box.hidden;
+  box.hidden = !open;
+  btn.setAttribute('aria-expanded', String(open));
+}
+
+/* ---------- รอบเกม ---------- */
+function renderRound() {
+  const r = S.rounds[S.i];
+  toggleBag(false);
+  setWater(r.ph);
+  renderHud(r);
+  if (r.kind === 'pack') renderPack(r); else renderEvent(r);
+  window.scrollTo(0, 0);
+  const h = $('#card h2');
+  if (h) h.focus({ preventScroll: true });
+}
+
+function renderPack(r) {
+  const age = S.age;
+  r.tiles = r.tiles || shuffle([...shuffle(PACK.good[age]).slice(0, 4), ...shuffle(PACK.bad[age]).slice(0, 2)]);
+  card().innerHTML = `
+    <div class="g-scene">${art('i-pack')}</div>
+    <p class="g-kicker">เตรียมตัว · ก่อนน้ำมา</p>
+    <h2 tabindex="-1">จัดกระเป๋าฉุกเฉิน</h2>
+    <p class="g-text">${esc(byAge(PACK.text, age))}</p>
+    <p class="g-ask">แตะเลือกของ 3 อย่าง</p>
+    <div class="g-pack">${r.tiles.map(id => { const it = ITEMS[id] || DECOY[id]; return `<button type="button" class="g-tile" data-id="${id}" aria-pressed="false">${art(it[1])}<span>${it[0]}</span></button>`; }).join('')}</div>
+    <button type="button" class="cta-btn primary g-go" id="packGo" disabled>เลือกแล้ว 0 / 3</button>
+    <div class="g-fb" id="fb" hidden aria-live="polite"></div>`;
+  const tiles = $$('.g-tile', card()), go = $('#packGo');
+  const update = () => {
+    const n = tiles.filter(t => t.getAttribute('aria-pressed') === 'true').length;
+    go.disabled = n !== 3;
+    go.textContent = n === 3 ? 'แพ็กกระเป๋า →' : 'เลือกแล้ว ' + n + ' / 3';
+  };
+  tiles.forEach(t => t.addEventListener('click', () => {
+    if (r.done) return;
+    const on = t.getAttribute('aria-pressed') === 'true';
+    const n = tiles.filter(x => x.getAttribute('aria-pressed') === 'true').length;
+    if (!on && n >= 3) { if (!reduce) { go.classList.remove('shake'); void go.offsetWidth; go.classList.add('shake'); } return; }
+    t.setAttribute('aria-pressed', String(!on));
+    update();
+  }));
+  go.addEventListener('click', () => finishPack(r, tiles));
+}
+
+function finishPack(r, tiles) {
+  if (r.done) return;
+  r.done = true;
+  const picked = tiles.filter(t => t.getAttribute('aria-pressed') === 'true').map(t => t.dataset.id);
+  tiles.forEach(t => {
+    t.disabled = true;
+    const id = t.dataset.id, chosen = picked.includes(id);
+    t.classList.add(chosen ? (ITEMS[id] ? 'good' : 'bad') : 'dim');
+  });
+  $('#packGo').hidden = true;
+  const good = picked.filter(id => ITEMS[id]);
+  good.forEach(id => S.bag.push({ id, used: false }));
+  S.pack = picked;
+  renderBag(true);
+  const fb = $('#fb');
+  fb.className = 'g-fb ' + (good.length === 3 ? 'ok' : 'mid');
+  fb.innerHTML = `
+    <p class="g-verdict">${good.length === 3 ? ICON.check + 'จัดกระเป๋าได้ครบ!' : 'ได้ของยังชีพ ' + good.length + ' ชิ้น'}</p>
+    <ul class="g-picks">${picked.map(id => { const it = ITEMS[id] || DECOY[id], ok = !!ITEMS[id];
+      return `<li class="${ok ? 'ok' : 'no'}">${art(it[1])}<div><b>${ok ? 'ใส่กระเป๋าแล้ว: ' : 'ไม่ช่วยตอนน้ำท่วม: '}${it[0]}</b><span>${it[2]}</span></div></li>`; }).join('')}</ul>
+    <p class="g-tip">${art('i-pack')}<span>ของในกระเป๋าช่วยกันพลาดได้ชิ้นละ 1 ครั้ง แตะ “กระเป๋า” ด้านบนเพื่อดูของทั้งหมด</span></p>
+    <button type="button" class="cta-btn primary g-next">ไปต่อ →</button>`;
+  revealFeedback(fb);
+}
+
+function renderEvent(r) {
+  const v = prepare(r);
+  const n = S.rounds.filter(x => x.kind === 'event').indexOf(r) + 1;
+  card().innerHTML = `
+    <div class="g-scene">${art(r.ev.art)}</div>
+    <p class="g-kicker">เหตุการณ์ที่ ${n} จาก ${TOTAL}</p>
+    <h2 tabindex="-1">${esc(v.title)}</h2>
+    <p class="g-text">${esc(v.text)}</p>
+    <p class="g-ask" id="ask">จะทำยังไงดี?</p>
+    <div class="g-choices" role="group" aria-labelledby="ask">${v.choices.map((c, i) =>
+      `<button type="button" class="g-choice" data-i="${i}"><span class="g-num" aria-hidden="true">${i + 1}</span><span>${esc(c.t)}</span></button>`).join('')}</div>
+    <div class="g-fb" id="fb" hidden aria-live="polite"></div>`;
+  $$('.g-choice', card()).forEach(b => b.addEventListener('click', () => choose(+b.dataset.i)));
+}
+
+function gainBox(cls, icon, title, sub) {
+  return `<div class="g-gain ${cls}">${art(icon, 'pop')}<div><b>${title}</b><span>${sub}</span></div></div>`;
+}
+
+function choose(i) {
+  const r = S.rounds[S.i];
+  if (!r || r.kind !== 'event' || r.done) return;
+  r.done = true;
+  const v = r.view, c = v.choices[i], ok = c.ok;
+  $$('.g-choice', card()).forEach((b, j) => {
+    b.disabled = true;
+    b.classList.add(v.choices[j].ok ? 'right' : j === i ? 'wrong' : 'dim');
+    if (j === i) b.setAttribute('aria-label', (ok ? 'คุณเลือกข้อนี้ ถูกต้อง: ' : 'คุณเลือกข้อนี้ ยังไม่ถูก: ') + c.t);
+  });
+  let gain = '', saved = null;
+  if (ok) {
+    const id = r.ev.give, it = ITEMS[id], have = S.bag.find(b => b.id === id);
+    if (!have) { S.bag.push({ id, used: false }); gain = gainBox('get', it[1], 'ได้ไอเทม: ' + it[0], it[2]); renderBag(true); }
+    else if (have.used) { have.used = false; gain = gainBox('get', it[1], 'ได้' + it[0] + 'มาใหม่', it[2]); renderBag(true); }
+    else if (S.hearts < 3) { S.hearts++; gain = gainBox('heal', 'i-heart', 'มี' + it[0] + 'อยู่แล้ว แลกเป็นหัวใจคืน 1 ดวง', 'หัวใจเป็น ' + S.hearts + ' ดวง'); renderHearts('pulse'); }
+    else {
+      const alt = shuffle(BONUS).find(x => !S.bag.some(b => b.id === x));
+      if (alt) { S.bag.push({ id: alt, used: false }); gain = gainBox('get', ITEMS[alt][1], 'ได้ไอเทมใหม่: ' + ITEMS[alt][0], 'มี' + it[0] + 'อยู่แล้ว เลยได้' + ITEMS[alt][0] + 'แทน · ' + ITEMS[alt][2]); renderBag(true); }
+      else gain = gainBox('get', it[1], 'มี' + it[0] + 'อยู่แล้ว', 'กระเป๋าเกือบครบทุกอย่าง และหัวใจเต็ม 3 ดวง เก่งมาก');
+    }
+  } else {
+    const g = r.ev.guard && S.bag.find(b => b.id === r.ev.guard && !b.used);
+    if (g) {
+      g.used = true; saved = g.id;
+      const it = ITEMS[g.id];
+      gain = gainBox('saved', it[1], it[0] + 'ในกระเป๋าช่วยไว้!', 'ไม่เสียหัวใจ แต่ใช้' + it[0] + 'ไปแล้ว');
+      renderBag(true);
+    } else {
+      S.hearts--;
+      gain = gainBox('loss', 'i-heart', 'เสียหัวใจ 1 ดวง', S.hearts > 0 ? 'เหลือ ' + S.hearts + ' ดวง' : 'หัวใจหมดแล้ว');
+      renderHearts('shake');
+    }
+  }
+  S.log.push({ id: r.ev.id, learn: v.learn, ok, saved });
+  const last = S.hearts <= 0 || S.i === S.rounds.length - 1;
+  const right = v.choices.find(x => x.ok);
+  const fb = $('#fb');
+  fb.className = 'g-fb ' + (ok ? 'ok' : 'no');
+  fb.innerHTML = `
+    <p class="g-verdict">${ok ? ICON.check + pick(OK_WORDS) : ICON.cross + pick(NO_WORDS)}</p>
+    <p class="g-result">${esc(c.res)}</p>
+    ${gain}
+    ${ok ? '' : `<p class="g-right"><b>ทางที่ปลอดภัยกว่า</b>${esc(right.t)}</p>`}
+    <div class="g-why"><b>ทำไม?</b><p>${esc(v.why)}</p></div>
+    ${v.real ? `<figure class="g-real"><figcaption>คำร้องจริงใน Traffy Fondue · ${esc(v.real[0])}</figcaption><blockquote>“${esc(v.real[1])}”</blockquote></figure>` : ''}
+    ${v.fact ? `<p class="g-fact"><b>จากข้อมูลจริง</b>${esc(v.fact)}</p>` : ''}
+    <button type="button" class="cta-btn primary g-next">${S.hearts <= 0 ? 'ดูผล →' : last ? 'ดูผลการเอาตัวรอด →' : 'ไปต่อ →'}</button>`;
+  revealFeedback(fb);
+}
+
+function revealFeedback(fb) {
+  fb.hidden = false;
+  const next = $('.g-next', fb);
+  next.addEventListener('click', nextRound);
+  next.focus({ preventScroll: true });
+  const top = fb.getBoundingClientRect().top;
+  const hud = $('#hud') ? $('#hud').offsetHeight : 0;
+  if (top > window.innerHeight * 0.55) window.scrollBy({ top: top - hud - 14, behavior: reduce ? 'auto' : 'smooth' });
+}
+
+function nextRound() {
+  if (S.hearts <= 0 || S.i >= S.rounds.length - 1) return renderEnd();
+  S.i++;
+  renderRound();
+}
+
+/* ---------- จบเกม ---------- */
+function renderEnd() {
+  const dead = S.hearts <= 0;
+  const right = S.log.filter(x => x.ok).length;
+  const stars = dead ? 0 : S.hearts;
+  const title = dead ? 'ต้องไปโรงพยาบาล' : right === TOTAL ? 'รอดแบบมือโปร!' : ['', 'รอดแบบหวุดหวิด!', 'รอดมาได้!', 'รอดอย่างปลอดภัย!'][stars];
+  const sub = dead
+    ? `${esc(S.name)} บาดเจ็บจนต้องไปโรงพยาบาล ไม่เป็นไร ลองใหม่ได้ ทุกครั้งที่เล่น เหตุการณ์จะเปลี่ยนไป`
+    : `${esc(S.name)} ผ่านน้ำท่วม 16 วันมาจนน้ำลด และไม่ลืมดูอาการต่อหลังน้ำลด`;
+  const savedN = S.log.filter(x => x.saved).length;
+  const left = TOTAL - S.log.length;
+  setWater(dead ? 2 : 4);
+  $('#endCard').innerHTML = `
+    <div class="g-endhead">
+      <div class="g-hero ${dead ? 'sad' : ''}">${art(AGES[S.age].pic)}</div>
+      <div class="g-stars" role="img" aria-label="ได้ ${stars} ดาว จาก 3">${[0, 1, 2].map(i => ICON.star.replace('<svg', `<svg class="${i < stars ? '' : 'off'}"`)).join('')}</div>
+      <h2 tabindex="-1">${title}</h2>
+      <p class="g-text">${sub}</p>
+    </div>
+    <div class="g-stats">
+      <div class="g-stat"><b>${right}<small>/${TOTAL}</small></b><span>ตัดสินใจถูก</span></div>
+      <div class="g-stat"><b>${S.bag.length}</b><span>ไอเทมในกระเป๋า</span></div>
+      <div class="g-stat"><b>${Math.max(S.hearts, 0)}<small>/3</small></b><span>หัวใจที่เหลือ</span></div>
+    </div>
+    ${savedN ? `<p class="g-tip">${art('i-pack')}<span>ของที่เตรียมไว้ช่วยกันพลาดได้ ${savedN} ครั้ง การเตรียมตัวก่อนน้ำมาช่วยได้จริง</span></p>` : ''}
+    <h3>กระเป๋ายังชีพของคุณ</h3>
+    ${S.bag.length ? `<ul class="g-bagend">${S.bag.map(b => { const it = ITEMS[b.id]; return `<li class="${b.used ? 'used' : ''}">${art(it[1])}<span>${it[0]}${b.used ? '<small>ใช้แล้ว</small>' : ''}</span></li>`; }).join('')}</ul>` : '<p class="g-fact">ยังไม่มีของในกระเป๋า ลองใหม่อีกครั้งนะ</p>'}
+    <h3>สิ่งที่ได้เรียนรู้</h3>
+    <ul class="g-lessons">${S.log.map(x => `<li class="${x.ok ? 'ok' : 'no'}"><i aria-label="${x.ok ? 'ถูก' : 'ยังไม่ถูก'}">${x.ok ? ICON.check : ICON.cross}</i><span>${esc(x.learn)}</span></li>`).join('')}</ul>
+    ${left > 0 ? `<p class="g-fact">ยังมีอีก ${left} เหตุการณ์ที่ยังไม่ได้เจอ</p>` : ''}
+    <div class="g-closing"><p>${CLOSING}</p><a href="index.html#p-ready">ดูเช็กลิสต์ “บ้านคุณพร้อมรับน้ำแค่ไหน?” →</a></div>
+    <div class="g-actions">
+      <button type="button" class="cta-btn primary" id="again">เล่นอีกครั้ง (เหตุการณ์ใหม่)</button>
+      <button type="button" class="cta-btn" id="switchAge">เปลี่ยนตัวละคร</button>
+      <a class="cta-btn" href="index.html#p-ready">กลับไปที่เรื่อง</a>
+    </div>`;
+  $('#again').addEventListener('click', () => startAge(S.age));
+  $('#switchAge').addEventListener('click', () => { setWater(0); show('s-start'); });
+  show('s-end');
+}
+
+/* ---------- เริ่ม ---------- */
+function init() {
+  $$('.g-age').forEach(b => b.addEventListener('click', () => startAge(b.dataset.age)));
+  $('#goPlay').addEventListener('click', startPlay);
+  $('#introBack').addEventListener('click', () => show('s-start'));
+  $('#hudBag').addEventListener('click', () => toggleBag());
+  document.addEventListener('keydown', e => {
+    if (!S || document.body.dataset.screen !== 's-play' || e.altKey || e.ctrlKey || e.metaKey) return;
+    const r = S.rounds[S.i];
+    if (r && r.kind === 'event' && !r.done && /^[1-3]$/.test(e.key)) { e.preventDefault(); choose(+e.key - 1); }
+    if (e.key === 'Escape') toggleBag(false);
+  });
+  setWater(0);
+  document.body.dataset.screen = 's-start';
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();
 
 </script>
