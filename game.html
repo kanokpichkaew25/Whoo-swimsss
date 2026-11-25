@@ -472,7 +472,7 @@ mark.red { background: var(--leech); color: var(--bone); }
   .g-back { color: var(--silt); text-decoration: none; font-size: 16px; padding: 8px 0; }
   .g-back:hover { color: var(--siren); }
   .g-brand { font-family: var(--font-display); font-size: 15px; color: var(--silt); }
-  .g-screen[hidden] { display: none !important; }
+  .g-screen[hidden], .g-wrap [hidden] { display: none !important; }
   .g-wrap h1:focus, .g-wrap h2:focus { outline: none; }
   .cta-btn { cursor: pointer; }
   .cta-btn:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
@@ -644,6 +644,243 @@ mark.red { background: var(--leech); color: var(--bone); }
   .pulse { animation: pulse 0.6s; }
   @keyframes pulse { 40% { transform: scale(1.18); } }
 
+  /* ===== ปุ่มเสียง ===== */
+  .g-snd { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 14px 6px 10px; border-radius: 30px; border: 1px solid var(--line); background: var(--card); color: var(--bone); font-family: var(--font-display); font-size: 15px; cursor: pointer; }
+  .g-snd svg { width: 22px; height: 22px; }
+  .g-snd .x { display: none; }
+  .g-snd.off { color: var(--silt); }
+  .g-snd.off .x { display: inline; }
+  .g-snd.off .w { display: none; }
+
+  /* ===== ฉากเคลื่อนไหวในการ์ดเหตุการณ์ ===== */
+  .g-scene { position: relative; overflow: hidden; }
+  .g-scene .actor { position: relative; z-index: 2; transform-origin: 50% 85%; animation: float 3.2s ease-in-out infinite; }
+  .g-scene[data-art="snake"] .actor { animation: slither 2.6s ease-in-out infinite; }
+  .g-scene[data-art="leech"] .actor { animation: inch 1.6s ease-in-out infinite; transform-origin: 20% 70%; }
+  .g-scene[data-art="rat"] .actor { animation: hop 1.2s ease-in-out infinite; }
+  .g-scene[data-art="centipede"] .actor { animation: scuttle 1.3s ease-in-out infinite; }
+  .g-scene[data-art="croc"] .actor, .g-scene[data-art="boat"] .actor, .g-scene[data-art="scene-stagnant"] .actor { animation: bob 2.8s ease-in-out infinite; }
+  .g-scene[data-art="i-phone"] .actor, .g-scene[data-art="i-mega"] .actor { animation: ring 2.4s ease-in-out infinite; }
+  .g-scene[data-art="i-plug"] .actor { animation: zap 2s linear infinite; }
+  .g-scene[data-art="i-night"] .actor { animation: flicker 3s ease-in-out infinite; }
+  .g-scene[data-art="scene-germ"] .actor, .g-scene[data-art="i-thermo"] .actor, .g-scene[data-art="i-pill"] .actor { animation: throb 1.5s ease-in-out infinite; }
+  .g-scene.gulp .actor { animation: gulp 0.45s; }
+  .g-sky { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .g-scene[data-ph="1"] .g-sky, .g-scene[data-ph="2"] .g-sky { opacity: 0.6; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Cpath d='M28 0l-5 13M10 18l-5 13' stroke='%23BEDCE6' stroke-opacity='.55' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); background-size: 36px 36px; animation: rain 0.55s linear infinite; }
+  .g-pool { position: absolute; left: 0; right: 0; bottom: 0; height: 0; z-index: 3; pointer-events: none; background: linear-gradient(180deg, rgba(44, 98, 107, 0.6), rgba(22, 49, 58, 0.92)); }
+  .g-pool::before { content: ""; position: absolute; left: 0; right: 0; top: -7px; height: 8px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='8' viewBox='0 0 60 8'%3E%3Cpath d='M0 8V4Q15 0 30 4T60 4V8Z' fill='%2378AAB4' fill-opacity='.55'/%3E%3C/svg%3E") repeat-x; background-size: 60px 8px; animation: wave 2.4s linear infinite; }
+  .g-scene[data-ph="1"] .g-pool { height: 24%; }
+  .g-scene[data-ph="2"] .g-pool { height: 28%; background: linear-gradient(180deg, rgba(74, 92, 52, 0.66), rgba(40, 52, 30, 0.94)); }
+  .g-scene[data-ph="3"] .g-pool { height: 9%; }
+  @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes slither { 0%, 100% { transform: translateX(-16px) skewX(5deg); } 50% { transform: translateX(16px) skewX(-5deg); } }
+  @keyframes inch { 0%, 100% { transform: translateX(-8px) scale(1, 1); } 35% { transform: translateX(-8px) scale(1.2, 0.85); } 65% { transform: translateX(10px) scale(0.92, 1.06); } }
+  @keyframes hop { 0%, 100% { transform: translateY(0); } 30% { transform: translateY(-16px) rotate(-5deg); } 55% { transform: translateY(0) rotate(2deg); } }
+  @keyframes scuttle { 0%, 100% { transform: translateX(-20px); } 25%, 75% { transform: translateX(0) translateY(-2px); } 50% { transform: translateX(20px); } }
+  @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(7px) rotate(2deg); } }
+  @keyframes ring { 0%, 55%, 100% { transform: rotate(0); } 60%, 70%, 80% { transform: rotate(-12deg); } 65%, 75%, 85% { transform: rotate(12deg); } }
+  @keyframes zap { 0%, 82%, 100% { filter: none; transform: none; } 85%, 91% { filter: brightness(1.7) drop-shadow(0 0 10px #F2C46B); transform: translateX(-2px); } 88% { filter: none; transform: translateX(2px); } }
+  @keyframes flicker { 0%, 100% { opacity: 1; } 45% { opacity: 0.55; } 50% { opacity: 1; } 70% { opacity: 0.75; } }
+  @keyframes throb { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+  @keyframes gulp { 40% { transform: scale(1.18); } }
+  @keyframes rain { from { background-position: 0 0; } to { background-position: 0 36px; } }
+  @keyframes wave { from { background-position: 0 0; } to { background-position: 60px 0; } }
+
+  /* ===== ฉากเปลี่ยนวัน ===== */
+  .g-trans { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; overflow: hidden; background: #0B1519; cursor: pointer; opacity: 0; outline: none; }
+  .g-trans[hidden] { display: none; }
+  .g-trans.in { animation: tIn 0.32s ease-out forwards; }
+  .g-trans.out { animation: tOut 0.38s ease-in forwards; }
+  @keyframes tIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes tOut { from { opacity: 1; } to { opacity: 0; } }
+  .t-sky { position: absolute; inset: 0; }
+  .g-trans[data-ph="1"] .t-sky, .g-trans[data-ph="2"] .t-sky { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36'%3E%3Cpath d='M28 0l-5 13M10 18l-5 13' stroke='%23BEDCE6' stroke-opacity='.4' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); background-size: 36px 36px; animation: rain 0.45s linear infinite; }
+  .t-sky::after { content: ""; position: absolute; top: 9%; right: 12%; width: 64px; height: 64px; border-radius: 50%; opacity: 0; }
+  .g-trans[data-ph="0"] .t-sky::after { opacity: 1; background: #E9E3D3; box-shadow: 0 0 40px rgba(233, 227, 211, 0.35); }
+  .g-trans[data-ph="3"] .t-sky::after, .g-trans[data-ph="4"] .t-sky::after { opacity: 1; background: #F2C46B; box-shadow: 0 0 60px rgba(242, 196, 107, 0.5); }
+  .t-water { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: linear-gradient(180deg, #2C626B, #16313A); transition: height 1.1s cubic-bezier(0.3, 0.7, 0.3, 1) 0.1s; }
+  .g-trans.in .t-water { height: var(--lv); }
+  .g-trans[data-ph="2"] .t-water { background: linear-gradient(180deg, #4A5C34, #28341E); }
+  .t-water::before { content: ""; position: absolute; left: 0; right: 0; top: -11px; height: 12px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='8' viewBox='0 0 60 8'%3E%3Cpath d='M0 8V4Q15 0 30 4T60 4V8Z' fill='%2378AAB4' fill-opacity='.6'/%3E%3C/svg%3E") repeat-x; background-size: 90px 12px; animation: wave 2s linear infinite; }
+  .t-text { position: relative; z-index: 2; display: grid; justify-items: center; gap: 2px; padding: 0 24px; text-align: center; opacity: 0; transform: translateY(14px) scale(0.96); animation: tText 0.5s 0.12s cubic-bezier(0.2, 1.3, 0.4, 1) forwards; }
+  @keyframes tText { to { opacity: 1; transform: none; } }
+  .t-wave { font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.06em; color: var(--siren); margin: 0; }
+  .t-text b { font-family: var(--font-display); font-size: clamp(54px, 15vw, 96px); line-height: 1.08; }
+  .t-text span { font-size: 20px; color: var(--silt); }
+  .t-data { max-width: 34ch; margin: 14px 0 0; padding: 10px 16px; border-radius: 14px; background: rgba(13, 24, 28, 0.75); border: 1px solid var(--line); font-size: 16px; line-height: 1.55; }
+  .t-text small { margin-top: 12px; font-size: 13px; color: var(--silt); opacity: 0.75; }
+
+  /* ===== เอฟเฟกต์ ===== */
+  #fxLayer { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+  .flyer { position: fixed; pointer-events: none; filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.45)); }
+  .flyer svg { display: block; width: 100%; height: 100%; }
+  .flyer.heart svg { color: var(--leech); }
+  .spark { position: fixed; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; }
+  .confetti { position: fixed; top: 0; border-radius: 2px; pointer-events: none; }
+  .g-flash { position: fixed; inset: 0; pointer-events: none; opacity: 0; }
+  .g-toast { position: fixed; left: 50%; bottom: 28px; z-index: 62; max-width: calc(100vw - 32px); padding: 12px 20px; border-radius: 30px; background: var(--siren); color: var(--night); font-family: var(--font-display); font-weight: 700; font-size: 17px; line-height: 1.35; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45); transform: translateX(-50%); animation: toastIn 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); transition: opacity 0.35s, transform 0.35s; }
+  .g-toast.out { opacity: 0; transform: translate(-50%, 12px); }
+  @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 24px) scale(0.8); } }
+  .ghost { position: fixed; z-index: 63; width: 64px; height: 64px; pointer-events: none; transform: translate(-50%, -60%) rotate(-10deg); filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5)); }
+  .ghost svg { width: 100%; height: 100%; }
+  .g-card.enter { animation: cardIn 0.45s cubic-bezier(0.2, 0.9, 0.3, 1); }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(18px); } }
+  .g-card.hit { animation: hit 0.45s; }
+  @keyframes hit { 15%, 55% { transform: translateX(-7px); } 35%, 75% { transform: translateX(7px); } }
+  .g-choice.picked { animation: pickedPop 0.4s cubic-bezier(0.2, 1.5, 0.4, 1); }
+  @keyframes pickedPop { 40% { transform: scale(1.03); } }
+  .hud-who { position: relative; }
+  .hud-who.happy svg { animation: happy 0.6s; }
+  @keyframes happy { 30% { transform: translateY(-6px) scale(1.1); } 60% { transform: none; } }
+  .hud-who[data-hp="1"]::after, .hud-who[data-hp="0"]::after { content: ""; position: absolute; left: 22px; top: 6px; width: 17px; height: 7px; border-radius: 3px; background: #F3D8B5; box-shadow: inset 0 0 0 1px #C9A27A; transform: rotate(-32deg); }
+  .g-gain svg.shield { animation: shield 1s; }
+  @keyframes shield { 40% { filter: drop-shadow(0 0 16px #F2C46B) brightness(1.3); transform: scale(1.12); } }
+  .g-stars svg.on { animation: starIn 0.5s var(--d, 0s) cubic-bezier(0.2, 1.6, 0.4, 1) both; }
+  @keyframes starIn { from { transform: scale(0) rotate(-90deg); opacity: 0; } }
+
+  /* ===== มินิเกม: ส่วนกลาง ===== */
+  .mg { position: relative; margin: 14px 0 10px; border-radius: 18px; overflow: hidden; background: #132429; border: 1px solid var(--line); -webkit-user-select: none; user-select: none; }
+  .mg > svg { display: block; width: 100%; height: auto; }
+  .mg-timer { position: absolute; left: 12px; right: 12px; top: 12px; z-index: 6; height: 10px; border-radius: 10px; background: rgba(13, 24, 28, 0.75); }
+  .mg-timer i { position: absolute; inset: 0; border-radius: 10px; background: var(--safe); transform-origin: left; transition: background 0.3s; }
+  .mg-timer i.low { background: var(--leech); }
+  .mg-timer b { position: absolute; left: 0; top: 14px; padding: 1px 9px; border-radius: 10px; background: rgba(13, 24, 28, 0.8); font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+  .mg-ctrl { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .mg-hint { font-size: 16px; color: var(--silt); margin: 6px 0 10px; }
+  .mg-count { position: absolute; left: 50%; bottom: 10px; z-index: 6; margin: 0; padding: 4px 14px; border-radius: 20px; background: rgba(13, 24, 28, 0.85); font-family: var(--font-display); font-weight: 600; font-size: 15px; white-space: nowrap; transform: translateX(-50%); max-width: none; }
+  .mg-chip { display: inline-flex; align-items: center; gap: 8px; margin: 10px 0 0; padding: 6px 14px 6px 8px; border-radius: 30px; border: 1px solid rgba(232, 137, 59, 0.45); background: rgba(232, 137, 59, 0.08); font-size: 15px; line-height: 1.4; max-width: none; }
+  .mg-chip.ok { border-color: rgba(98, 180, 141, 0.5); background: rgba(98, 180, 141, 0.1); }
+  .mg-chip svg { width: 30px; height: 30px; flex: none; }
+
+  /* ปิดทางงู */
+  .mg-hot { position: absolute; z-index: 5; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 12px 6px 6px; border-radius: 30px; border: 2px solid var(--siren); background: rgba(13, 24, 28, 0.88); color: var(--bone); font-family: var(--font-display); font-weight: 600; font-size: 14.5px; white-space: nowrap; cursor: pointer; transform: translate(-50%, -50%); }
+  .mg-hot b { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--siren); color: var(--night); }
+  .mg-hot:disabled { opacity: 0.55; cursor: default; }
+  .mg.live .mg-hot:not(:disabled):not(.ok) { animation: hotPulse 1.2s infinite; }
+  @keyframes hotPulse { 50% { box-shadow: 0 0 0 9px rgba(232, 137, 59, 0.25); } }
+  .mg-hot.ok { opacity: 1; gap: 0; min-height: 0; padding: 3px; border-color: var(--safe); font-size: 0; }
+  .mg-hot.ok b { background: var(--safe); font-size: 16px; }
+  .mg-hot.shake { animation: shake 0.45s; }
+  .mg-list { list-style: none; display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0 0 10px; padding: 0; font-size: 15.5px; color: var(--silt); }
+  .mg-list li::before { content: "○ "; }
+  .mg-list li.done { color: var(--safe); }
+  .mg-list li.done::before { content: "✓ "; }
+  .bath .lid-open { transform-box: fill-box; transform-origin: 50% 100%; transition: transform 0.35s, opacity 0.35s; }
+  .bath.shut .lid-open { transform: scaleY(0.15); opacity: 0; }
+  .bath .lid-shut { opacity: 0; transition: opacity 0.2s 0.2s; }
+  .bath.shut .lid-shut { opacity: 1; }
+  .bath .brick { transition: transform 0.55s cubic-bezier(0.3, 1.5, 0.5, 1); }
+  .bath.braced .brick { transform: translate(83px, -62px); }
+  .bath .grate { opacity: 0; transform: translateY(-16px); transition: opacity 0.35s, transform 0.35s; }
+  .bath.grated .grate { opacity: 1; transform: none; }
+  .bath .snk { transform: translateY(46px); transition: transform 0.25s linear; }
+  .bath .snk.pop { animation: snkPop 0.35s ease-in-out infinite alternate; }
+  @keyframes snkPop { from { transform: translateY(-4px) rotate(-6deg); } to { transform: translateY(-10px) rotate(6deg); } }
+  .bath .snk-drain.pop, .bath .snk-bowl.pop { transform-box: fill-box; transform-origin: 50% 100%; }
+  .bath.rattle .lid-shut { transform-box: fill-box; transform-origin: 50% 50%; animation: rattle 0.12s infinite; }
+  @keyframes rattle { 50% { transform: translateY(-3px) rotate(3deg); } }
+  .mg.win { box-shadow: 0 0 0 2px var(--safe); }
+  .mg.lose { box-shadow: 0 0 0 2px var(--leech); }
+
+  /* ส่องไฟฉาย */
+  .mg-dark { aspect-ratio: 3 / 2; touch-action: none; cursor: crosshair; }
+  .mg-dark .room { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .mg-dark:focus-visible { outline: 3px solid var(--siren); outline-offset: 2px; }
+  .hz { position: absolute; z-index: 2; width: 25%; pointer-events: none; transform: translate(-50%, -50%); }
+  .hz svg { display: block; width: 100%; height: auto; }
+  .hz-centipede { width: 21%; }
+  .hz-leech { width: 16%; }
+  .hz-wire { width: 8%; }
+  .hz span { position: absolute; left: 50%; top: -4px; padding: 2px 10px; border-radius: 20px; background: var(--siren); color: var(--night); font-family: var(--font-display); font-weight: 700; font-size: 13px; white-space: nowrap; opacity: 0; transform: translate(-50%, -100%); }
+  .hz.found { z-index: 4; filter: drop-shadow(0 0 10px rgba(242, 196, 107, 0.9)); }
+  .hz.found span { opacity: 1; }
+  .hz.missed { z-index: 4; filter: drop-shadow(0 0 10px rgba(217, 83, 79, 0.95)); }
+  .hz.missed span { opacity: 1; background: var(--leech); }
+  .mg-shade { --x: 50%; --y: 8%; --r: 0px; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(circle at var(--x) var(--y), rgba(255, 236, 180, 0.12) 0, rgba(255, 236, 180, 0.05) calc(var(--r) * 0.55), rgba(4, 9, 11, 0.965) var(--r)); }
+  .mg-cover { position: absolute; left: 50%; top: 50%; z-index: 5; width: 80%; margin: 0; font-size: 16px; line-height: 1.5; color: var(--bone); text-align: center; transform: translate(-50%, -50%); max-width: none; }
+
+  /* เคาะรองเท้า */
+  .mg-shoe { aspect-ratio: 16 / 9; display: grid; place-items: center; background: linear-gradient(180deg, #1A3239 64%, #3A2E26 64%); }
+  .shoe-btn { position: relative; z-index: 2; width: 56%; padding: 0; border: 0; border-radius: 20px; background: none; cursor: pointer; }
+  .shoe-btn svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.35)); }
+  .shoe-btn:focus-visible { outline: 3px solid var(--siren); outline-offset: 4px; }
+  .shoe-btn.knock { animation: knock 0.38s; }
+  @keyframes knock { 20% { transform: rotate(-14deg) translateY(-10px); } 45% { transform: rotate(10deg) translateY(4px); } 70% { transform: rotate(-5deg); } }
+  .mg-shoe.wear .shoe-btn { animation: squish 0.5s; }
+  @keyframes squish { 50% { transform: scale(1.05, 0.86); } }
+  .cent { position: absolute; z-index: 3; left: 50%; top: 22%; width: 30%; opacity: 0; pointer-events: none; }
+  .cent svg, .hand svg { display: block; width: 100%; height: auto; }
+  .cent.fall { animation: centFall 1.3s forwards; }
+  @keyframes centFall { 0% { opacity: 1; transform: translate(-50%, 0) scale(0.4) rotate(-50deg); } 35% { opacity: 1; transform: translate(-50%, 110%) scale(1) rotate(0); } 100% { opacity: 1; transform: translate(150%, 110%); } }
+  .hand { position: absolute; z-index: 3; left: 56%; top: -40%; width: 16%; opacity: 0; pointer-events: none; transform: rotate(180deg); transition: top 0.45s, opacity 0.2s; }
+  .mg-shoe.reach .hand { top: 8%; opacity: 1; }
+  .bite { position: absolute; z-index: 4; left: 50%; top: 12%; font-family: var(--font-display); font-weight: 700; font-size: 34px; color: var(--leech); text-shadow: 0 2px 0 var(--night); opacity: 0; transform: translate(-50%, 0) scale(0.4); }
+  .bite.on { animation: biteIn 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) forwards; }
+  @keyframes biteIn { to { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(-8deg); } }
+
+  /* ปลิงและแผล */
+  .mg-leg { aspect-ratio: 260 / 150; background: radial-gradient(circle at 40% 40%, #1F3A41, #132429); }
+  .mg-leg .leg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .lch { position: absolute; z-index: 3; left: 28%; top: 24%; width: 30%; transform-origin: 20% 60%; animation: inch 1.5s ease-in-out infinite; transition: transform 0.5s, opacity 0.5s, filter 0.2s; }
+  .lch svg { display: block; width: 100%; height: auto; }
+  .lch.over { filter: drop-shadow(0 0 12px rgba(242, 196, 107, 0.95)); }
+  .lch.shrink { animation: none; transform: scale(0.7) rotate(18deg); }
+  .lch.off { animation: none; opacity: 0; transform: translateY(160%) rotate(60deg) scale(0.6); transition: transform 0.7s cubic-bezier(0.5, 0, 0.8, 0.5), opacity 0.7s; }
+  .lch.stretch { animation: none; transform: scaleX(1.7) translateX(12%); transition: transform 0.6s; }
+  .lch.snap { opacity: 0; transform: translate(60%, -80%) rotate(-30deg) scale(0.6); transition: transform 0.45s, opacity 0.45s; }
+  .mark { position: absolute; z-index: 2; left: 37%; top: 38%; width: 12%; aspect-ratio: 1; border-radius: 50%; opacity: 0; transform: scale(0.4); transition: opacity 0.35s, transform 0.35s; }
+  .mark.on { opacity: 1; transform: scale(1); background: radial-gradient(circle, #B3261E 0 35%, rgba(179, 38, 30, 0.35) 36% 60%, transparent 61%); }
+  .mark.burn { left: 31%; top: 26%; width: 24%; background: radial-gradient(circle, rgba(140, 40, 20, 0.9) 0 30%, rgba(232, 137, 59, 0.55) 31% 60%, transparent 70%); }
+  .mark.scratch { left: 33%; top: 18%; width: 22%; border-radius: 0; background: none; }
+  .mark svg { display: block; width: 100%; height: 100%; }
+  .fxa { position: absolute; z-index: 4; left: 44%; top: -4%; width: 20%; opacity: 0; pointer-events: none; }
+  .fxa svg { display: block; width: 100%; height: auto; }
+  .fxa.on { animation: toolIn 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) forwards; }
+  .fxa.on.t0 { animation: toolIn 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) forwards, shakeSalt 0.22s 0.45s 4; }
+  .fxa.on.t1 { left: 34%; top: 6%; }
+  .fxa.on.wash { left: 30%; top: -2%; }
+  @keyframes toolIn { from { opacity: 0; transform: translateY(-30px) scale(0.6); } to { opacity: 1; transform: rotate(-30deg); } }
+  @keyframes shakeSalt { 0%, 100% { opacity: 1; transform: rotate(-30deg); } 50% { opacity: 1; transform: rotate(-55deg) translateY(4px); } }
+  .grain { position: absolute; z-index: 5; top: 16%; width: 5px; height: 5px; border-radius: 1px; background: #F4F1E8; opacity: 0; animation: grain 0.6s ease-in forwards; }
+  @keyframes grain { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(70px); } }
+  .mg-tools, .mg-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
+  .mg-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tool { position: relative; display: grid; justify-items: center; align-content: start; gap: 4px; min-height: 100px; padding: 10px 6px; border-radius: 16px; border: 1.5px solid rgba(233, 227, 211, 0.24); background: rgba(233, 227, 211, 0.05); color: var(--bone); font-family: var(--font-display); font-weight: 600; font-size: 15px; line-height: 1.3; text-align: center; cursor: grab; touch-action: none; }
+  .tool svg { width: 52px; height: 52px; }
+  .tool:hover:not(:disabled) { border-color: var(--siren); }
+  .tool.lifted { opacity: 0.4; }
+  .tool:disabled { opacity: 0.45; cursor: default; }
+  .tool.ok { opacity: 1; border-color: var(--safe); background: rgba(98, 180, 141, 0.14); }
+  .tool.hold { cursor: pointer; -webkit-touch-callout: none; }
+  .tool.shake { animation: shake 0.45s; }
+  .tool .ring { position: absolute; left: 50%; top: 4px; width: 62px; height: 62px; margin-left: -31px; transform: rotate(-90deg); pointer-events: none; }
+  .tool .ring circle { fill: none; stroke: var(--safe); stroke-width: 4; stroke-linecap: round; }
+  .wound { position: absolute; z-index: 2; left: 40%; top: 40%; width: 9%; aspect-ratio: 1; }
+  .wound b { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, #B3261E 0 40%, rgba(179, 38, 30, 0.4) 41% 70%, transparent 71%); }
+  .wound i { position: absolute; left: 40%; top: 60%; width: 7px; height: 10px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #C0392B; opacity: 0; animation: drip 1.3s ease-in infinite; }
+  .wound i:nth-of-type(2) { left: 18%; animation-delay: 0.45s; }
+  .wound i:nth-of-type(3) { left: 64%; animation-delay: 0.9s; }
+  @keyframes drip { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(60px); } }
+  .wound.stopped i { display: none; }
+  .wound.stopped b { background: radial-gradient(circle, #8E2A22 0 28%, transparent 29%); }
+  .mg-leg.mud .wound b { background: radial-gradient(circle, #5A4030 0 62%, transparent 63%); transform: scale(1.8); }
+  .cloth { position: absolute; z-index: 3; left: 35%; top: 28%; width: 19%; aspect-ratio: 1; border-radius: 10px; background: #F4F1E8; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); opacity: 0; transform: translateY(-40px) rotate(-8deg); transition: opacity 0.25s, transform 0.25s; }
+  .cloth.press { opacity: 1; transform: rotate(-4deg) scale(0.95); }
+  .cloth.on { opacity: 1; transform: rotate(-4deg); }
+
+  @media (max-width: 600px) {
+    .g-snd span { display: none; }
+    .g-snd { padding: 6px 10px; }
+    .mg-hot { font-size: 13px; padding: 4px 10px 4px 4px; min-height: 40px; }
+    .mg-hot b { width: 24px; height: 24px; }
+    .tool { min-height: 92px; font-size: 14px; }
+    .tool svg { width: 46px; height: 46px; }
+    .t-data { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .g-scene .actor, .g-sky, .g-pool::before, .lch, .wound i, .mg.live .mg-hot, .t-sky, .t-water::before { animation: none !important; }
+  }
+
   @media (max-width: 600px) {
     .g-wrap { padding: 8px 14px 100px; }
     .hud { margin: 0 -14px 14px; padding: 8px 14px; }
@@ -676,8 +913,10 @@ mark.red { background: var(--leech); color: var(--bone); }
 <body class="game">
 <div id="flood" aria-hidden="true"><div class="body"></div><div class="murk"></div><div class="lane"><div id="swimmer" hidden></div></div><svg viewBox="0 0 400 20" preserveAspectRatio="none"><path d="M0 10 Q 25 0 50 10 T 100 10 T 150 10 T 200 10 T 250 10 T 300 10 T 350 10 T 400 10 V 20 H 0 Z" fill="rgba(38,84,92,0.55)"/></svg></div>
 
+<div class="g-trans" id="trans" hidden tabindex="-1" aria-live="polite"></div>
+
 <main class="g-wrap">
-  <nav class="g-top" aria-label="ลิงก์กลับ"><a class="g-back" href="index.html#p-ready">← กลับไปที่เรื่อง</a><span class="g-brand">ใครว่ายมากับน้ำ?</span></nav>
+  <nav class="g-top" aria-label="เมนูเกม"><a class="g-back" href="index.html#p-ready">← กลับไปที่เรื่อง</a><button type="button" class="g-snd" id="sndBtn" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4Z" fill="currentColor"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="x" d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>เสียงเปิด</span></button></nav>
 
   <!-- ===== หน้าแรก: เลือกตัวละคร ===== -->
   <section class="g-screen" id="s-start" aria-labelledby="t-start">
@@ -754,7 +993,8 @@ mark.red { background: var(--leech); color: var(--bone); }
                     i-bandage i-shower i-calendar i-thermo i-pill i-trash
                     i-clock i-elder i-team i-mega i-q i-db i-funnel i-chart i-game
      ไอคอนเกม 64×64 : i-water i-firstaid i-stick i-meds i-bag i-whistle i-plug i-pack
-                      i-battery i-sandal i-teddy i-dryer
+                      i-battery i-sandal i-teddy i-dryer i-hand i-flame i-claw
+     มินิเกม     : i-wire (64×120) · g-leg ขา (260×150) · g-sneaker รองเท้าผ้าใบ (170×100)
      ตัวละคร 120×120 : c-kid เด็ก · c-teen วัยรุ่น · c-adult วัยทำงาน · c-elder ผู้สูงอายุ
      ไอคอน 32×32  : i-house i-heart (สีตาม color ของ CSS) */
 (() => {
@@ -1172,6 +1412,34 @@ mark.red { background: var(--leech); color: var(--bone); }
   <rect x="42" y="10" width="7" height="18" rx="2" fill="#93A6A5"/>
   <path d="M53 13h7M53 19h8M53 25h7" stroke="#F2C46B" stroke-width="2.5" stroke-linecap="round"/>
 </symbol>
+<symbol id="i-hand" viewBox="0 0 64 64">
+  <path d="M21 60c-6-4-10-11-10-19V27a4 4 0 0 1 8 0v7V13a4 4 0 0 1 8 0v18V9a4 4 0 0 1 8 0v22V14a4 4 0 0 1 8 0v25l3-6a4 4 0 0 1 7 4l-6 14c-3 6-8 9-15 9Z" fill="#E7B386" stroke="#B9835A" stroke-width="1.5" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-flame" viewBox="0 0 64 64">
+  <path d="M32 5c5 10 17 16 17 31a17 17 0 0 1-34 0c0-8 4-13 8-17 1 6 4 9 6 9-2-8 0-16 3-23Z" fill="#E8893B"/>
+  <path d="M32 31c3 5 8 8 8 15a8 8 0 0 1-16 0c0-4 2-7 4-9 1 3 2 4 3 4-1-4 0-7 1-10Z" fill="#F2C46B"/>
+</symbol>
+<symbol id="i-claw" viewBox="0 0 64 64">
+  <path d="M14 10l14 44M27 6l12 48M40 9l10 40" stroke="#F07A74" stroke-width="5" stroke-linecap="round" fill="none"/>
+</symbol>
+<symbol id="i-wire" viewBox="0 0 64 120">
+  <path d="M34 0v52q0 16-12 26" fill="none" stroke="#93A6A5" stroke-width="5" stroke-linecap="round"/>
+  <path d="M14 82l9-8 6 6-9 8Z" fill="#C9C2B0"/>
+  <path d="M6 96l9-6-3 9 9-4-4 9M24 98l4 8" stroke="#F2C46B" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="g-leg" viewBox="0 0 260 150">
+  <path d="M0 22H150c40 0 60 18 64 52l8 38c2 12 16 16 32 18v20H120c-10-16-24-26-46-28H0Z" fill="#E7B386"/>
+  <path d="M0 22H150c26 0 44 8 54 24" fill="none" stroke="#F3CFAA" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+  <path d="M120 150c-10-16-24-26-46-28H0" fill="none" stroke="#C99872" stroke-width="3"/>
+  <path d="M30 60q8-3 16 0M70 82q8-3 16 0M40 100q8-3 16 0" fill="none" stroke="#D9A57D" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+<symbol id="g-sneaker" viewBox="0 0 170 100">
+  <path d="M12 74Q12 46 34 40L66 33Q74 16 92 18L104 20Q118 44 146 54Q164 60 162 76Z" fill="#E9E3D3"/>
+  <path d="M10 72H164V82Q164 90 156 90H16Q10 90 10 82Z" fill="#93A6A5"/>
+  <path d="M30 56Q60 50 92 58M44 66H150" stroke="#E8893B" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M70 36l8 8M80 31l8 8M90 28l7 9" stroke="#7E9291" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="88" cy="22" rx="17" ry="6" fill="#0D181C"/>
+</symbol>
 <symbol id="i-heart" viewBox="0 0 32 32">
   <path d="M16 28S3 20 3 11.5a7 7 0 0 1 13 -3.6a7 7 0 0 1 13 3.6C29 20 16 28 16 28Z" fill="currentColor"/>
 </symbol>
@@ -1198,6 +1466,9 @@ mark.red { background: var(--leech); color: var(--bone); }
        c      ตัวเลือก 3 ข้อ [ตัวเลือก, ผลที่ตามมา]  ข้อแรกคือข้อที่ถูกเสมอ (เกมสลับลำดับให้เอง)
        why    เหตุผล   fact ข้อมูลจริงจากเรื่องหลัก   real คำร้องจริง [วันเวลา · เขต, ข้อความ]
        give   ไอเทมที่ได้เมื่อตอบถูก   guard ไอเทมที่ช่วยกันพลาด   learn บทเรียนที่แสดงตอนจบเกม
+       game   (ไม่ใส่ก็ได้) ให้เรื่องนี้เป็นมินิเกม: lockdown ปิดทางงู · dark ส่องไฟฉาย · shoes เคาะรองเท้า
+              · leech โรยเกลือให้ปลิงหลุด (ใส่ tools ด้วย) · bleed ล้างแผลแล้วกดห้ามเลือด
+              มินิเกมใช้ c เป็นผลลัพธ์: ข้อ 0 = ทำสำเร็จ · ข้อ 1 และ 2 = พลาด
    • ข้อความแยกตามวัยได้ เช่น  text: { k: 'สำหรับเด็ก', _: 'สำหรับวัยอื่นทั้งหมด' }
    • [ก|ข|ค] = สุ่มคำใดคำหนึ่ง   {name} ชื่อตัวละคร   {district} เขต   {day} วันที่ หรือจำนวนวันหลังน้ำลด
    • ตัวเลขใน fact ต้องตรงกับเรื่องหลักใน index.html เสมอ
@@ -1264,14 +1535,14 @@ const PACK = {
 
 const EVENTS = [
 /* ---------------- 0 · ก่อนน้ำมา ---------------- */
-{ id: 'toilet', ph: 0, ages: 'ktae', art: 'i-toilet', title: 'ทางลับของงู',
-  text: { k: 'น้ำจะมาถึงคืนนี้ แม่ให้หนูช่วยเตรียมห้องน้ำชั้นล่าง ต้องทำอะไรนะ?',
-          t: 'น้ำจะมาถึงคืนนี้ พ่อแม่ฝากให้เตรียมห้องน้ำชั้นล่างก่อนออกไปทำงาน',
-          a: 'น้ำจะมาถึงคืนนี้ ห้องน้ำชั้นล่างควรเตรียมยังไง?',
-          e: 'น้ำจะมาถึงคืนนี้ ห้องน้ำชั้นล่างของยายควรเตรียมยังไง?' },
-  c: [['ปิดฝาชักโครก หาของหนักทับ และใส่ตะแกรงที่ปลายท่อ', 'คืนนั้นไม่มีอะไรโผล่ขึ้นมาจากท่อเลย'],
-      ['เปิดฝาชักโครกไว้ ให้น้ำระบายได้เร็ว', '[ตีสอง|ตีสาม] มีเสียงกุกกักในห้องน้ำ… มีบางอย่างขึ้นมาจากท่อ'],
-      ['ยังไม่ต้องทำอะไร รอน้ำมาก่อน', 'พอน้ำมาจริง ห้องน้ำท่วมจนเข้าไปปิดอะไรไม่ได้แล้ว']],
+{ id: 'toilet', ph: 0, ages: 'ktae', art: 'i-toilet', game: 'lockdown', title: 'ปิดทางงู ให้ทันเวลา!',
+  text: { k: 'น้ำจะมาถึงคืนนี้ แม่ให้หนูช่วยปิดทางที่งูจะขึ้นมาในห้องน้ำชั้นล่าง ทำให้ครบ 3 อย่างก่อนหมดเวลา',
+          t: 'น้ำจะมาถึงคืนนี้ พ่อแม่ฝากให้ปิดทางที่งูจะขึ้นมาในห้องน้ำชั้นล่าง ทำให้ครบ 3 อย่างก่อนหมดเวลา',
+          a: 'น้ำจะมาถึงคืนนี้ งูหนีน้ำมาตามท่อได้ ปิดทางเข้าห้องน้ำชั้นล่างให้ครบ 3 อย่างก่อนหมดเวลา',
+          e: 'น้ำจะมาถึงคืนนี้ งูหนีน้ำมาตามท่อได้ ยายต้องปิดทางเข้าห้องน้ำให้ครบ 3 อย่างก่อนหมดเวลา' },
+  c: [['ปิดฝาชักโครก หาของหนักทับ และใส่ตะแกรงที่ปลายท่อ', 'ปิดครบทันเวลา! คืนนั้นไม่มีอะไรโผล่ขึ้นมาจากท่อเลย'],
+      ['ปิดไม่ครบ', 'หมดเวลา! [ตีสอง|ตีสาม] มีเสียงกุกกักในห้องน้ำ… งูโผล่ขึ้นมาจากท่อ'],
+      ['ยังไม่ต้องทำ รอน้ำมาก่อน', 'พอน้ำมาจริง ห้องน้ำท่วมจนเข้าไปปิดอะไรไม่ได้แล้ว']],
   why: 'งูและหนูหนีน้ำมาตามท่อได้ การปิดฝาชักโครกและปิดปลายท่อ ช่วยกันสัตว์ขึ้นมาในบ้าน',
   real: ['29 ก.ย. 23:26 · มีนบุรี', 'งูอยู่ในห้องน้ำค่ะ'],
   give: 'grate', learn: 'ปิดฝาชักโครก ใส่ตะแกรงปลายท่อ ก่อนน้ำมา' },
@@ -1393,10 +1664,10 @@ const EVENTS = [
   fact: 'ถึงวันที่ 27 ต.ค. คำร้องนี้ยังไม่ปิดในระบบ (สถานะ “กำลังดำเนินการ”) ความช่วยเหลืออาจมาช้า เราจึงต้องปฐมพยาบาลให้เป็น',
   give: 'firstaid', guard: 'phone', learn: 'งูกัด อยู่นิ่ง ดาม ห้ามขันชะเนาะ รีบไปโรงพยาบาล' },
 
-{ id: 'shoes', ph: 1, ages: 'ktae', art: 'centipede', title: 'อะไรอยู่ในรองเท้า?',
+{ id: 'shoes', ph: 1, ages: 'ktae', art: 'centipede', game: 'shoes', title: 'อะไรอยู่ในรองเท้า?',
   text: { k: 'เช้านี้หนูจะใส่รองเท้าผ้าใบที่วางไว้หน้าบ้านทั้งคืน',
           t: 'เช้านี้จะใส่รองเท้าผ้าใบที่ถอดไว้หน้าบ้านตั้งแต่เมื่อวาน',
-          a: 'เช้านี้ต้องรีบออกไปช่วยเพื่อนบ้าน รองเท้าบูทวางอยู่หน้าบ้านทั้งคืน',
+          a: 'เช้านี้ต้องรีบออกไปช่วยเพื่อนบ้าน รองเท้าผ้าใบวางอยู่หน้าบ้านทั้งคืน',
           e: 'เช้านี้ยายจะใส่รองเท้าที่วางไว้ข้างประตูทั้งคืน' },
   c: [['เคาะรองเท้าแรงๆ และส่องดูข้างในก่อนใส่', 'ตะขาบตัวยาวหล่นออกมา! โชคดีที่เคาะก่อน'],
       ['ใส่เลย ไม่มีอะไรหรอก', 'ตะขาบในรองเท้ากัดนิ้วเท้า ปวดและบวมแดง'],
@@ -1440,6 +1711,18 @@ const EVENTS = [
   why: 'ตอนกลางคืนมองไม่เห็นงู ปลิง หลุม หรือฝาท่อที่เปิดอยู่ใต้น้ำ ถ้าจำเป็นต้องลุย ให้ลุยตอนกลางวันและไปกับคนอื่น',
   fact: 'วันที่ 26 ก.ย. น้ำท่วมสูงสุด คนแจ้งเรื่องน้ำท่วมถึง 5,089 เรื่องในวันเดียว',
   give: 'stick', guard: 'torch', learn: 'ไม่ลุยน้ำตอนกลางคืน' },
+
+{ id: 'dark', ph: 1, ages: 'ktae', art: 'i-torch', game: 'dark', title: 'ไฟดับ! ส่องหาอันตราย',
+  text: { k: 'ไฟดับทั้งซอย! หนูต้องเดินไปหาแม่ที่ห้องครัว ส่องไฟหาอันตรายให้ครบ 3 อย่างก่อนเดิน',
+          t: 'ไฟดับทั้งซอย! ต้องเดินลงไปดูน้องที่ชั้นล่าง ส่องไฟหาอันตรายให้ครบ 3 อย่างก่อนเดิน',
+          a: 'ไฟดับทั้งซอย! ต้องเดินลงไปชั้นล่างที่น้ำซึมเข้ามา ส่องไฟหาอันตรายให้ครบ 3 อย่างก่อนเดิน',
+          e: 'ไฟดับกลางดึก ยายต้องเดินไปห้องน้ำ ส่องไฟหาอันตรายให้ครบ 3 อย่างก่อนเดิน' },
+  c: [['ส่องไฟดูให้ทั่วก่อนเดินในที่มืด', 'เจออันตรายครบทั้ง 3 อย่าง เดินอ้อมไปได้อย่างปลอดภัย'],
+      ['หาไม่ครบ', 'หมดเวลา! ยังมีอันตรายซ่อนอยู่ในความมืด เกือบเหยียบไปแล้ว'],
+      ['เดินไปเลย ไม่ต้องส่อง', 'ในความมืด เท้าไปเหยียบอะไรนิ่มๆ… แล้วมันก็ขยับ!']],
+  why: 'ช่วงน้ำท่วม สัตว์หนีน้ำมาซ่อนในบ้าน และสายไฟที่ห้อยใกล้น้ำก็อันตราย ก่อนเดินในที่มืดต้องส่องไฟดูให้ทั่ว ไฟฉายส่องได้กว้างกว่าแสงมือถือ จึงควรมีติดบ้านไว้',
+  fact: 'ช่วงน้ำท่วม 16 วัน มีคำร้องเรื่องสัตว์อันตรายในกรุงเทพฯ 332 เรื่อง',
+  give: 'torch', guard: 'firstaid', learn: 'ก่อนเดินในที่มืด ส่องไฟฉายดูให้ทั่ว' },
 
 { id: 'rat', ph: 1, ages: 'ktae', art: 'rat', title: 'หนูหนีน้ำ',
   text: { k: 'เจอลูกหนูตัวเล็กๆ หนีน้ำมาเกาะบันไดบ้าน ตัวเปียกและสั่น น่าสงสารมาก',
@@ -1486,7 +1769,11 @@ const EVENTS = [
   give: 'whistle', guard: 'torch', learn: 'พื้นเปียกตอนมืด ใช้ไฟฉาย เดินช้าๆ' },
 
 /* ---------------- 2 · วันที่ 4–9 น้ำขัง น้ำเน่า ---------------- */
-{ id: 'leech', ph: 2, ages: 'ktae', art: 'leech', title: 'ปลิงเกาะขา!',
+{ id: 'leech', ph: 2, ages: 'ktae', art: 'leech', game: 'leech', title: 'ปลิงเกาะขา!',
+  tools: { k: [['i-salt', 'โรยเกลือ'], ['i-hand', 'ดึงออก'], ['i-claw', 'เกาแรงๆ']],
+           t: [['i-salt', 'โรยเกลือ'], ['i-hand', 'กระชากออก'], ['i-flame', 'ไฟแช็กลน']],
+           a: [['i-salt', 'โรยเกลือ'], ['i-hand', 'กระชากออก'], ['i-flame', 'บุหรี่จี้']],
+           e: [['i-salt', 'โรยเกลือ'], ['i-hand', 'ดึงออก'], ['i-flame', 'เทียนลน']] },
   text: { k: 'ตอนลุยน้ำกลับบ้านกับแม่ หนูเห็นปลิงตัวดำเกาะที่ขา',
           t: 'ตอนพาน้องลุยน้ำกลับบ้าน น้องร้องว่ามีปลิงเกาะขา',
           a: 'ลุยน้ำกลับจากที่ทำงาน มีปลิงตัวดำเกาะที่น่อง เลือดเริ่มไหล',
@@ -1508,7 +1795,7 @@ const EVENTS = [
   fact: 'คำร้องเรื่องปลิงเพิ่มจาก 3 เรื่อง (16 วันก่อนน้ำท่วม) เป็น 75 เรื่อง (16 วันที่น้ำท่วม) มากขึ้น 25 เท่า',
   give: 'salt', guard: 'firstaid', learn: 'ปลิงเกาะ อย่ากระชาก ใช้เกลือให้หลุดเอง' },
 
-{ id: 'bleed', ph: 2, ages: 'ktae', art: 'leech', title: 'เลือดไม่ยอมหยุด',
+{ id: 'bleed', ph: 2, ages: 'ktae', art: 'leech', game: 'bleed', title: 'เลือดไม่ยอมหยุด',
   text: { k: 'ปลิงหลุดไปแล้ว แต่แผลที่ขาหนูยังมีเลือดซึมไม่หยุด',
           t: 'ปลิงหลุดจากขาน้องแล้ว แต่เลือดยังซึมไม่หยุด น้องตกใจร้องไห้',
           a: 'ปลิงหลุดไปครึ่งชั่วโมงแล้ว แต่เลือดยังซึมไม่หยุด',
@@ -1776,16 +2063,25 @@ const CLOSING = 'ในชีวิตจริง คำร้องเรื�
 /* =========================== เครื่องเกม =========================== */
 
 const PHASES = ['ก่อนน้ำมา', 'วันที่ 1–3', 'วันที่ 4–9', 'หลังน้ำลด'];
-const WATER = [7, 34, 28, 12, 5];          /* ความสูงน้ำ (vh) ของแต่ละช่วง */
+const WAVES = ['ก่อนน้ำมา · ข่าวเตือนภัย', 'ระลอก 1 · สัตว์หนีน้ำขึ้นบ้าน', 'ระลอก 2 · น้ำขัง น้ำเน่า', 'น้ำลดแล้ว · เก็บกวาดบ้าน', 'ระลอก 3 · อันตรายที่มองไม่เห็น'];
+const WATER = [7, 34, 28, 12, 5];          /* ความสูงน้ำด้านหลัง (vh) ของแต่ละช่วง */
 const SWIMMER = [null, 'snake', 'leech', 'rat', null];
-const PLAN = [[0, 1], [1, 2], [2, 3], [3, 1], [4, 1]];   /* [ช่วง, จำนวนเรื่อง] */
+const PLAN = [[0, 1, 0], [1, 2, 1], [2, 3, 1], [3, 1, 0], [4, 1, 0]];   /* [ช่วง, จำนวนเรื่อง, มินิเกมอย่างน้อยกี่เรื่อง] */
 const TOTAL = PLAN.reduce((s, p) => s + p[1], 0);
+/* ตัวเลขรายวันชุดเดียวกับ story-data.js (18 ก.ย.–14 ต.ค. 2569) ใช้ในฉากเปลี่ยนวัน
+   ถ้าแก้ตัวเลขในเรื่องหลัก ต้องแก้ตรงนี้ให้ตรงกันด้วย */
+const DAILY = {
+  flood:  [57, 62, 90, 61, 90, 108, 84, 1883, 5089, 3167, 2784, 1522, 1337, 1210, 1080, 857, 631, 593, 737, 552, 349, 282, 190, 239, 370, 433, 855],
+  danger: [6, 11, 11, 11, 13, 15, 10, 15, 25, 23, 29, 31, 29, 34, 22, 17, 24, 12, 19, 8, 15, 14, 15, 9, 14, 10, 7],
+  leech:  [1, 0, 0, 0, 0, 0, 0, 2, 5, 3, 10, 11, 7, 8, 10, 6, 2, 2, 6, 1, 0, 1, 1, 1, 0, 1, 0],
+};
 const OK_WORDS = ['ถูกต้อง!', 'เยี่ยมเลย!', 'ตัดสินใจได้ดี!', 'ใช่เลย!'];
 const NO_WORDS = ['อุ๊ย! ไม่ใช่วิธีนี้', 'พลาดไปนิด', 'ยังไม่ใช่'];
 const TH_M = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const VB = { snake: '0 0 120 80', rat: '0 0 120 80', centipede: '0 0 120 80', leech: '0 0 120 80', croc: '0 0 140 80',
              'croc-x': '0 0 140 80', boat: '0 0 120 60', 'scene-climb': '0 0 160 110', 'scene-stagnant': '0 0 160 110',
-             'scene-germ': '0 0 160 110', 'scene-night': '0 0 480 320', 'i-heart': '0 0 32 32', 'i-house': '0 0 32 32' };
+             'scene-germ': '0 0 160 110', 'scene-night': '0 0 480 320', 'i-heart': '0 0 32 32', 'i-house': '0 0 32 32',
+             'i-wire': '0 0 64 120', 'g-leg': '0 0 260 150', 'g-sneaker': '0 0 170 100' };
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -1793,9 +2089,11 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const rnd = n => Math.floor(Math.random() * n);
 const pick = a => a[rnd(a.length)];
 const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const byAge = (v, age) => (v && typeof v === 'object' && !Array.isArray(v)) ? (age in v ? v[age] : v._) : v;
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
 const vary = s => s.replace(/\[([^\]]+)\]/g, (_, g) => pick(g.split('|')));
+const nf = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 const dateOf = d => { const t = new Date(2026, 8, 24 + d); return t.getDate() + ' ' + TH_M[t.getMonth()]; };
 const vbOf = id => VB[id] || (id.startsWith('c-') ? '0 0 120 120' : '0 0 64 64');
 const art = (id, cls) => `<svg${cls ? ` class="${cls}"` : ''} viewBox="${vbOf(id)}" aria-hidden="true" focusable="false"><use href="#${id}"/></svg>`;
@@ -1805,28 +2103,156 @@ const ICON = {
   star: '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.9 6.2 6.8.8-5 4.7 1.3 6.7L12 17.6l-6 3.3 1.3-6.7-5-4.7 6.8-.8Z" fill="currentColor"/></svg>',
 };
 
-/* จำว่าเคยเล่นเรื่องไหนไปแล้ว (แยกตามวัย) เพื่อให้รอบใหม่ได้เรื่องใหม่ */
+/* จำว่าเคยเล่นเรื่องไหนไปแล้ว (แยกตามวัย) และการเปิด/ปิดเสียง */
 const SEEN_KEY = 'whoswims-game-seen';
+const SOUND_KEY = 'whoswims-game-sound';
 const MEM = {};
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); if (v) return JSON.parse(v); } catch (e) { /* ใช้ความจำชั่วคราวแทน */ } return k in MEM ? MEM[k] : d; },
   set(k, v) { MEM[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ไม่เป็นไร */ } },
 };
 
-function draw(age, ph, n) {
+/* ---------- เสียง (สร้างด้วย Web Audio ไม่ต้องใช้ไฟล์เสียง) ---------- */
+const SND = (() => {
+  let ctx = null, on = store.get(SOUND_KEY, true);
+  const ac = () => {
+    if (!ctx) { const C = window.AudioContext || window.webkitAudioContext; if (!C) return null; ctx = new C(); }
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  };
+  const tone = (f, t0, dur, type, vol, f2) => {
+    const c = ac(); if (!c) return;
+    const t = c.currentTime + t0, o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine'; o.frequency.setValueAtTime(f, t);
+    if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol || 0.12, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.05);
+  };
+  const noise = (t0, dur, vol, freq) => {
+    const c = ac(); if (!c) return;
+    const t = c.currentTime + t0, len = Math.max(1, Math.floor(c.sampleRate * dur)), b = c.createBuffer(1, len, c.sampleRate), d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / len);
+    const src = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    src.buffer = b; f.type = 'lowpass'; f.frequency.value = freq || 1000; g.gain.value = vol || 0.15;
+    src.connect(f); f.connect(g); g.connect(c.destination); src.start(t);
+  };
+  const FX = {
+    tap: () => tone(700, 0, 0.06, 'triangle', 0.07),
+    ok: () => { tone(784, 0, 0.12, 'triangle', 0.13); tone(1175, 0.1, 0.24, 'triangle', 0.13); },
+    no: () => tone(240, 0, 0.32, 'sawtooth', 0.06, 110),
+    item: () => [988, 1319, 1760].forEach((f, i) => tone(f, i * 0.07, 0.16, 'sine', 0.09)),
+    save: () => { noise(0, 0.35, 0.1, 2600); tone(523, 0.04, 0.3, 'sine', 0.1, 1046); },
+    heart: () => tone(180, 0, 0.35, 'sine', 0.18, 70),
+    splash: () => noise(0, 0.7, 0.16, 900),
+    whoosh: () => noise(0, 0.3, 0.08, 1800),
+    tick: () => tone(1200, 0, 0.04, 'square', 0.035),
+    win: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i * 0.13, 0.3, 'triangle', 0.11)),
+    lose: () => [392, 330, 262].forEach((f, i) => tone(f, i * 0.18, 0.34, 'sine', 0.11)),
+    knock: () => { noise(0, 0.09, 0.22, 600); tone(150, 0, 0.08, 'sine', 0.12); },
+    salt: () => noise(0, 0.5, 0.06, 5000),
+    bite: () => { tone(320, 0, 0.09, 'square', 0.07, 120); noise(0.02, 0.12, 0.12, 1400); },
+    found: () => { tone(880, 0, 0.08, 'sine', 0.1); tone(1320, 0.07, 0.12, 'sine', 0.1); },
+    streak: () => [659, 784, 988, 1319].forEach((f, i) => tone(f, i * 0.06, 0.12, 'triangle', 0.09)),
+  };
+  return {
+    play(k) { if (on && FX[k]) { try { FX[k](); } catch (e) { /* เล่นเสียงไม่ได้ก็ไม่เป็นไร */ } } },
+    get on() { return on; },
+    toggle() { on = !on; store.set(SOUND_KEY, on); if (on) this.play('tap'); return on; },
+  };
+})();
+
+/* ---------- เอฟเฟกต์ภาพ ---------- */
+const canAnim = () => !reduce && typeof document.body.animate === 'function';
+function layer() {
+  let l = $('#fxLayer');
+  if (!l) { l = document.createElement('div'); l.id = 'fxLayer'; l.setAttribute('aria-hidden', 'true'); document.body.appendChild(l); }
+  return l;
+}
+function bump(el, cls) { if (!el || reduce) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+function flyTo(from, to, icon, done) {
+  const a = from && from.getBoundingClientRect(), b = to && to.getBoundingClientRect();
+  if (!canAnim() || !a || !b || !a.width || !b.width) { if (done) done(); return; }
+  const size = clamp(a.width, 34, 76);
+  const el = document.createElement('div');
+  el.className = 'flyer'; el.innerHTML = art(icon);
+  Object.assign(el.style, { width: size + 'px', height: size + 'px', left: (a.left + a.width / 2 - size / 2) + 'px', top: (a.top + a.height / 2 - size / 2) + 'px' });
+  layer().appendChild(el);
+  const dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
+  el.animate([
+    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+    { transform: `translate(${dx * 0.45}px, ${dy * 0.45 - 70}px) scale(1.2)`, opacity: 1, offset: 0.45 },
+    { transform: `translate(${dx}px, ${dy}px) scale(0.3)`, opacity: 0.3 },
+  ], { duration: 800, easing: 'cubic-bezier(.45,0,.35,1)' }).onfinish = () => { el.remove(); if (done) done(); };
+}
+function burst(target, n = 14) {
+  if (!canAnim() || !target) return;
+  const r = target.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  const cols = ['#F2C46B', '#62B48D', '#E8893B', '#E9E3D3'];
+  for (let i = 0; i < n; i++) {
+    const p = document.createElement('i'); p.className = 'spark';
+    p.style.left = cx + 'px'; p.style.top = cy + 'px'; p.style.background = cols[i % cols.length];
+    layer().appendChild(p);
+    const ang = (i / n) * Math.PI * 2 + Math.random() * 0.4, d = 34 + Math.random() * 36;
+    p.animate([{ transform: 'translate(-50%,-50%) scale(1)', opacity: 1 },
+               { transform: `translate(calc(-50% + ${Math.cos(ang) * d}px), calc(-50% + ${Math.sin(ang) * d}px)) scale(.2)`, opacity: 0 }],
+      { duration: 650 + Math.random() * 300, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => p.remove();
+  }
+}
+function flash(color) {
+  if (!canAnim()) return;
+  const f = document.createElement('div'); f.className = 'g-flash'; f.style.background = color;
+  layer().appendChild(f);
+  f.animate([{ opacity: 0 }, { opacity: 1, offset: 0.25 }, { opacity: 0 }], { duration: 520, easing: 'ease-out' }).onfinish = () => f.remove();
+}
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'g-toast'; t.setAttribute('role', 'status'); t.textContent = msg;
+  layer().appendChild(t);
+  setTimeout(() => t.classList.add('out'), 1700);
+  setTimeout(() => t.remove(), 2150);
+}
+function confetti() {
+  if (!canAnim()) return;
+  const cols = ['#E8893B', '#F2C46B', '#62B48D', '#E9E3D3', '#D9534F', '#6FB3C8'];
+  for (let i = 0; i < 70; i++) {
+    const p = document.createElement('i'); p.className = 'confetti';
+    p.style.left = Math.random() * 100 + 'vw'; p.style.background = cols[i % cols.length];
+    p.style.width = 6 + Math.random() * 6 + 'px'; p.style.height = 8 + Math.random() * 8 + 'px';
+    layer().appendChild(p);
+    const drift = (Math.random() - 0.5) * 160, rot = (Math.random() - 0.5) * 900;
+    p.animate([{ transform: 'translate(0,-20px) rotate(0)', opacity: 1 }, { transform: `translate(${drift}px, 105vh) rotate(${rot}deg)`, opacity: 0.9 }],
+      { duration: 2200 + Math.random() * 1600, delay: Math.random() * 500, easing: 'cubic-bezier(.3,.6,.5,1)' }).onfinish = () => p.remove();
+  }
+}
+function heartDrop() {
+  const hs = $$('#hudHearts svg:not(.empty)'), h = hs[hs.length - 1];
+  if (!canAnim() || !h) return;
+  const r = h.getBoundingClientRect(), el = document.createElement('div');
+  el.className = 'flyer heart'; el.innerHTML = art('i-heart');
+  Object.assign(el.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' });
+  layer().appendChild(el);
+  el.animate([{ transform: 'translate(0,0) rotate(0)', opacity: 1 }, { transform: 'translate(-10px, 70px) rotate(-40deg) scale(.6)', opacity: 0 }],
+    { duration: 800, easing: 'cubic-bezier(.5,0,.8,.6)' }).onfinish = () => el.remove();
+}
+
+/* ---------- สุ่มเรื่อง ---------- */
+function draw(age, ph, n, minGames) {
   const pool = EVENTS.filter(e => e.ph === ph && e.ages.includes(age));
   const seenAll = store.get(SEEN_KEY, {});
-  const key = age + ph;
+  const key = age + ph, last = seenAll[key + 'L'] || [];
   let seen = (seenAll[key] || []).filter(id => pool.some(e => e.id === id));
   let out = shuffle(pool.filter(e => !seen.includes(e.id))).slice(0, n);
   if (out.length < n) {          /* เล่นครบทุกเรื่องแล้ว เริ่มวนใหม่ โดยเลี่ยงเรื่องที่เพิ่งเล่นในรอบก่อน */
-    const last = seenAll[key + 'L'] || [];
     seen = [];
     const rest = shuffle(pool.filter(e => !out.includes(e))).sort((x, y) => last.includes(x.id) - last.includes(y.id));
     out = out.concat(rest.slice(0, n - out.length));
   }
+  if (minGames && !out.some(e => e.game)) {     /* ให้ทุกรอบมีมินิเกม โดยเลือกเกมที่ยังไม่ได้เล่นก่อน */
+    const g = shuffle(pool.filter(e => e.game && !out.includes(e)))
+      .sort((x, y) => (seen.includes(x.id) - seen.includes(y.id)) || (last.includes(x.id) - last.includes(y.id)))[0];
+    if (g) out[out.length - 1] = g;
+  }
   seenAll[key + 'L'] = out.map(e => e.id);
-  seenAll[key] = seen.concat(out.map(e => e.id));
+  seenAll[key] = seen.concat(out.map(e => e.id).filter(id => !seen.includes(id)));
   store.set(SEEN_KEY, seenAll);
   return out;
 }
@@ -1840,9 +2266,9 @@ function buildRun(age) {
     3: () => [1 + rnd(3)],
     4: () => [pick([10, 12, 14])],
   };
-  PLAN.forEach(([ph, n]) => {
+  PLAN.forEach(([ph, n, mg]) => {
     const d = days[ph](n);
-    draw(age, ph, n).forEach((ev, j) => rounds.push({ kind: 'event', ev, ph, day: d[j] }));
+    draw(age, ph, n, mg).forEach((ev, j) => rounds.push({ kind: 'event', ev, ph, day: d[j] }));
   });
   return rounds;
 }
@@ -1855,6 +2281,15 @@ function when(r) {
   if (r.ph <= 2) return ['วันที่ ' + r.day, 'จาก 16 วัน · ' + dateOf(r.day)];
   return ['หลังน้ำลด ' + r.day + ' วัน', dateOf(16 + r.day)];
 }
+function dataLine(r) {
+  if (r.ph === 0) return `ข้อมูลจริงวันนั้น: คนแจ้งเรื่องน้ำท่วม ${nf(DAILY.flood[6])} เรื่อง วันรุ่งขึ้นพุ่งเป็น ${nf(DAILY.flood[7])} เรื่อง`;
+  if (r.ph <= 2) {
+    const i = r.day + 6;
+    return `ข้อมูลจริงวันนั้น: คำร้องเรื่องน้ำท่วม ${nf(DAILY.flood[i])} เรื่อง · สัตว์อันตราย ${DAILY.danger[i]} เรื่อง` + (r.ph === 2 && DAILY.leech[i] ? ` · ปลิง ${DAILY.leech[i]} เรื่อง` : '');
+  }
+  if (r.ph === 3) return `น้ำลดแล้ว แต่ข้อมูลจริงวันนั้นยังมีคำร้องเรื่องสัตว์อันตราย ${DAILY.danger[22 + r.day]} เรื่อง`;
+  return 'เชื้อโรคฉี่หนูใช้เวลา 1–2 สัปดาห์กว่าจะแสดงอาการ';
+}
 const fill = (s, r) => vary(String(s)).replace(/\{name\}/g, S.name).replace(/\{district\}/g, S.district).replace(/\{day\}/g, r ? r.day : '');
 
 function prepare(r) {
@@ -1865,7 +2300,7 @@ function prepare(r) {
   r.view = {
     title: f(ev.title), text: f(ev.text), why: f(ev.why), fact: f(ev.fact), learn: f(ev.learn),
     real: real ? [real[0], fill(real[1], r)] : null,
-    choices: shuffle(byAge(ev.c, age).map((c, i) => ({ t: fill(c[0], r), res: fill(c[1], r), ok: i === 0 }))),
+    choices: shuffle(byAge(ev.c, age).map((c, i) => ({ t: fill(c[0], r), res: fill(c[1], r), ok: i === 0, i0: i }))),
   };
   return r.view;
 }
@@ -1892,18 +2327,20 @@ function setWater(ph) {
 
 function startAge(age) {
   const A = AGES[age];
-  S = { age, name: pick(A.names), district: pick(DISTRICTS), hearts: 3, bag: [], log: [], pack: [], rounds: [], i: 0 };
+  S = { age, name: pick(A.names), district: pick(DISTRICTS), hearts: 3, bag: [], log: [], pack: [], rounds: [], i: 0, streak: 0 };
   $('#introPic').innerHTML = art(A.pic);
   $('#introName').textContent = 'คุณคือ ' + S.name;
   $('#introText').textContent = fill(A.intro);
   $('#introDistrict').textContent = 'เขต' + S.district;
   setWater(0);
+  SND.play('tap');
   show('s-intro');
 }
 
 function startPlay() {
   S.rounds = buildRun(S.age);
   S.i = 0;
+  SND.play('tap');
   show('s-play');
   renderRound();
 }
@@ -1914,7 +2351,9 @@ function renderHud(r) {
   $('#hudTrack').innerHTML = PHASES.map((t, i) => `<span class="${i < seg ? 'done' : i === seg ? 'on' : ''}">${t}</span>`).join('');
   const [big, small] = when(r);
   $('#hudDay').innerHTML = `<b>${big}</b><span>${small}</span>`;
-  $('#hudWho').innerHTML = art(AGES[S.age].pic) + `<span>${esc(S.name)}</span>`;
+  const who = $('#hudWho');
+  who.innerHTML = art(AGES[S.age].pic) + `<span>${esc(S.name)}</span>`;
+  who.dataset.hp = S.hearts;
   renderHearts();
   renderBag();
 }
@@ -1923,13 +2362,13 @@ function renderHearts(anim) {
   const el = $('#hudHearts');
   el.innerHTML = [0, 1, 2].map(i => art('i-heart', i < S.hearts ? '' : 'empty')).join('');
   el.setAttribute('aria-label', 'หัวใจเหลือ ' + S.hearts + ' จาก 3 ดวง');
-  if (anim && !reduce) { el.classList.remove('shake', 'pulse'); void el.offsetWidth; el.classList.add(anim); }
+  $('#hudWho').dataset.hp = S.hearts;
+  if (anim) bump(el, anim);
 }
 
 function renderBag(pop) {
-  const btn = $('#hudBag');
   $('#bagCount').textContent = S.bag.length;
-  if (pop && !reduce) { btn.classList.remove('pulse'); void btn.offsetWidth; btn.classList.add('pulse'); }
+  if (pop) bump($('#hudBag'), 'pulse');
   $('#bagBox').innerHTML = S.bag.length
     ? `<p class="bag-h">กระเป๋ายังชีพ · ${S.bag.length} ชิ้น <small>ไอเทมช่วยกันพลาดได้ชิ้นละ 1 ครั้ง</small></p><ul>` +
       S.bag.map(b => { const it = ITEMS[b.id]; return `<li class="${b.used ? 'used' : ''}">${art(it[1])}<div><b>${it[0]}</b><span>${b.used ? 'ใช้ไปแล้ว' : it[2]}</span></div></li>`; }).join('') + '</ul>'
@@ -1943,23 +2382,60 @@ function toggleBag(force) {
   btn.setAttribute('aria-expanded', String(open));
 }
 
+/* ---------- ฉากเปลี่ยนวัน ---------- */
+function transition(r, done) {
+  const t = $('#trans');
+  if (reduce || !t) { done(); return; }
+  const [big] = when(r);
+  t.dataset.ph = r.ph;
+  t.style.setProperty('--lv', [16, 56, 48, 20, 8][r.ph] + '%');
+  t.innerHTML = `<div class="t-sky"></div><div class="t-water"></div>
+    <div class="t-text"><p class="t-wave">${WAVES[r.ph]}</p><b>${big}</b><span>${dateOf(r.ph <= 2 ? r.day : 16 + r.day)} 2569</span>
+    <p class="t-data">${dataLine(r)}</p><small>แตะเพื่อข้าม</small></div>`;
+  t.hidden = false;
+  t.classList.remove('in', 'out'); void t.offsetWidth; t.classList.add('in');
+  t.focus({ preventScroll: true });
+  SND.play(r.ph === 1 || r.ph === 2 ? 'splash' : 'whoosh');
+  let over = false;
+  const key = e => { if (['Enter', ' ', 'Escape'].includes(e.key)) { e.preventDefault(); e.stopPropagation(); finish(); } };
+  const finish = () => {
+    if (over) return;
+    over = true; clearTimeout(timer);
+    document.removeEventListener('keydown', key, true);
+    done();
+    t.classList.add('out');
+    setTimeout(() => { t.hidden = true; t.classList.remove('in', 'out'); }, 380);
+  };
+  const timer = setTimeout(finish, 2100);
+  t.onclick = finish;
+  document.addEventListener('keydown', key, true);
+}
+
 /* ---------- รอบเกม ---------- */
 function renderRound() {
-  const r = S.rounds[S.i];
+  const r = S.rounds[S.i], prev = S.rounds[S.i - 1];
   toggleBag(false);
-  setWater(r.ph);
-  renderHud(r);
-  if (r.kind === 'pack') renderPack(r); else renderEvent(r);
-  window.scrollTo(0, 0);
-  const h = $('#card h2');
-  if (h) h.focus({ preventScroll: true });
+  const paint = () => {
+    setWater(r.ph);
+    renderHud(r);
+    if (r.kind === 'pack') renderPack(r);
+    else if (r.ev.game && GAMES[r.ev.game]) GAMES[r.ev.game](r, prepare(r));
+    else renderEvent(r);
+    window.scrollTo(0, 0);
+    bump(card(), 'enter');
+    const h = $('#card h2');
+    if (h) h.focus({ preventScroll: true });
+  };
+  if (!prev || prev.ph !== r.ph || prev.day !== r.day) transition(r, paint); else paint();
 }
+
+const scene = (id, ph) => `<div class="g-scene" data-art="${id}" data-ph="${ph}"><div class="g-sky"></div>${art(id, 'actor')}<div class="g-pool"></div></div>`;
 
 function renderPack(r) {
   const age = S.age;
   r.tiles = r.tiles || shuffle([...shuffle(PACK.good[age]).slice(0, 4), ...shuffle(PACK.bad[age]).slice(0, 2)]);
   card().innerHTML = `
-    <div class="g-scene">${art('i-pack')}</div>
+    ${scene('i-pack', 0)}
     <p class="g-kicker">เตรียมตัว · ก่อนน้ำมา</p>
     <h2 tabindex="-1">จัดกระเป๋าฉุกเฉิน</h2>
     <p class="g-text">${esc(byAge(PACK.text, age))}</p>
@@ -1977,8 +2453,10 @@ function renderPack(r) {
     if (r.done) return;
     const on = t.getAttribute('aria-pressed') === 'true';
     const n = tiles.filter(x => x.getAttribute('aria-pressed') === 'true').length;
-    if (!on && n >= 3) { if (!reduce) { go.classList.remove('shake'); void go.offsetWidth; go.classList.add('shake'); } return; }
+    if (!on && n >= 3) { bump(go, 'shake'); toast('เลือกได้แค่ 3 อย่าง แตะอีกครั้งเพื่อเอาออก'); return; }
     t.setAttribute('aria-pressed', String(!on));
+    SND.play('tap');
+    if (!on) { const it = ITEMS[t.dataset.id] || DECOY[t.dataset.id]; flyTo($('svg', t), $('.g-scene .actor', card()), it[1], () => bump($('.g-scene', card()), 'gulp')); }
     update();
   }));
   go.addEventListener('click', () => finishPack(r, tiles));
@@ -1997,7 +2475,7 @@ function finishPack(r, tiles) {
   const good = picked.filter(id => ITEMS[id]);
   good.forEach(id => S.bag.push({ id, used: false }));
   S.pack = picked;
-  renderBag(true);
+  renderBag();
   const fb = $('#fb');
   fb.className = 'g-fb ' + (good.length === 3 ? 'ok' : 'mid');
   fb.innerHTML = `
@@ -2007,13 +2485,16 @@ function finishPack(r, tiles) {
     <p class="g-tip">${art('i-pack')}<span>ของในกระเป๋าช่วยกันพลาดได้ชิ้นละ 1 ครั้ง แตะ “กระเป๋า” ด้านบนเพื่อดูของทั้งหมด</span></p>
     <button type="button" class="cta-btn primary g-next">ไปต่อ →</button>`;
   revealFeedback(fb);
+  SND.play(good.length === 3 ? 'ok' : 'tap');
+  good.forEach((id, k) => setTimeout(() => flyTo($(`.g-tile[data-id="${id}"] svg`, card()), $('#hudBag'), ITEMS[id][1], () => { bump($('#hudBag'), 'pulse'); SND.play('item'); }), 520 + 180 * k));
+  tiles.filter(t => t.classList.contains('bad')).forEach(t => bump(t, 'shake'));
 }
 
 function renderEvent(r) {
   const v = prepare(r);
   const n = S.rounds.filter(x => x.kind === 'event').indexOf(r) + 1;
   card().innerHTML = `
-    <div class="g-scene">${art(r.ev.art)}</div>
+    ${scene(r.ev.art, r.ph)}
     <p class="g-kicker">เหตุการณ์ที่ ${n} จาก ${TOTAL}</p>
     <h2 tabindex="-1">${esc(v.title)}</h2>
     <p class="g-text">${esc(v.text)}</p>
@@ -2030,35 +2511,42 @@ function gainBox(cls, icon, title, sub) {
 
 function choose(i) {
   const r = S.rounds[S.i];
-  if (!r || r.kind !== 'event' || r.done) return;
+  if (!r || r.kind !== 'event' || r.done || i < 0) return;
   r.done = true;
+  if (r.stop) r.stop();
   const v = r.view, c = v.choices[i], ok = c.ok;
   $$('.g-choice', card()).forEach((b, j) => {
     b.disabled = true;
     b.classList.add(v.choices[j].ok ? 'right' : j === i ? 'wrong' : 'dim');
-    if (j === i) b.setAttribute('aria-label', (ok ? 'คุณเลือกข้อนี้ ถูกต้อง: ' : 'คุณเลือกข้อนี้ ยังไม่ถูก: ') + c.t);
+    if (j === i) { b.setAttribute('aria-label', (ok ? 'คุณเลือกข้อนี้ ถูกต้อง: ' : 'คุณเลือกข้อนี้ ยังไม่ถูก: ') + c.t); bump(b, 'picked'); }
   });
-  let gain = '', saved = null;
+  let gain = '', saved = null, fx = 'none', fxIcon = null;
   if (ok) {
+    S.streak++;
     const id = r.ev.give, it = ITEMS[id], have = S.bag.find(b => b.id === id);
-    if (!have) { S.bag.push({ id, used: false }); gain = gainBox('get', it[1], 'ได้ไอเทม: ' + it[0], it[2]); renderBag(true); }
-    else if (have.used) { have.used = false; gain = gainBox('get', it[1], 'ได้' + it[0] + 'มาใหม่', it[2]); renderBag(true); }
-    else if (S.hearts < 3) { S.hearts++; gain = gainBox('heal', 'i-heart', 'มี' + it[0] + 'อยู่แล้ว แลกเป็นหัวใจคืน 1 ดวง', 'หัวใจเป็น ' + S.hearts + ' ดวง'); renderHearts('pulse'); }
+    if (!have) { S.bag.push({ id, used: false }); gain = gainBox('get', it[1], 'ได้ไอเทม: ' + it[0], it[2]); fx = 'item'; fxIcon = it[1]; }
+    else if (have.used) { have.used = false; gain = gainBox('get', it[1], 'ได้' + it[0] + 'มาใหม่', it[2]); fx = 'item'; fxIcon = it[1]; }
+    else if (S.hearts < 3) { S.hearts++; gain = gainBox('heal', 'i-heart', 'มี' + it[0] + 'อยู่แล้ว แลกเป็นหัวใจคืน 1 ดวง', 'หัวใจเป็น ' + S.hearts + ' ดวง'); fx = 'heal'; }
     else {
       const alt = shuffle(BONUS).find(x => !S.bag.some(b => b.id === x));
-      if (alt) { S.bag.push({ id: alt, used: false }); gain = gainBox('get', ITEMS[alt][1], 'ได้ไอเทมใหม่: ' + ITEMS[alt][0], 'มี' + it[0] + 'อยู่แล้ว เลยได้' + ITEMS[alt][0] + 'แทน · ' + ITEMS[alt][2]); renderBag(true); }
+      if (alt) { S.bag.push({ id: alt, used: false }); gain = gainBox('get', ITEMS[alt][1], 'ได้ไอเทมใหม่: ' + ITEMS[alt][0], 'มี' + it[0] + 'อยู่แล้ว เลยได้' + ITEMS[alt][0] + 'แทน · ' + ITEMS[alt][2]); fx = 'item'; fxIcon = ITEMS[alt][1]; }
       else gain = gainBox('get', it[1], 'มี' + it[0] + 'อยู่แล้ว', 'กระเป๋าเกือบครบทุกอย่าง และหัวใจเต็ม 3 ดวง เก่งมาก');
     }
+    renderBag();
   } else {
+    S.streak = 0;
     const g = r.ev.guard && S.bag.find(b => b.id === r.ev.guard && !b.used);
     if (g) {
       g.used = true; saved = g.id;
       const it = ITEMS[g.id];
       gain = gainBox('saved', it[1], it[0] + 'ในกระเป๋าช่วยไว้!', 'ไม่เสียหัวใจ แต่ใช้' + it[0] + 'ไปแล้ว');
+      fx = 'save';
       renderBag(true);
     } else {
+      heartDrop();
       S.hearts--;
       gain = gainBox('loss', 'i-heart', 'เสียหัวใจ 1 ดวง', S.hearts > 0 ? 'เหลือ ' + S.hearts + ' ดวง' : 'หัวใจหมดแล้ว');
+      fx = 'loss';
       renderHearts('shake');
     }
   }
@@ -2077,12 +2565,25 @@ function choose(i) {
     ${v.fact ? `<p class="g-fact"><b>จากข้อมูลจริง</b>${esc(v.fact)}</p>` : ''}
     <button type="button" class="cta-btn primary g-next">${S.hearts <= 0 ? 'ดูผล →' : last ? 'ดูผลการเอาตัวรอด →' : 'ไปต่อ →'}</button>`;
   revealFeedback(fb);
+  if (ok) { SND.play('ok'); bump($('#hudWho'), 'happy'); flash('rgba(98,180,141,.16)'); }
+  else { SND.play('no'); flash('rgba(217,83,79,.3)'); bump(card(), 'hit'); }
+  const icon = $('.g-gain svg', fb);
+  setTimeout(() => {
+    if (fx === 'item') { burst(icon); flyTo(icon, $('#hudBag'), fxIcon, () => { bump($('#hudBag'), 'pulse'); SND.play('item'); }); }
+    else if (fx === 'heal') { burst(icon); flyTo(icon, $('#hudHearts'), 'i-heart', () => { renderHearts('pulse'); SND.play('item'); }); }
+    else if (fx === 'save') { bump(icon, 'shield'); SND.play('save'); }
+    else if (fx === 'loss') SND.play('heart');
+  }, reduce ? 0 : 480);
+  if (ok && (S.streak === 3 || S.streak === 5)) {
+    const n = S.streak;
+    setTimeout(() => { toast(n === 3 ? 'ถูกติดกัน 3 ข้อ! เก่งมาก' : 'ถูกติดกัน 5 ข้อ! สุดยอด'); SND.play('streak'); }, 1100);
+  }
 }
 
 function revealFeedback(fb) {
   fb.hidden = false;
   const next = $('.g-next', fb);
-  next.addEventListener('click', nextRound);
+  next.addEventListener('click', () => { if (next.disabled) return; next.disabled = true; nextRound(); });
   next.focus({ preventScroll: true });
   const top = fb.getBoundingClientRect().top;
   const hud = $('#hud') ? $('#hud').offsetHeight : 0;
@@ -2094,6 +2595,378 @@ function nextRound() {
   S.i++;
   renderRound();
 }
+
+/* ---------- มินิเกม ---------- */
+function gameShell(r, v, inner) {
+  const n = S.rounds.filter(x => x.kind === 'event').indexOf(r) + 1;
+  card().innerHTML = `
+    <p class="g-kicker">เหตุการณ์ที่ ${n} จาก ${TOTAL} · มินิเกม</p>
+    <h2 tabindex="-1">${esc(v.title)}</h2>
+    <p class="g-text">${esc(v.text)}</p>
+    ${inner}
+    <div class="g-fb" id="fb" hidden aria-live="polite"></div>`;
+}
+const opt = (v, i0) => v.choices.find(c => c.i0 === i0);
+function resolve(i0) {
+  const r = S.rounds[S.i];
+  if (!r || r.done) return;
+  const mg = $('#mg');
+  if (mg) mg.classList.add('done');
+  $$('.mg-ctrl button, .mg-tools button, .mg-steps button, .mg-hot, .shoe-btn', card()).forEach(b => { b.disabled = true; });
+  choose(r.view.choices.findIndex(c => c.i0 === i0));
+}
+function countdown(sec, bar, label, onEnd, onTick) {
+  const t0 = performance.now();
+  let raf = 0, live = true, shown = Math.ceil(sec);
+  const step = now => {
+    if (!live) return;
+    const left = Math.max(0, sec - (now - t0) / 1000);
+    bar.style.transform = `scaleX(${left / sec})`;
+    bar.classList.toggle('low', left < sec * 0.3);
+    const s = Math.ceil(left);
+    if (s !== shown) { shown = s; if (label) label.textContent = s + ' วิ'; if (s <= 3 && s > 0) SND.play('tick'); }
+    if (onTick) onTick(1 - left / sec);
+    if (left <= 0) { live = false; onEnd(); return; }
+    raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
+  return { stop() { live = false; cancelAnimationFrame(raf); } };
+}
+/* ลากของไปวางบนเป้าหมาย หรือแตะเพื่อใช้ (ใช้ได้ทั้งเมาส์ นิ้ว และคีย์บอร์ด) */
+function dragTool(btn, target, onUse) {
+  let sx = 0, sy = 0, ghost = null, dragging = false, skip = false, pid = null;
+  const over = e => { const t = target.getBoundingClientRect(), pad = 28; return e.clientX > t.left - pad && e.clientX < t.right + pad && e.clientY > t.top - pad && e.clientY < t.bottom + pad; };
+  const clear = () => { if (ghost) ghost.remove(); ghost = null; dragging = false; btn.classList.remove('lifted'); target.classList.remove('over'); };
+  btn.addEventListener('pointerdown', e => {
+    if (btn.disabled) return;
+    sx = e.clientX; sy = e.clientY; dragging = false; pid = e.pointerId;
+    try { btn.setPointerCapture(pid); } catch (err) { /* ไม่เป็นไร */ }
+  });
+  btn.addEventListener('pointermove', e => {
+    if (pid !== e.pointerId || btn.disabled) return;
+    if (!dragging && Math.hypot(e.clientX - sx, e.clientY - sy) > 10) {
+      dragging = true;
+      ghost = document.createElement('div'); ghost.className = 'ghost'; ghost.innerHTML = $('svg', btn).outerHTML;
+      layer().appendChild(ghost); btn.classList.add('lifted');
+    }
+    if (dragging) { ghost.style.left = e.clientX + 'px'; ghost.style.top = e.clientY + 'px'; target.classList.toggle('over', over(e)); }
+  });
+  btn.addEventListener('pointerup', e => {
+    if (pid !== e.pointerId) return;
+    pid = null;
+    if (dragging) { skip = true; const hit = over(e); clear(); if (hit) onUse(); }
+  });
+  btn.addEventListener('pointercancel', e => { if (pid !== e.pointerId) return; pid = null; clear(); });
+  btn.addEventListener('click', () => { if (skip) { skip = false; return; } if (!btn.disabled) onUse(); });
+}
+
+const BATH_SVG = `<svg class="bath" viewBox="0 0 360 220" aria-hidden="true">
+  <defs><clipPath id="mgClipDrain"><rect width="360" height="200"/></clipPath><clipPath id="mgClipBowl"><rect width="360" height="139"/></clipPath></defs>
+  <rect width="360" height="160" fill="#1C3A42"/>
+  <path d="M30 0V160M60 0V160M90 0V160M120 0V160M150 0V160M180 0V160M210 0V160M240 0V160M270 0V160M300 0V160M330 0V160M0 30H360M0 60H360M0 90H360M0 120H360" stroke="rgba(233,227,211,.06)"/>
+  <rect y="160" width="360" height="60" fill="#27474F"/>
+  <path d="M0 160H360" stroke="rgba(233,227,211,.18)" stroke-width="2"/>
+  <path d="M22 0V112Q22 136 46 136H84" fill="none" stroke="#3E5D64" stroke-width="10"/>
+  <rect x="88" y="58" width="74" height="46" rx="8" fill="#E9E3D3"/>
+  <rect x="96" y="50" width="58" height="10" rx="4" fill="#D3CCBA"/>
+  <ellipse class="lid-open" cx="125" cy="96" rx="34" ry="36" fill="#F4F1E8" stroke="#C9C2B0" stroke-width="2"/>
+  <path d="M86 138Q125 162 164 138L156 176Q125 186 94 176Z" fill="#E9E3D3"/>
+  <ellipse cx="125" cy="138" rx="40" ry="13" fill="#F4F1E8"/>
+  <ellipse cx="125" cy="139" rx="29" ry="8" fill="#0D181C"/>
+  <g clip-path="url(#mgClipBowl)"><g class="snk snk-bowl"><path d="M116 150Q114 120 125 106Q136 120 134 150Z" fill="#6FA35B"/><circle cx="121" cy="115" r="2.2" fill="#0D181C"/><circle cx="129" cy="115" r="2.2" fill="#0D181C"/><path d="M125 106v-7m0 0l-3-3m3 3l3-3" stroke="#D9534F" stroke-width="1.6" fill="none"/></g></g>
+  <ellipse class="lid-shut" cx="125" cy="136" rx="41" ry="14" fill="#F4F1E8" stroke="#C9C2B0" stroke-width="2"/>
+  <g class="brick"><rect x="20" y="176" width="44" height="22" rx="3" fill="#B9662A"/><path d="M20 187H64M42 176V187M31 187V198M53 187V198" stroke="#8E4A1C" stroke-width="2"/></g>
+  <ellipse cx="300" cy="200" rx="24" ry="8" fill="#0A1214"/>
+  <g clip-path="url(#mgClipDrain)"><g class="snk snk-drain"><path d="M291 212Q289 186 300 172Q311 186 309 212Z" fill="#6FA35B"/><circle cx="296" cy="181" r="2.2" fill="#0D181C"/><circle cx="304" cy="181" r="2.2" fill="#0D181C"/><path d="M300 172v-7m0 0l-3-3m3 3l3-3" stroke="#D9534F" stroke-width="1.6" fill="none"/></g></g>
+  <g class="grate"><ellipse cx="300" cy="200" rx="25" ry="8.5" fill="#93A6A5"/><path d="M281 200H319M290 194V206M300 192V208M310 194V206" stroke="#5E7372" stroke-width="2"/></g>
+</svg>`;
+
+const ROOM_SVG = `<svg class="room" viewBox="0 0 360 240" preserveAspectRatio="none" aria-hidden="true">
+  <rect width="360" height="240" fill="#2B4650"/>
+  <rect y="168" width="360" height="72" fill="#35565F"/>
+  <rect x="24" y="58" width="62" height="110" rx="3" fill="#5A4030"/><circle cx="76" cy="116" r="3" fill="#C9A86A"/>
+  <rect x="250" y="26" width="76" height="52" rx="4" fill="#1B3138" stroke="#4E6A70" stroke-width="3"/><circle cx="300" cy="44" r="9" fill="#E9E3D3" opacity=".8"/>
+  <rect x="150" y="104" width="78" height="64" rx="4" fill="#4A3A2C"/><rect x="158" y="112" width="28" height="48" rx="2" fill="#5C4838"/><rect x="192" y="112" width="28" height="48" rx="2" fill="#5C4838"/>
+  <path d="M0 206Q45 198 90 206T180 206T270 206T360 206V240H0Z" fill="#3E7480" opacity=".75"/>
+  <path d="M30 222q10-4 20 0M200 228q12-4 24 0M300 218q10-4 20 0" stroke="#9DC3CC" stroke-width="2" fill="none" opacity=".5"/>
+</svg>`;
+const DARK = {
+  slots: { snake: [[20, 78], [66, 80]], centipede: [[80, 30], [30, 34]], leech: [[46, 88], [86, 88]], wire: [[60, 44], [12, 40]] },
+  name: { snake: 'งู', centipede: 'ตะขาบ', leech: 'ปลิง', wire: 'สายไฟห้อยใกล้น้ำ' },
+  art: { snake: 'snake', centipede: 'centipede', leech: 'leech', wire: 'i-wire' },
+};
+
+const GAMES = {
+  /* ปิดฝาชักโครก วางของหนักทับ ใส่ตะแกรง ให้ทันเวลา */
+  lockdown(r, v) {
+    const sec = byAge({ k: 14, e: 16, _: 12 }, S.age);
+    gameShell(r, v, `
+      <div class="mg mg-bath" id="mg">
+        <div class="mg-timer"><i id="mgBar"></i><b id="mgSec">${sec} วิ</b></div>
+        ${BATH_SVG}
+        <button type="button" class="mg-hot" data-k="lid" style="left:63%;top:36%" disabled><b>1</b>ปิดฝาชักโครก</button>
+        <button type="button" class="mg-hot" data-k="brick" style="left:19%;top:64%" disabled><b>2</b>วางของหนัก</button>
+        <button type="button" class="mg-hot" data-k="drain" style="left:80%;top:72%" disabled><b>3</b>ใส่ตะแกรง</button>
+      </div>
+      <ul class="mg-list"><li data-k="lid">ปิดฝาชักโครก</li><li data-k="brick">หาของหนักทับฝา</li><li data-k="drain">ใส่ตะแกรงที่ปลายท่อ</li></ul>
+      <div class="mg-ctrl"><button type="button" class="cta-btn primary" id="mgStart">เริ่ม! มีเวลา ${sec} วินาที</button><button type="button" class="cta-btn" id="mgSkip">${esc(opt(v, 2).t)}</button></div>`);
+    const mg = $('#mg'), svg = $('.bath', mg), done = new Set();
+    const snk = { drain: $('.snk-drain', svg), bowl: $('.snk-bowl', svg) };
+    const rise = (el, p) => { el.style.transform = `translateY(${(1 - p) * 46}px)`; };
+    let timer = null;
+    const timeout = () => {
+      $$('.mg-hot', mg).forEach(b => { b.disabled = true; });
+      if (!done.has('drain')) { rise(snk.drain, 1); snk.drain.classList.add('pop'); }
+      else if (!done.has('lid')) { rise(snk.bowl, 1); snk.bowl.classList.add('pop'); }
+      else svg.classList.add('rattle');
+      mg.classList.add('lose'); SND.play('bite'); flash('rgba(217,83,79,.3)');
+      setTimeout(() => resolve(1), 1000);
+    };
+    const act = k => {
+      if (done.has(k) || r.done) return;
+      const hot = $(`.mg-hot[data-k="${k}"]`, mg);
+      if (k === 'brick' && !done.has('lid')) { toast('ปิดฝาก่อน แล้วค่อยวางของหนักทับ'); bump(hot, 'shake'); SND.play('no'); return; }
+      done.add(k);
+      svg.classList.add({ lid: 'shut', brick: 'braced', drain: 'grated' }[k]);
+      hot.classList.add('ok'); hot.disabled = true; $('b', hot).textContent = '✓'; hot.setAttribute('aria-label', hot.textContent + ' เสร็จแล้ว');
+      $(`.mg-list li[data-k="${k}"]`, card()).classList.add('done');
+      SND.play(k === 'brick' ? 'knock' : 'found'); burst(hot, 8);
+      if (k === 'drain') rise(snk.drain, 0);
+      if (k === 'lid') rise(snk.bowl, 0);
+      if (done.size === 3) { timer.stop(); mg.classList.add('win'); SND.play('ok'); setTimeout(() => resolve(0), 700); }
+    };
+    $('#mgStart').addEventListener('click', () => {
+      $('#mgStart').hidden = true;
+      $$('.mg-hot', mg).forEach(b => { b.disabled = false; });
+      mg.classList.add('live');
+      SND.play('tap');
+      timer = countdown(sec, $('#mgBar'), $('#mgSec'), timeout, p => {
+        const k = clamp(p * 1.15 - 0.1);
+        if (!done.has('drain')) rise(snk.drain, k * 0.85);
+        if (!done.has('lid')) rise(snk.bowl, k * 0.75);
+      });
+      r.stop = () => timer.stop();
+      $('.mg-hot', mg).focus({ preventScroll: true });
+    });
+    $('#mgSkip').addEventListener('click', () => { if (timer) timer.stop(); resolve(2); });
+    $$('.mg-hot', mg).forEach(b => b.addEventListener('click', () => act(b.dataset.k)));
+  },
+
+  /* ส่องไฟฉายหาอันตราย 3 อย่างในห้องมืด มีไฟฉายในกระเป๋าแสงจะกว้างกว่า */
+  dark(r, v) {
+    const torch = S.bag.some(b => b.id === 'torch' && !b.used);
+    const sec = 20;
+    const hz = shuffle(Object.keys(DARK.slots)).slice(0, 3).map(k => { const s = pick(DARK.slots[k]); return { k, x: s[0], y: s[1] }; });
+    gameShell(r, v, `
+      <p class="mg-chip ${torch ? 'ok' : ''}">${art(torch ? 'i-torch' : 'i-phone')}<span>${torch ? 'มีไฟฉายในกระเป๋า แสงส่องได้กว้าง' : 'ไม่มีไฟฉาย ต้องใช้แสงจากมือถือ ซึ่งแคบกว่า'}</span></p>
+      <div class="mg mg-dark" id="mg" tabindex="0" aria-label="ห้องมืด ลากนิ้วหรือกดปุ่มลูกศรเพื่อส่องไฟ">
+        ${ROOM_SVG}
+        ${hz.map(h => `<div class="hz hz-${h.k}" data-k="${h.k}" style="left:${h.x}%;top:${h.y}%">${art(DARK.art[h.k])}<span>${DARK.name[h.k]}</span></div>`).join('')}
+        <div class="mg-shade" id="shade"></div>
+        <div class="mg-timer"><i id="mgBar"></i><b id="mgSec">${sec} วิ</b></div>
+        <p class="mg-cover" id="mgCover">กด “เริ่มส่องไฟ” แล้วลากนิ้วหรือเมาส์ไปรอบห้อง</p>
+        <p class="mg-count" id="mgCount" aria-live="polite">เจอแล้ว 0 / 3</p>
+      </div>
+      <div class="mg-ctrl"><button type="button" class="cta-btn primary" id="mgStart">เริ่มส่องไฟ! มีเวลา ${sec} วินาที</button><button type="button" class="cta-btn" id="mgSkip">${esc(opt(v, 2).t)}</button></div>`);
+    const mg = $('#mg'), shade = $('#shade');
+    let lx = 0.5, ly = 0.08, live = false, timer = null, found = 0;
+    const R = () => mg.clientWidth * (torch ? 0.25 : 0.155);
+    const paint = () => {
+      const w = mg.clientWidth, h = mg.clientHeight;
+      shade.style.setProperty('--x', lx * w + 'px');
+      shade.style.setProperty('--y', ly * h + 'px');
+      if (live) shade.style.setProperty('--r', R() + 'px');
+      if (!live) return;
+      $$('.hz:not(.found)', mg).forEach(el => {
+        const hx = parseFloat(el.style.left) / 100 * w, hy = parseFloat(el.style.top) / 100 * h;
+        if (Math.hypot(hx - lx * w, hy - ly * h) >= R() * 0.6) return;
+        el.classList.add('found'); found++;
+        $('#mgCount').textContent = `เจอแล้ว ${found} / 3 · ${DARK.name[el.dataset.k]}`;
+        SND.play('found'); burst(el, 10);
+        if (found === 3) {
+          live = false; timer.stop(); mg.classList.add('win');
+          shade.style.setProperty('--r', w * 1.5 + 'px');
+          setTimeout(() => resolve(0), 900);
+        }
+      });
+    };
+    const moveTo = e => { if (!live) return; const b = mg.getBoundingClientRect(); lx = clamp((e.clientX - b.left) / b.width); ly = clamp((e.clientY - b.top) / b.height); paint(); };
+    mg.addEventListener('pointermove', moveTo);
+    mg.addEventListener('pointerdown', moveTo);
+    mg.addEventListener('keydown', e => {
+      const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+      if (!d || !live) return;
+      e.preventDefault(); lx = clamp(lx + d[0] * 0.06); ly = clamp(ly + d[1] * 0.08); paint();
+    });
+    $('#mgStart').addEventListener('click', () => {
+      $('#mgStart').hidden = true; $('#mgCover').hidden = true;
+      live = true; mg.classList.add('live'); paint();
+      mg.focus({ preventScroll: true });
+      SND.play('tap');
+      timer = countdown(sec, $('#mgBar'), $('#mgSec'), () => {
+        live = false; mg.classList.add('lose');
+        $$('.hz:not(.found)', mg).forEach(el => el.classList.add('missed'));
+        shade.style.setProperty('--r', mg.clientWidth * 1.5 + 'px');
+        SND.play('bite'); flash('rgba(217,83,79,.28)');
+        setTimeout(() => resolve(1), 1200);
+      });
+      r.stop = () => { live = false; timer.stop(); };
+    });
+    $('#mgSkip').addEventListener('click', () => { live = false; if (timer) timer.stop(); resolve(2); });
+    paint();
+  },
+
+  /* แตะเคาะรองเท้า 3 ครั้งก่อนใส่ */
+  shoes(r, v) {
+    gameShell(r, v, `
+      <div class="mg mg-shoe" id="mg">
+        <button type="button" class="shoe-btn" id="shoe" aria-label="แตะเพื่อเคาะรองเท้า">${art('g-sneaker')}</button>
+        <div class="cent" id="cent">${art('centipede')}</div>
+        <div class="hand" id="hand">${art('i-hand')}</div>
+        <div class="bite" id="bite">งับ!</div>
+        <p class="mg-count" id="mgCount">แตะรองเท้าเพื่อเคาะ · 0 / 3</p>
+      </div>
+      <div class="mg-ctrl"><button type="button" class="cta-btn" id="mgB1">${esc(opt(v, 1).t)}</button><button type="button" class="cta-btn" id="mgB2">${esc(opt(v, 2).t)}</button></div>`);
+    const shoe = $('#shoe'), mg = $('#mg');
+    let taps = 0;
+    shoe.addEventListener('click', () => {
+      if (r.done || taps >= 3) return;
+      taps++; bump(shoe, 'knock'); SND.play('knock');
+      $('#mgCount').textContent = taps < 3 ? `แตะรองเท้าเพื่อเคาะ · ${taps} / 3` : 'มีอะไรหล่นออกมา!';
+      if (taps === 3) {
+        shoe.disabled = true; $('#mgB1').disabled = true; $('#mgB2').disabled = true;
+        $('#cent').classList.add('fall');
+        setTimeout(() => SND.play('found'), 300);
+        setTimeout(() => resolve(0), 1400);
+      }
+    });
+    const hurt = i0 => {
+      if (r.done || taps >= 3) return;
+      shoe.disabled = true; $('#mgB1').disabled = true; $('#mgB2').disabled = true;
+      mg.classList.add(i0 === 1 ? 'wear' : 'reach');
+      setTimeout(() => { $('#bite').classList.add('on'); SND.play('bite'); flash('rgba(217,83,79,.3)'); }, 420);
+      setTimeout(() => resolve(i0), 1100);
+    };
+    $('#mgB1').addEventListener('click', () => hurt(1));
+    $('#mgB2').addEventListener('click', () => hurt(2));
+  },
+
+  /* ลากหรือแตะเลือกของไปใช้กับปลิง */
+  leech(r, v) {
+    const tools = byAge(r.ev.tools, S.age).map((t, i) => ({ icon: t[0], label: t[1], i }));
+    gameShell(r, v, `
+      <div class="mg mg-leg" id="mg">
+        ${art('g-leg', 'leg')}
+        <div class="mark" id="mark"></div>
+        <div class="lch" id="lch">${art('leech')}</div>
+        <div class="fxa" id="fxa"></div>
+      </div>
+      <p class="mg-hint">ลากของไปวางที่ปลิง หรือแตะเลือกก็ได้</p>
+      <div class="mg-tools">${shuffle(tools).map(t => `<button type="button" class="tool" data-i="${t.i}" data-icon="${t.icon}">${art(t.icon)}<span>${esc(t.label)}</span></button>`).join('')}</div>`);
+    const mg = $('#mg'), lch = $('#lch'), fxa = $('#fxa'), mark = $('#mark');
+    const apply = (i, icon) => {
+      if (r.done || mg.classList.contains('busy')) return;
+      mg.classList.add('busy');
+      $$('.tool', card()).forEach(b => { b.disabled = true; });
+      fxa.innerHTML = art(icon); fxa.className = 'fxa on t' + i;
+      if (i === 0) {
+        SND.play('salt');
+        for (let k = 0; k < 16; k++) {
+          const g = document.createElement('i'); g.className = 'grain';
+          g.style.left = (44 + Math.random() * 18) + '%'; g.style.animationDelay = (0.35 + k * 0.04) + 's';
+          mg.appendChild(g);
+        }
+        setTimeout(() => lch.classList.add('shrink'), 800);
+        setTimeout(() => { lch.classList.add('off'); SND.play('found'); }, 1350);
+        setTimeout(() => resolve(0), 1900);
+      } else if (i === 1) {
+        setTimeout(() => lch.classList.add('stretch'), 300);
+        setTimeout(() => { lch.classList.add('snap'); mark.classList.add('on'); SND.play('bite'); flash('rgba(217,83,79,.3)'); }, 950);
+        setTimeout(() => resolve(1), 1600);
+      } else {
+        const fire = icon === 'i-flame';
+        setTimeout(() => {
+          mark.classList.add('on', fire ? 'burn' : 'scratch');
+          if (!fire) mark.innerHTML = art('i-claw');
+          if (fire) lch.classList.add('off');
+          SND.play('bite'); flash(fire ? 'rgba(232,137,59,.32)' : 'rgba(217,83,79,.3)');
+        }, 700);
+        setTimeout(() => resolve(2), 1500);
+      }
+    };
+    $$('.tool', card()).forEach(b => dragTool(b, lch, () => apply(+b.dataset.i, b.dataset.icon)));
+  },
+
+  /* ล้างแผลก่อน แล้วกดผ้าค้างไว้จนวงเต็ม */
+  bleed(r, v) {
+    const HOLD = 2.5;
+    gameShell(r, v, `
+      <div class="mg mg-leg" id="mg">
+        ${art('g-leg', 'leg')}
+        <div class="wound" id="wound"><b></b><i></i><i></i><i></i></div>
+        <div class="cloth" id="cloth"></div>
+        <div class="fxa" id="fxa"></div>
+      </div>
+      <div class="mg-steps">
+        <button type="button" class="tool" id="wash">${art('i-shower')}<span>1 · ล้างแผลด้วยสบู่</span></button>
+        <button type="button" class="tool hold" id="press" disabled><svg class="ring" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19"/></svg>${art('i-bandage')}<span>2 · กดผ้าค้างไว้</span></button>
+      </div>
+      <p class="mg-hint" id="mgHint">ล้างแผลก่อน แล้วกดปุ่มที่ 2 ค้างไว้จนวงเต็ม</p>
+      <div class="mg-ctrl"><button type="button" class="cta-btn" id="mgB1">${esc(opt(v, 1).t)}</button><button type="button" class="cta-btn" id="mgB2">${esc(opt(v, 2).t)}</button></div>`);
+    const press = $('#press'), ring = $('.ring circle', press), wound = $('#wound'), cloth = $('#cloth'), hint = $('#mgHint');
+    const C = 2 * Math.PI * 19;
+    ring.style.strokeDasharray = C; ring.style.strokeDashoffset = C;
+    let washed = false, t0 = 0, raf = 0, held = false, ok = false;
+    $('#wash').addEventListener('click', () => {
+      if (r.done || washed) return;
+      washed = true; SND.play('splash');
+      $('#wash').classList.add('ok'); $('#wash').disabled = true; press.disabled = false;
+      $('#fxa').innerHTML = art('i-shower'); $('#fxa').className = 'fxa on wash';
+      wound.classList.add('clean');
+      hint.textContent = 'ดีมาก! ทีนี้กดปุ่มที่ 2 ค้างไว้จนวงเต็ม';
+      press.focus({ preventScroll: true });
+    });
+    const tick = now => {
+      if (!held) return;
+      const p = clamp((now - t0) / 1000 / HOLD);
+      ring.style.strokeDashoffset = C * (1 - p);
+      if (p >= 1) {
+        held = false; ok = true;
+        wound.classList.add('stopped'); cloth.classList.remove('press'); cloth.classList.add('on'); press.classList.add('ok');
+        hint.textContent = 'เลือดหยุดแล้ว!'; SND.play('found');
+        setTimeout(() => resolve(0), 800);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    const down = () => {
+      if (press.disabled || ok || r.done || held) return;
+      held = true; t0 = performance.now(); cloth.classList.add('press'); SND.play('tap');
+      hint.textContent = 'กดค้างไว้นะ…';
+      raf = requestAnimationFrame(tick);
+    };
+    const up = () => {
+      if (!held) return;
+      held = false; cancelAnimationFrame(raf); cloth.classList.remove('press');
+      if (!ok) { ring.style.strokeDashoffset = C; hint.textContent = 'ยังไม่พอ กดค้างไว้นานๆ จนวงเต็มนะ'; bump(press, 'shake'); }
+    };
+    press.addEventListener('pointerdown', e => { e.preventDefault(); down(); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => press.addEventListener(ev, up));
+    press.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) { e.preventDefault(); down(); } });
+    press.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); up(); } });
+    press.addEventListener('contextmenu', e => e.preventDefault());
+    const wrong = i0 => {
+      if (r.done || ok) return;
+      held = false; cancelAnimationFrame(raf);
+      $('#mg').classList.add(i0 === 1 ? 'mud' : 'drip');
+      SND.play('no');
+      setTimeout(() => resolve(i0), 700);
+    };
+    $('#mgB1').addEventListener('click', () => wrong(1));
+    $('#mgB2').addEventListener('click', () => wrong(2));
+    r.stop = () => { held = false; cancelAnimationFrame(raf); };
+  },
+};
 
 /* ---------- จบเกม ---------- */
 function renderEnd() {
@@ -2110,13 +2983,13 @@ function renderEnd() {
   $('#endCard').innerHTML = `
     <div class="g-endhead">
       <div class="g-hero ${dead ? 'sad' : ''}">${art(AGES[S.age].pic)}</div>
-      <div class="g-stars" role="img" aria-label="ได้ ${stars} ดาว จาก 3">${[0, 1, 2].map(i => ICON.star.replace('<svg', `<svg class="${i < stars ? '' : 'off'}"`)).join('')}</div>
+      <div class="g-stars" role="img" aria-label="ได้ ${stars} ดาว จาก 3">${[0, 1, 2].map(i => ICON.star.replace('<svg', `<svg class="${i < stars ? 'on' : 'off'}" style="--d:${0.25 + i * 0.22}s"`)).join('')}</div>
       <h2 tabindex="-1">${title}</h2>
       <p class="g-text">${sub}</p>
     </div>
     <div class="g-stats">
       <div class="g-stat"><b>${right}<small>/${TOTAL}</small></b><span>ตัดสินใจถูก</span></div>
-      <div class="g-stat"><b>${S.bag.length}</b><span>ไอเทมในกระเป๋า</span></div>
+      <div class="g-stat"><b>${S.bag.length}</b><span>ไอเทม</span></div>
       <div class="g-stat"><b>${Math.max(S.hearts, 0)}<small>/3</small></b><span>หัวใจที่เหลือ</span></div>
     </div>
     ${savedN ? `<p class="g-tip">${art('i-pack')}<span>ของที่เตรียมไว้ช่วยกันพลาดได้ ${savedN} ครั้ง การเตรียมตัวก่อนน้ำมาช่วยได้จริง</span></p>` : ''}
@@ -2134,6 +3007,8 @@ function renderEnd() {
   $('#again').addEventListener('click', () => startAge(S.age));
   $('#switchAge').addEventListener('click', () => { setWater(0); show('s-start'); });
   show('s-end');
+  if (dead) SND.play('lose');
+  else setTimeout(() => { confetti(); SND.play('win'); }, 300);
 }
 
 /* ---------- เริ่ม ---------- */
@@ -2142,10 +3017,16 @@ function init() {
   $('#goPlay').addEventListener('click', startPlay);
   $('#introBack').addEventListener('click', () => show('s-start'));
   $('#hudBag').addEventListener('click', () => toggleBag());
+  const sb = $('#sndBtn');
+  if (sb) {
+    const sync = () => { sb.setAttribute('aria-pressed', String(SND.on)); sb.classList.toggle('off', !SND.on); $('span', sb).textContent = SND.on ? 'เสียงเปิด' : 'เสียงปิด'; };
+    sb.addEventListener('click', () => { SND.toggle(); sync(); });
+    sync();
+  }
   document.addEventListener('keydown', e => {
     if (!S || document.body.dataset.screen !== 's-play' || e.altKey || e.ctrlKey || e.metaKey) return;
     const r = S.rounds[S.i];
-    if (r && r.kind === 'event' && !r.done && /^[1-3]$/.test(e.key)) { e.preventDefault(); choose(+e.key - 1); }
+    if (r && r.kind === 'event' && !r.done && !r.ev.game && /^[1-3]$/.test(e.key)) { e.preventDefault(); choose(+e.key - 1); }
     if (e.key === 'Escape') toggleBag(false);
   });
   setWater(0);

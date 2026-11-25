@@ -821,7 +821,8 @@ mark.red { background: var(--leech); color: var(--bone); }
                     i-bandage i-shower i-calendar i-thermo i-pill i-trash
                     i-clock i-elder i-team i-mega i-q i-db i-funnel i-chart i-game
      ไอคอนเกม 64×64 : i-water i-firstaid i-stick i-meds i-bag i-whistle i-plug i-pack
-                      i-battery i-sandal i-teddy i-dryer
+                      i-battery i-sandal i-teddy i-dryer i-hand i-flame i-claw
+     มินิเกม     : i-wire (64×120) · g-leg ขา (260×150) · g-sneaker รองเท้าผ้าใบ (170×100)
      ตัวละคร 120×120 : c-kid เด็ก · c-teen วัยรุ่น · c-adult วัยทำงาน · c-elder ผู้สูงอายุ
      ไอคอน 32×32  : i-house i-heart (สีตาม color ของ CSS) */
 (() => {
@@ -1238,6 +1239,34 @@ mark.red { background: var(--leech); color: var(--bone); }
   <circle cx="22" cy="19" r="6" fill="#B9662A"/>
   <rect x="42" y="10" width="7" height="18" rx="2" fill="#93A6A5"/>
   <path d="M53 13h7M53 19h8M53 25h7" stroke="#F2C46B" stroke-width="2.5" stroke-linecap="round"/>
+</symbol>
+<symbol id="i-hand" viewBox="0 0 64 64">
+  <path d="M21 60c-6-4-10-11-10-19V27a4 4 0 0 1 8 0v7V13a4 4 0 0 1 8 0v18V9a4 4 0 0 1 8 0v22V14a4 4 0 0 1 8 0v25l3-6a4 4 0 0 1 7 4l-6 14c-3 6-8 9-15 9Z" fill="#E7B386" stroke="#B9835A" stroke-width="1.5" stroke-linejoin="round"/>
+</symbol>
+<symbol id="i-flame" viewBox="0 0 64 64">
+  <path d="M32 5c5 10 17 16 17 31a17 17 0 0 1-34 0c0-8 4-13 8-17 1 6 4 9 6 9-2-8 0-16 3-23Z" fill="#E8893B"/>
+  <path d="M32 31c3 5 8 8 8 15a8 8 0 0 1-16 0c0-4 2-7 4-9 1 3 2 4 3 4-1-4 0-7 1-10Z" fill="#F2C46B"/>
+</symbol>
+<symbol id="i-claw" viewBox="0 0 64 64">
+  <path d="M14 10l14 44M27 6l12 48M40 9l10 40" stroke="#F07A74" stroke-width="5" stroke-linecap="round" fill="none"/>
+</symbol>
+<symbol id="i-wire" viewBox="0 0 64 120">
+  <path d="M34 0v52q0 16-12 26" fill="none" stroke="#93A6A5" stroke-width="5" stroke-linecap="round"/>
+  <path d="M14 82l9-8 6 6-9 8Z" fill="#C9C2B0"/>
+  <path d="M6 96l9-6-3 9 9-4-4 9M24 98l4 8" stroke="#F2C46B" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<symbol id="g-leg" viewBox="0 0 260 150">
+  <path d="M0 22H150c40 0 60 18 64 52l8 38c2 12 16 16 32 18v20H120c-10-16-24-26-46-28H0Z" fill="#E7B386"/>
+  <path d="M0 22H150c26 0 44 8 54 24" fill="none" stroke="#F3CFAA" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+  <path d="M120 150c-10-16-24-26-46-28H0" fill="none" stroke="#C99872" stroke-width="3"/>
+  <path d="M30 60q8-3 16 0M70 82q8-3 16 0M40 100q8-3 16 0" fill="none" stroke="#D9A57D" stroke-width="2" stroke-linecap="round"/>
+</symbol>
+<symbol id="g-sneaker" viewBox="0 0 170 100">
+  <path d="M12 74Q12 46 34 40L66 33Q74 16 92 18L104 20Q118 44 146 54Q164 60 162 76Z" fill="#E9E3D3"/>
+  <path d="M10 72H164V82Q164 90 156 90H16Q10 90 10 82Z" fill="#93A6A5"/>
+  <path d="M30 56Q60 50 92 58M44 66H150" stroke="#E8893B" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M70 36l8 8M80 31l8 8M90 28l7 9" stroke="#7E9291" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="88" cy="22" rx="17" ry="6" fill="#0D181C"/>
 </symbol>
 <symbol id="i-heart" viewBox="0 0 32 32">
   <path d="M16 28S3 20 3 11.5a7 7 0 0 1 13 -3.6a7 7 0 0 1 13 3.6C29 20 16 28 16 28Z" fill="currentColor"/>
